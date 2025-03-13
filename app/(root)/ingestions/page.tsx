@@ -22,7 +22,9 @@ const Ingestions = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios.get("/api/ingestions")
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const url = `${baseUrl}/ingestions`;
+        axios.get(url)
             .then((response) => {
                 if (response.data.success) {
                     setIngestions(response.data.data);
@@ -35,7 +37,9 @@ const Ingestions = () => {
     }, []);
 
     useEffect(() => {
-        axios.get("/api/data-sources")
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const url = `${baseUrl}/data-sources`;
+        axios.get(url)
             .then((response) => {
                 if (response.data.success) {
                     setDataSources(response.data.data);
@@ -72,8 +76,11 @@ const Ingestions = () => {
 
             const { answer } = responseIngestion.data;
 
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const url = `${baseUrl}/data-sources`;
+
             // Call API to update the database
-            const updateResponse = await axios.put("/api/data-sources", {
+            const updateResponse = await axios.put(url, {
                 id: source_id,
                 data: answer
             });

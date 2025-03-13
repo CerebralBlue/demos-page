@@ -18,18 +18,22 @@ const Reports: React.FC = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const response = await axios.get<{ success: boolean; data: Report[] }>('/api/reports');
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                const url = `${baseUrl}/reports`;
+
+                const response = await axios.get<{ success: boolean; data: Report[] }>(url);
                 if (response.data.success) {
                     setReports(response.data.data);
                 } else {
-                    setError('Failed to fetch reports');
+                    setError("Failed to fetch reports");
                 }
             } catch (err) {
-                setError('Error fetching reports');
+                setError("Error fetching reports");
             } finally {
                 setLoading(false);
             }
         };
+
         fetchReports();
     }, []);
 

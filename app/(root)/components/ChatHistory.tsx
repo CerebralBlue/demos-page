@@ -13,6 +13,8 @@ interface ChatHistoryProps {
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, chatEndRef }) => {
+    
+    const baseAppUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
 
     const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
 
@@ -21,7 +23,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await fetch("/api/files-select");
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                const url = `${baseUrl}/files-select`;
+                const response = await fetch(url);
                 const data = await response.json();
                 if (data.success) {
                     setFileList(data.data);
@@ -60,8 +64,10 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
             const content10k = response10k.data.answer;
 
             // Store generated 10k
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const url = `${baseUrl}/reports`;
             const responsePost = await axios.post(
-                "/api/reports/",
+                url,
                 { file_name: fileName, content: content10k },
                 { headers }
             );
@@ -104,7 +110,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
                                     <p className="text-sm font-semibold">{msg.fileName}</p>
                                     {msg.reportId && (
                                         <a
-                                            href={`/reports/${msg.reportId}`}
+                                            href={`${baseAppUrl}/reports/${msg.reportId}`}
                                             className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                                         >
                                             <Icon name="eye" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />

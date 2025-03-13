@@ -1,10 +1,9 @@
 "use client";
-import React, { DragEvent, useEffect, useRef, useState } from 'react';
+import React, { DragEvent, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHistory from '../components/ChatHistory';
 import ChatHeader from '../components/ChatHeader';
-import { FileItem } from '@/types/file.item';
 import { headers } from '@/constants';
 
 const Home = () => {
@@ -13,24 +12,7 @@ const Home = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [chatHistory, setChatHistory] = useState<{ message: string, type: "agent" | "user", isFile?: boolean, fileName?: string }[]>([]);
-    // const [fileList, setFileList] = useState<FileItem[]>([]);
-
     const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-    // useEffect(() => {
-    //     const fetchFiles = async () => {
-    //         try {
-    //             const response = await fetch("/api/files-select");
-    //             const data = await response.json();
-    //             if (data.success) {
-    //                 setFileList(data.data);
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching files:", error);
-    //         }
-    //     };
-    //     fetchFiles();
-    // }, []);
 
     const handlePrePromptClick = (message: string) => {
         setQuery(message);
@@ -116,8 +98,12 @@ const Home = () => {
 
                 if (ocrText && ocrText.length > 0) {
                     // Store OCR sheet only if there is meaningful text
+                    
+                    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                    const url = `${baseUrl}/ingestions`;
+        
                     const responsePost = await axios.post(
-                        "/api/ingestions/",
+                        url,
                         { file_name: fileName, type: fileExtension, data: ocrText },
                         { headers }
                     );

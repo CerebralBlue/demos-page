@@ -58,7 +58,9 @@ const ReportEditionPage = () => {
 
     const fetchReportById = async (id: string) => {
         try {
-            const res = await axios.get(`/api/reports/${id}`);
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const url = `${baseUrl}/reports/${id}`;
+            const res = await axios.get(url);
             setWholeText(res.data?.data?.content || "No content available.");
             setDrafts(res.data?.data?.versions || []);
         } catch (error) {
@@ -74,8 +76,10 @@ const ReportEditionPage = () => {
     };
 
     const storeDraftVersion = async (updatedText: string) => {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const url = `${baseUrl}/reports/drafts`;
         const responsePost = await axios.post(
-            "/api/reports/drafts",
+            url,
             { id, content: updatedText },
             { headers }
         );
