@@ -92,7 +92,6 @@ const Home = () => {
                     { headers }
                 );
                 let ocrText = responseOCR.data.answer?.trim();
-                console.log("Success:", ocrText);
 
                 // Store OCR sheet
 
@@ -107,7 +106,6 @@ const Home = () => {
                         { file_name: fileName, type: fileExtension, data: ocrText },
                         { headers }
                     );
-                    console.log("Success:", responsePost);
 
                     // Show success message
                     setChatHistory((prev) => [...prev, { message: "Ingested file successful!", type: "agent" }]);
@@ -158,7 +156,6 @@ const Home = () => {
                     { headers }
                 );
 
-                // Handle different response cases
                 if (responseIngestion.data.answer === "trigger_ingestion") {
                     setChatHistory((prev) => [...prev, { message: "Upload the PDF sheet file", type: "agent" }]);
                     scrollToBottom();
