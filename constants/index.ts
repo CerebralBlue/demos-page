@@ -54,9 +54,8 @@ export const sidebarLinks = [
       },
     ],
   },
-
   {
-    category: "DOC Analyzer Demo",
+    category: "Doc Analyzer Demo",
     links: [
       {
         imgURL: "users",

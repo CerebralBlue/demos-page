@@ -31,6 +31,33 @@ const agents = [
     image: "/demos-page/neuralseek_logo.png",
     creator: "NeuralSeek",
     description: "AI-powered digital identity assistant.",
+  },
+  {
+    category: "RFP Writer Agent Demo",
+    label: "RFP Writer Agent",
+    route: "/agent-rfp-writer",
+    icon: "users",
+    image: "/demos-page/neuralseek_logo.png",
+    creator: "NeuralSeek",
+    description: "AI-powered RFP writer assistant.",
+  },
+  {
+    category: "Doc Analyzer Agent Demo",
+    label: "Doc Analyzer Agent",
+    route: "/agent-doc-analyzer",
+    icon: "users",
+    image: "/demos-page/neuralseek_logo.png",
+    creator: "NeuralSeek",
+    description: "AI-powered document analyzer assistant.",
+  },
+  {
+    category: "Search Engine Agent Demo",
+    label: "Search Engine Agent",
+    route: "/agent-doc-analyzer",
+    icon: "users",
+    image: "/demos-page/neuralseek_logo.png",
+    creator: "NeuralSeek",
+    description: "AI-powered search engine assistant.",
   }
 ];
 
@@ -42,7 +69,7 @@ const Home = () => {
       </header>
       <div className="relative flex-1 overflow-hidden max-h-[70vh] pr-4">
         <div className="overflow-y-auto h-full pr-4 mr-[-10px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {agents.map((agent, index) => (
               <Link key={index} href={agent.route} className="group">
                 <div className="flex flex-col w-full bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-transform transform hover:scale-105">
