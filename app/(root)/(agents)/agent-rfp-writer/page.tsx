@@ -53,39 +53,20 @@ const RFPWriterAgent: React.FC = () => {
         return metadata;
     };
     const selectSheet = (event: React.MouseEvent<HTMLLIElement>, file_metadata: any) => {
-        const li = event.currentTarget;
-        const sheetName = li.textContent;
-
-        if (!sheetName) return;
-
+        var li = event.target as HTMLLIElement;
+        sheetName = li.textContent;
         li.classList.add("selected");
-
         const columns = file_metadata.columns[sheetName];
-
-        const ul = document.createElement("ul");
-        ul.style.listStyle = "none";
-        ul.style.padding = "0";
-
-        columns.forEach((column: string) => {
-            const columnLi = document.createElement("li");
-            columnLi.textContent = column;
-            columnLi.style.display = "inline-block";
-            columnLi.style.padding = "6px 12px";
-            columnLi.style.margin = "4px";
-            columnLi.style.backgroundColor = "#e0e0e0";
-            columnLi.style.borderRadius = "6px";
-            columnLi.style.cursor = "pointer";
-            columnLi.addEventListener('click', () => selectColumn(columnLi.textContent!));
-
-            ul.appendChild(columnLi);
-        });
-
-        event.currentTarget.parentElement?.querySelectorAll(".selected").forEach((el) => {
-            el.classList.remove("selected");
-        });
-
-        event.currentTarget.classList.add("selected");
-        event.currentTarget.appendChild(ul);
+        // iterate columns and display them.
+        var ul = document.createElement("ul");
+        for(var i=0; i < columns.length; i++) {
+            
+            const _li = document.createElement("li");
+            _li.textContent = columns[i];
+            _li.addEventListener('click', () => selectColumn(_li.textContent!));
+            ul.appendChild(_li);
+        }
+        li.appendChild(ul);
     };
 
     async function seek(text: any, url: any, apikey: any, filter = '', prompt = '', session_id = '') {
@@ -228,7 +209,6 @@ const RFPWriterAgent: React.FC = () => {
     
     
 
-
     const selectColumn = (event: string) => {
         renderData(event);
 
@@ -280,7 +260,7 @@ const RFPWriterAgent: React.FC = () => {
                     hr_list_div.appendChild(ul);
                     file_metadata_div.appendChild(hr_list_div);
 
-                } else if (metadata.type === "xlsx") {
+                } else if (metadata.type === "xlsx" || metadata.type === "xls") {
                     file_metadata_div.innerHTML += `<div><strong>Sheets: ${metadata.sheets.length}</strong></div>`;
                     file_metadata_div.innerHTML += `<h3>List of Sheets</h3>`;
                     file_metadata_div.innerHTML += `<div>Please select one of the sheets to show the list of columns.</div>`;
@@ -293,6 +273,7 @@ const RFPWriterAgent: React.FC = () => {
                     ul.style.padding = "0";
 
                     metadata.sheets.forEach((sheet: string) => {
+
                         const li = document.createElement("li");
                         li.textContent = sheet;
                         li.style.display = "inline-block";
@@ -303,7 +284,7 @@ const RFPWriterAgent: React.FC = () => {
                         li.style.borderRadius = "6px";
                         li.style.cursor = "pointer";
                         li.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
-
+                        // li.addEventListener('click', () => selectSheet(li.textContent!));
                         ul.appendChild(li);
                     });
 
@@ -382,11 +363,11 @@ const RFPWriterAgent: React.FC = () => {
     };
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file && file.name.endsWith('.csv')) {
+        if (file && (file.name.endsWith('.csv') || file!.name.endsWith('.xlsx') || file!.name.endsWith('.xls'))) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const text = e.target?.result as string;
-                handleFileUpload(file.name, file);
+                handleFileUpload(file!.name, file);
             };
             reader.readAsText(file);
         } else {

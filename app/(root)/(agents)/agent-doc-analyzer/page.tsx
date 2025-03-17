@@ -2,9 +2,13 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import Icon from '@/components/Icon';
+import { custom } from 'zod';
 const DocAnalyzerAgent = () => {
     const [fileName, setFileName] = useState<string | null>(null);
     const [response, setResponse] = useState<{ answer: string; generation: boolean; warningMessages: string[] } | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [customPrompt, setCustomPrompt] = useState<boolean>(false);
+    const [query, setQuery] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -40,6 +44,7 @@ const DocAnalyzerAgent = () => {
     }
 
     const summarize = async (name: string) => {
+        setLoading(true);
         try {
             const response = await fetch('/demos-page/api/proxy', {
                 method: 'POST',
@@ -56,6 +61,7 @@ const DocAnalyzerAgent = () => {
 
             const data = await response.json();
             setResponse(data);
+            setLoading(false);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -66,11 +72,36 @@ const DocAnalyzerAgent = () => {
 
 
     const handleFileUpload = async (filename: string, file: File) => {
+        setResponse(null);
         setFileName(filename);
-        exploreUpload(filename, file);
+        // exploreUpload(filename, file);
     };
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+    };
+    const performSearch = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/demos-page/api/proxy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    agent: "custom_analyzer",
+                    params: {
+                        filename: fileName,
+                        query: query
+                    }
+                }),
+            });
+
+            const data = await response.json();
+            setResponse(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -116,11 +147,60 @@ const DocAnalyzerAgent = () => {
                         />
                     </div>
                 </div>
-                {fileName && !response && (
-                    <div className="mt-8 p-4 border rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                {customPrompt && (
+                    <div className="relative w-full max-w-3xl m-auto mt-8">
+                    <textarea
+                        id="query"
+                        rows={4}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                // handleChat();
+                            }
+                        }}
+                        className="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16 h-14"
+                        placeholder="Message NeuralSeek"
+                    />
+                    <div className="flex gap-2 m-auto me-0 mb-0">
+    
+                        <button
+                            onClick={() => { performSearch() }}
+                            disabled={loading || (query.trim().length === 0)}
+                            className={`p-2 rounded-lg transition absolute bottom-5 right-2 ${loading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : query.trim().length > 0
+                                    ? 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
+                                    : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-not-allowed'
+                                }`}
+                            title={loading ? "Processing..." : query.trim().length === 0 ? "Enter a message or upload files" : "Send"}
+                        >
+                            {loading ? (
+                                <Icon name="loader" className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Icon name="paper-plane" className="w-5 h-5" />
+                            )}
+                        </button>
+                    </div>
+    
+                </div>
+            )}
+                {loading && (
                         <div className="loader">
                             <Icon name="loader" className="w-5 h-5 animate-spin" />
-                        </div>
+                        </div>)
+
+                    }
+                {fileName && !response && !loading && (
+                   
+                    <div className="mt-8 p-4 border rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center space-x-4">
+                        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => summarize(fileName)}>
+                            Analyze document
+                        </button>
+                        <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" onClick={() => setCustomPrompt(true)}>
+                            Custom prompt
+                        </button>
                     </div>
                 )}
                 {response && (
