@@ -1,8 +1,11 @@
 // "use client";
-// import React, { useState } from 'react';
-// import { useEffect, useRef } from "react";
-// import * as sdk from "@d-id/client-sdk";
+
+// import React, { useState, useEffect, useRef } from 'react';
+// import dynamic from 'next/dynamic';
 // import Icon from '@/components/Icon';
+
+// // Create a type for the SDK to use throughout the component
+// type SDKType = typeof import('@d-id/client-sdk');
 
 // declare global {
 //   interface Window {
@@ -11,25 +14,35 @@
 //   }
 // }
 
-// export default function DIDAgent() {
+// // Create a component that loads only on client-side
+// const DIDAgent = () => {
+
+//   const agentId: string = process.env.NEXT_PUBLIC_DID_AGENT_ID || "";
+//   const agentKey: string = process.env.NEXT_PUBLIC_DID_API_KEY || "";
+
+//   const nsEndpointSeek1: string = process.env.NEXT_PUBLIC_NS_API_SEEK_1 || "";
+//   const nsApiKey1: string = process.env.NEXT_PUBLIC_NS_API_KEY_1 || "";
+
 //   const videoContainerRef = useRef<HTMLDivElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   let manager: any;
-//   // const agentId = "agt_8djD6Mq8";
-//   const agentId = "agt_r84CvBRO";
-//   const auth: { type: "key"; clientKey: string } = { type: "key", clientKey: "cnJlZWRAdGVjaGQuY29t:nmzIJP5Z38_atXP3f3Xgw" };
-//   // const auth: { type: "key"; clientKey: string } = { type: "key", clientKey: "Z29vZ2xlLW9hdXRoMnwxMTc5MTE2MzI0ODg4NzA1MzczMTU6MU1sQkVhMXo3dlU4WHVSRzJJTDND" };
-
 //   const videoElement = useRef<HTMLVideoElement>(null);
-//   const [text, setText] = useState("");
 //   const textArea = useRef<HTMLTextAreaElement>(null);
 //   const answersRef = useRef<HTMLDivElement>(null);
-
-//   const [connectionState, setConnectionState] = useState("Connecting...");
-//   const [agentManager, setAgentManager] = useState<any>(null);
-
 //   const chatEndRef = useRef<HTMLDivElement | null>(null);
+//   const recognitionRef = useRef<any>(null);
+//   const hasInitialized = useRef(false);
+
+//   // References for SDK and manager
+//   const sdkRef = useRef<SDKType | null>(null);
+//   const managerRef = useRef<any>(null);
+
+//   const [text, setText] = useState("");
+//   const [connectionState, setConnectionState] = useState("Connecting...");
 //   const [chatHistory, setChatHistory] = useState<{ message: string, type: "agent" | "user" }[]>([]);
+//   const [isListening, setIsListening] = useState(false);
+  
+//   const auth: { type: "key"; clientKey: string } = { type: "key", clientKey: agentKey };
+//   let srcObject: any;
 
 //   const scrollToBottom = () => {
 //     setTimeout(() => {
@@ -55,56 +68,86 @@
 //     }
 //   };
 
-//   const hasInitialized = useRef(false);
-//   let srcObject: any;
-
+//   // Load SDK dynamically and initialize agent
 //   useEffect(() => {
 //     if (hasInitialized.current) return;
 //     hasInitialized.current = true;
-//     const callbacks = {
-//       onSrcObjectReady: (value: MediaStream) => {
-//         srcObject = value;
-//         videoElement.current!.play();
-//       },
-//       onVideoStateChange: (state: string) => {
-//         if (!manager) return;
 
-//         if (state === "STOP") {
-//           captureLastFrame();
-//           videoElement.current!.muted = true;
-//           videoElement.current!.srcObject = null;
-//           videoElement.current!.src = manager.agent.presenter.idle_video;
-//         } else {
-//           // videoContainerRef.current!.style.backgroundImage = "";
-//           videoElement.current!.muted = false;
-//           videoElement.current!.srcObject = srcObject;
-//         }
-//       },
-//       onConnectionStateChange: (state: string) => {
-//         setConnectionState(state === "connected" ? "Online" : "Disconnected");
-//       },
-//       onNewMessage: (messages: any[]) => {
-//         const lastMsg = messages[messages.length - 1];
+//     const loadSDKAndInitAgent = async () => {
+//       try {
+//         // Dynamically import the SDK
+//         const sdkModule = await import('@d-id/client-sdk');
+//         sdkRef.current = sdkModule;
 
-//         // answersRef.current!.innerHTML += `<p>[${lastMsg.role}] : ${lastMsg.content}</p>`;
-//         // answersRef.current!.scrollTop = answersRef.current!.scrollHeight;
+//         const callbacks = {
+//           onSrcObjectReady: (value: MediaStream) => {
+//             srcObject = value;
+//             if (videoElement.current) {
+//               videoElement.current.play();
+//             }
+//           },
+//           onVideoStateChange: (state: string) => {
+//             if (!managerRef.current || !videoElement.current) return;
 
-//         setChatHistory((prev) => [
-//           ...prev,
-//           { message: lastMsg.content, type: lastMsg.role }
-//         ]);
-//         scrollToBottom();
+//             if (state === "STOP") {
+//               captureLastFrame();
+//               videoElement.current.muted = true;
+//               videoElement.current.srcObject = null;
+//               videoElement.current.src = managerRef.current.agent.presenter.idle_video;
+//             } else {
+//               videoElement.current.muted = false;
+//               videoElement.current.srcObject = srcObject;
+//             }
+//           },
+//           onConnectionStateChange: (state: string) => {
+//             setConnectionState(state === "connected" ? "Online" : "Disconnected");
+//           },
+//           onNewMessage: (messages: any[]) => {
+//             if (messages && messages.length > 0) {
+//               const lastMsg = messages[messages.length - 1];
+//               setChatHistory((prev) => [
+//                 ...prev,
+//                 { message: lastMsg.content, type: lastMsg.role }
+//               ]);
+//               scrollToBottom();
+//             }
+//           },
+//           onError: (error: any) => console.error("Error:", error),
+//         };
 
-//       },
-//       onError: (error: any) => console.error("Error:", error),
+//         // Initialize the agent manager
+//         const options = {
+//           compatibilityMode: "auto" as "auto",
+//           streamWarmup: true
+//         };
+
+//         const manager = await sdkModule.createAgentManager(
+//           agentId,
+//           { auth, callbacks, streamOptions: options }
+//         );
+
+//         managerRef.current = manager;
+//         manager.connect();
+//       } catch (error) {
+//         console.error("Failed to load D-ID SDK or initialize agent:", error);
+//         setConnectionState("Failed to connect");
+//       }
 //     };
-//     const initAgent = async () => {
-//       const options = { compatibilityMode: "auto" as sdk.CompatibilityMode, streamWarmup: true };
-//       manager = await sdk.createAgentManager(agentId, { auth, callbacks, streamOptions: options });
-//       manager.connect();
-//       setAgentManager(manager);
+
+//     // Only run in browser
+//     if (typeof window !== 'undefined') {
+//       loadSDKAndInitAgent();
+//     }
+
+//     // Cleanup function
+//     return () => {
+//       if (managerRef.current && managerRef.current.disconnect) {
+//         managerRef.current.disconnect();
+//       }
+//       if (recognitionRef.current) {
+//         recognitionRef.current.stop();
+//       }
 //     };
-//     initAgent();
 //   }, []);
 
 //   useEffect(() => {
@@ -115,31 +158,33 @@
 //     }
 //   }, [connectionState]);
 
-//   const showAnswer = (answer: string, rol: any) => {
-//     if (answersRef.current) {
-
-//       // answersRef.current.innerHTML += `<p>${rol} : ${answer}</p>`;
-//       // answersRef.current.scrollTop = answersRef.current.scrollHeight;
-
-//       setChatHistory((prev) => [
-//         ...prev,
-//         { message: answer, type: rol }
-//       ]);
-//       scrollToBottom();
-
-//     }
+//   const showAnswer = (answer: string, role: "agent" | "user") => {
+//     setChatHistory((prev) => [
+//       ...prev,
+//       { message: answer, type: role }
+//     ]);
+//     scrollToBottom();
 //   };
 
-//   const [isListening, setIsListening] = useState(false);
-
-//   const recognitionRef = useRef<any>(null);
-
 //   const startListening = () => {
-//     if (isListening) {
-//       recognitionRef.current.stop();
-//       setIsListening(false);
-//     } else {
-//       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+//     try {
+//       if (typeof window === "undefined") return;
+
+//       if (isListening) {
+//         if (recognitionRef.current) {
+//           recognitionRef.current.stop();
+//         }
+//         setIsListening(false);
+//         return;
+//       }
+
+//       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//       if (!SpeechRecognition) {
+//         console.error("Speech recognition not supported in this browser");
+//         return;
+//       }
+
+//       const recognition = new SpeechRecognition();
 //       recognition.lang = 'en-US';
 //       recognition.interimResults = false;
 //       recognition.maxAlternatives = 1;
@@ -151,53 +196,65 @@
 //       };
 
 //       recognition.onerror = (event: any) => {
-//         if (event.error === 'no-speech') {
-//           console.log('No speech detected. Please try again.');
-//         } else {
-//           console.error('Speech recognition error', event.error);
-//         }
+//         console.error('Speech recognition error', event.error);
+//         setIsListening(false);
 //       };
 
 //       recognition.onend = () => {
-//         if (isListening) {
-//           recognition.start();
-//         }
+//         setIsListening(false);
 //       };
 
 //       recognition.start();
 //       setIsListening(true);
+//     } catch (error) {
+//       console.error("Error starting speech recognition:", error);
+//       setIsListening(false);
 //     }
 //   };
+
 //   const chat = async () => {
-//     if (text.trim() !== "") {
-//       const question = text;
-//       try {
-//         showAnswer(text, "user");
-//         setText("");  // ✅ Clear the textarea by updating state
+//     if (text.trim() === "") return;
 
-//         const response = await fetch('https://api-usw.neuralseek.com/v1/e688e6f2bfe772fdae28dc9f/seek', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'apikey': 'e389d36b-a9af93af-ac08626f-c829870d'
-//           },
-//           body: JSON.stringify({ question }),
-//         });
+//     const question = text;
+//     try {
+//       showAnswer(text, "user");
+//       setText("");
 
-//         const data = await response.json();
+//       const response = await fetch(nsEndpointSeek1, {
+//         method: 'POST',
+//         //mode: 'no-cors',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'apikey': nsApiKey1
+//         },
+//         body: JSON.stringify({ question }),
+//       });
 
+//       if (!response.ok) {
+//         throw new Error(`API response: ${response.status}`);
+//       }
+
+//       const data = await response.json();
+
+//       if (data.answer) {
 //         speak(data.answer);
 //         showAnswer(data.answer, "agent");
-
-//       } catch (error) {
-//         console.error('Error:', error);
+//       } else {
+//         showAnswer("Sorry, I couldn't process your request.", "agent");
 //       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       showAnswer("Sorry, there was an error processing your request.", "agent");
 //     }
 //   };
 
-//   const speak = (text2speek: any) => {
-//     if (text2speek.trim().length > 2) {
-//       agentManager.speak({ type: "text", input: text2speek });
+//   const speak = (text2speak: string) => {
+//     if (!managerRef.current || !text2speak || text2speak.trim().length <= 2) return;
+
+//     try {
+//       managerRef.current.speak({ type: "text", input: text2speak });
+//     } catch (error) {
+//       console.error("Error making agent speak:", error);
 //     }
 //   };
 
@@ -214,17 +271,17 @@
 //               ref={videoElement}
 //               className="w-full h-full object-cover"
 //               autoPlay
-//               loop
+//               playsInline
 //             ></video>
 //             <canvas ref={canvasRef} className="hidden"></canvas>
 //           </div>
 
 //           {/* Connection Status */}
 //           <div className="mt-4 mb-2 flex items-center space-x-2">
-//             <a
+//             <div
 //               className={`flex items-center py-1 px-3 border rounded-full transition cursor-pointer ${connectionState === "Online"
 //                 ? "bg-green-500 text-white border-green-500"
-//                 : connectionState === "Connecting"
+//                 : connectionState === "Connecting..."
 //                   ? "bg-yellow-500 text-white border-yellow-500"
 //                   : "bg-red-500 text-white border-red-500"
 //                 }`}
@@ -232,13 +289,13 @@
 //               <span
 //                 className={`w-3 h-3 rounded-full mr-2 ${connectionState === "Online"
 //                   ? "bg-green-300"
-//                   : connectionState === "Connecting"
+//                   : connectionState === "Connecting..."
 //                     ? "bg-yellow-300"
 //                     : "bg-red-300"
 //                   }`}
 //               ></span>
 //               <p className="text-sm font-semibold">{connectionState}</p>
-//             </a>
+//             </div>
 //           </div>
 //         </div>
 
@@ -281,8 +338,15 @@
 //             ref={textArea}
 //             value={text}
 //             onChange={(e) => setText(e.target.value)}
+//             onKeyDown={(e) => {
+//               if (e.key === 'Enter' && !e.shiftKey) {
+//                 e.preventDefault();
+//                 chat();
+//               }
+//             }}
 //             className="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16"
-//             placeholder={"Message NeuralSeek"}
+//             placeholder={isListening ? "Listening..." : "Message NeuralSeek"}
+//             disabled={isListening || connectionState !== "Online"}
 //           />
 //           <div className="absolute m-2 bottom-2 left-2 right-2 flex gap-2 items-end">
 //             <button
@@ -315,7 +379,10 @@
 //       </div>
 //     </div>
 //   );
-// }
+// };
+
+// // Export a dynamic component with SSR disabled
+// export default dynamic(() => Promise.resolve(DIDAgent), { ssr: false });
 
 
 "use client";

@@ -4,100 +4,85 @@ export const headers = {
 }
 
 export const sidebarLinks = [
-  // SEC Agent -----------------
   {
-    imgURL: "home",
-    route: "/home",
-    label: "Home",
+    category: "",
+    links: [
+      {
+        imgURL: "home",
+        route: "/home",
+        label: "Home",
+      },
+    ],
   },
   {
-    imgURL: "document",
-    route: "/ingestions",
-    label: "Ingestions",
+    category: "SEC Reporting Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-sec",
+        label: "SEC Agent",
+      },
+      {
+        imgURL: "document",
+        route: "/ingestions",
+        label: "Ingestions",
+      },
+      {
+        imgURL: "document-chart-bar",
+        route: "/reports",
+        label: "10K Reports",
+      },
+    ],
   },
   {
-    imgURL: "document-chart-bar",
-    route: "/reports",
-    label: "10K Reports",
+    category: "D-ID Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-d-id",
+        label: "D-ID Agent",
+      },
+    ],
   },
   {
-    imgURL: "char-bar",
-    route: "/charts",
-    label: "Charts",
-  },
-  // D-ID Agent -----------------------------
-  {
-    imgURL: "users",
-    route: "/agents",
-    label: "D-ID Agent",
-  },
-  // Agent -----------------------------
-  // {
-  //   imgURL: "pencil-square",
-  //   route: "/drafts",
-  //   label: "Drafts",
-  // },
-  // {
-  //   imgURL: "users",
-  //   route: "/agents",
-  //   label: "Agents",
-  // },
-  // {
-  //   imgURL: "link",
-  //   route: "/integrations",
-  //   label: "Integrations",
-  // }
-];
-
-export const shortcuts = [
-  // {
-  //     title: 'Ingest documents',
-  //     description: 'Upload and process your documents with AI.',
-  //     buttonText: 'Start Ingesting',
-  //     link: '#',
-  //     icon: 'link',
-  // },
-  {
-    title: 'Generate AI Report',
-    description: 'Automatically create an SEC compliance report.',
-    buttonText: 'Generate Report',
-    link: '#',
-    icon: 'char-bar',
-  },
-  // {
-  //     title: 'Update and Comment Existing Report',
-  //     description: 'Modify and analyze your previously generated reports.',
-  //     buttonText: 'Query Reports',
-  //     link: '#',
-  //     icon: 'users',
-  // },
-];
-
-// good_user / good_password - Bank of America
-export const TEST_USER_ID = "6627ed3d00267aa6fa3e";
-
-// custom_user -> Chase Bank
-// export const TEST_ACCESS_TOKEN =
-//   "access-sandbox-da44dac8-7d31-4f66-ab36-2238d63a3017";
-
-// custom_user -> Chase Bank
-export const TEST_ACCESS_TOKEN =
-  "access-sandbox-229476cf-25bc-46d2-9ed5-fba9df7a5d63";
-
-export const ITEMS = [
-  {
-    id: "6624c02e00367128945e", // appwrite item Id
-    accessToken: "access-sandbox-83fd9200-0165-4ef8-afde-65744b9d1548",
-    itemId: "VPMQJKG5vASvpX8B6JK3HmXkZlAyplhW3r9xm",
-    userId: "6627ed3d00267aa6fa3e",
-    accountId: "X7LMJkE5vnskJBxwPeXaUWDBxAyZXwi9DNEWJ",
+    category: "RFP Writer Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-rfp-writer",
+        label: "RFP Writer Agent",
+      },
+    ],
   },
   {
-    id: "6627f07b00348f242ea9", // appwrite item Id
-    accessToken: "access-sandbox-74d49e15-fc3b-4d10-a5e7-be4ddae05b30",
-    itemId: "Wv7P6vNXRXiMkoKWPzeZS9Zm5JGWdXulLRNBq",
-    userId: "6627ed3d00267aa6fa3e",
-    accountId: "x1GQb1lDrDHWX4BwkqQbI4qpQP1lL6tJ3VVo9",
+    category: "Doc Analyzer Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-doc-analyzer",
+        label: "DOC Analyzer Agent",
+      },
+    ],
+  },
+  {
+    category: "Search Engine Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-search-engine",
+        label: "Search Engine Agent",
+      },
+    ],
+  },
+  {
+    category: "Law Demo",
+    links: [
+      {
+        imgURL: "document-text",
+        route: "/agent-depositions",
+        label: "Depositions Agent",
+      },
+    ],
   },
 ];
 

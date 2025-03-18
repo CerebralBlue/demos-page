@@ -15,7 +15,7 @@
   /* Color of the track */
   border-radius: 6px;
   /* Rounded corners for the track */
-  margin: 10px;
+  margin-left: 10px
 }
 
 ::-webkit-scrollbar-thumb {
@@ -42,6 +42,11 @@
 .hide-scrollbar-x::-webkit-scrollbar-horizontal {
   display: none;
   /* Chrome, Safari, Edge */
+}
+
+.scroll-container {
+  overflow-y: auto;
+  padding-left: 10px; /* Creates space before the scrollbar */
 }
 
 * {

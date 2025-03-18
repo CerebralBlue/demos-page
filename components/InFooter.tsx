@@ -3,7 +3,7 @@ import React from "react";
 const Footer = ({ type = "desktop" }: { type?: "desktop" | "mobile" }) => {
   return (
     <footer className="w-full p-4 flex items-center space-x-3">
-      <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 text-white text-lg font-bold">
+      <div className="w-2 h-2 flex items-center justify-center rounded-full bg-gray-700 text-white text-lg font-bold">
         N
       </div>
       <div className="flex flex-col">
