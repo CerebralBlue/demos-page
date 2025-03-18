@@ -32,15 +32,16 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
     }
 
     return (
-        <main className="flex h-screen w-full font-inter bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
-            {/* Sidebar */}
-            {/*{sidebarOpen && <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}*/}
-            {sidebarOpen && <Sidebar/>}
-
+        <main className="flex h-screen w-full font-inter bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300 overflow-hidden">
+            {sidebarOpen && (
+                <div className="h-screen sticky top-0 left-0 z-10">
+                    <Sidebar />
+                </div>
+            )}
+            
+            {/* Main content area */}
             <div className="flex flex-col flex-grow min-h-0 w-full">
-                {/* Header */}
                 <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 shadow-md">
-                    {/* Sidebar Toggle Button */}
                     <button
                         onClick={toggleSidebar}
                         className="p-3 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -54,8 +55,6 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                             <Bars3Icon className="size-5 text-gray-500 dark:text-gray-400" />
                         )}
                     </button>
-
-                    {/* Theme Toggle Button */}
                     <button
                         onClick={toggleTheme}
                         className="p-3 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -67,9 +66,10 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                         )}
                     </button>
                 </div>
-
-                {/* Main Content */}
-                <div className="flex-grow w-full relative">{children}</div>
+                
+                <div className="flex-grow w-full overflow-auto">
+                    {children}
+                </div>
             </div>
         </main>
     );

@@ -10,7 +10,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ handlePrePromptClick }) => {
         <header className="flex flex-col items-center space-y-3 mb-8">
             <div className="flex items-center space-x-3">
                 <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
-                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">SEC AI Reporting Chat</h1>
+                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">SEC AI Reporting Agent</h1>
             </div>
             <p className="text-center text-lg">What reporting task do you want to run today?</p>
             <div className="flex flex-wrap gap-4 w-full max-w-3xl justify-center mb-4">

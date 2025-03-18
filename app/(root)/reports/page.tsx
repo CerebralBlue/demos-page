@@ -62,30 +62,33 @@ const Reports: React.FC = () => {
                         <p className="text-sm">Try adding a new report to get started.</p>
                     </div>
                 ) : (
-                    <div className="relative overflow-hidden h-[90vh] md:h-[80vh] lg:h-[67vh] pr-4">
-                        <div className="grid md:grid-cols-3 gap-6 overflow-y-auto h-full pr-4 mr-[-10px]">
-
+                    <div className="relative md:h-[80vh] lg:h-[67vh] pr-4">
+                        <div className="grid md:grid-cols-3 gap-6 h-full pr-4 mr-[-10px]">
                             {reports.map((report) => (
                                 <div
                                     key={report._id}
-                                    className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition flex flex-col gap-4 border border-gray-200"
+                                    className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-lg hover:shadow-lg dark:hover:shadow-xl transition flex flex-col gap-4 border border-gray-200 dark:border-gray-700"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="flex-shrink-0 p-2 bg-gray-100 rounded-full">
-                                            <Icon name="char-bar" className="w-6 h-6 text-gray-700" />
+                                        <div className="flex-shrink-0 p-2 bg-gray-100 dark:bg-gray-700 rounded-full">
+                                            <Icon name="char-bar" className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                                         </div>
                                         <div className="flex-1">
                                             <h3
-                                                className="text-lg font-semibold text-gray-900 cursor-pointer"
+                                                className="text-lg font-semibold text-gray-900 dark:text-gray-200 cursor-pointer"
                                                 title={report.file_name}
                                             >
                                                 {report.file_name.length > 23 ? `${report.file_name.slice(0, 23)}...` : report.file_name}
                                             </h3>
-                                            <p className="text-sm text-gray-600">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                                 <span className="font-medium">Updated:</span> {new Date(report.createdAt).toLocaleDateString()}
                                             </p>
-                                            <p className="text-sm text-gray-600">Version: {report?.versions?.length || 1}</p>
-                                            <p className="text-sm text-gray-600">Characters: {report.content.length}</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                Version: {report?.versions?.length || 1}
+                                            </p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                Characters: {report.content.length}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -95,13 +98,14 @@ const Reports: React.FC = () => {
                                             onClick={() => router.push(`/reports/${report._id}`)}
                                         >
                                             <Icon name="edit" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-500">Edit with AI</p>
+                                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">Edit with AI</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
+
                 )}
             </div>
             <ReportDetail
