@@ -76,6 +76,16 @@ export const sidebarLinks = [
     ],
   },
   {
+    category: "SOW Writer Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-sow-writer",
+        label: "SOW Writer Agent",
+      },
+    ],
+  },
+  {
     category: "Law Demo",
     links: [
       {
