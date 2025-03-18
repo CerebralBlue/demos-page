@@ -34,7 +34,8 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
     return (
         <main className="flex h-screen w-full font-inter bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
             {/* Sidebar */}
-            {sidebarOpen && <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
+            {/*{sidebarOpen && <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}*/}
+            {sidebarOpen && <Sidebar/>}
 
             <div className="flex flex-col flex-grow min-h-0 w-full">
                 {/* Header */}

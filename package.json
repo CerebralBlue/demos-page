@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "next lint",
-    "start:prod": "NODE_ENV=production ENV_FILE=.env.prod next start"
+    "start:prod": "NODE_ENV=production next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@d-id/client-sdk": "^1.0.19-beta.155",
