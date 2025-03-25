@@ -104,16 +104,16 @@ export const sidebarLinks = [
       },
     ],
   },
-  {
-    category: "Law Demo",
-    links: [
-      {
-        imgURL: "document-text",
-        route: "/agent-depositions",
-        label: "Depositions Agent",
-      },
-    ],
-  },
+  // {
+  //   category: "Law Demo",
+  //   links: [
+  //     {
+  //       imgURL: "document-text",
+  //       route: "/agent-depositions",
+  //       label: "Depositions Agent",
+  //     },
+  //   ],
+  // },
 ];
 
 export const topCategoryStyles = {

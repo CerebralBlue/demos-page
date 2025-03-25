@@ -1,52 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Custom scrollbar for WebKit browsers */
+/* 
 ::-webkit-scrollbar {
   width: 12px;
-  /* Width of the scrollbar */
   height: 12px;
-  /* Height of the horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
-  /* Color of the track */
   border-radius: 6px;
-  /* Rounded corners for the track */
   margin-left: 10px
 }
 
 ::-webkit-scrollbar-thumb {
   background: #888;
-  /* Color of the scrollbar thumb */
   border-radius: 6px;
-  /* Rounded corners for the thumb */
   border: 3px solid #f1f1f1;
-  /* Padding around the thumb */
   cursor: default;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
-  /* Color of the thumb on hover */
 }
 
 .hide-scrollbar-x {
   scrollbar-width: auto;
-  /* Firefox */
   overflow-x: hidden;
 }
 
 .hide-scrollbar-x::-webkit-scrollbar-horizontal {
   display: none;
-  /* Chrome, Safari, Edge */
 }
 
 .scroll-container {
   overflow-y: auto;
-  padding-left: 10px; /* Creates space before the scrollbar */
+  padding-left: 10px;
 }
 
 * {
@@ -55,18 +44,85 @@
   box-sizing: border-box;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
 }
+ */
+ ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Light Theme (default) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+  border: 3px solid #f1f1f1;
+  cursor: default;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Dark Theme */
+.dark ::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #666;
+  border: 3px solid #222;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+.hide-scrollbar-x {
+  scrollbar-width: auto;
+  overflow-x: hidden;
+}
+
+.hide-scrollbar-x::-webkit-scrollbar-horizontal {
+  display: none;
+}
+
+.scroll-container {
+  overflow-y: auto;
+  padding-left: 10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+
+
+
 
 .glassmorphism {
   background: rgba(255, 255, 255, 0.25);
@@ -92,10 +148,12 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #7878a3;
 }
-.videoDiv{
+
+.videoDiv {
   width: 200px;
   height: 200px;
 }
+
 @layer utilities {
   .input-class {
     @apply text-16 placeholder:text-16 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-500;
