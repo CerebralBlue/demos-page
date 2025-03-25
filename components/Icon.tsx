@@ -1,4 +1,4 @@
-import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon} from '@heroicons/react/24/outline';
+import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon} from '@heroicons/react/24/outline';
 
 const Icon = ({ name, className }: { name: string; className?: string }) => {
   switch (name) {
@@ -42,6 +42,8 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <ArrowLeftIcon className={className} />;
     case 'arrow-right':
       return <ArrowRightIcon className={className} />;
+    case 'arrow-right-left':
+      return <ArrowsRightLeftIcon className={className} />;
     case 'eye':
       return <EyeIcon className={className} />;
     case 'chat-bubble-bottom-center-text':

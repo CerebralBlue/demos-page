@@ -37,7 +37,7 @@ const TroubleshootingAgentPage: React.FC = () => {
     };
 
     return (
-        <div className="p-4 max-w-lg mx-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+        <div className="p-4 max-w-lg mx-auto">
             <div className="flex items-center space-x-3 w-full justify-center mb-10">
                 <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
                 <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Troubleshooting Agent</h1>

@@ -116,7 +116,7 @@ const AgentSowWriterPage: React.FC = () => {
         
         
         
-        <div className="p-4 max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="p-4 max-w-md mx-auto">
             <div className="flex items-center justify-center mb-6">
                 <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-12 h-12 mr-3" />
                 <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">SOW Writer</h1>
