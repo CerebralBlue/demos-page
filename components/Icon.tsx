@@ -58,6 +58,8 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <SunIcon className={className} />;
     case 'moon':
       return <MoonIcon className={className} />;
+    case 'swap':
+      return <ArrowPathIcon className={className} />;
     default:
       return null;
   }
