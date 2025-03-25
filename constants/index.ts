@@ -85,6 +85,26 @@ export const sidebarLinks = [
     ],
   },
   {
+    category: "Translator Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/translator-agent",
+        label: "Translator Agent",
+      },
+    ],
+  },
+  {
+    category: "Troubleshooting Demo",
+    links: [
+      {
+        imgURL: "users",
+        route: "/troubleshooting-agent",
+        label: "Troubleshooting Agent",
+      },
+    ],
+  },
+  {
     category: "Law Demo",
     links: [
       {
