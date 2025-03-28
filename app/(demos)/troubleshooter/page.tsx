@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Icon from '@/components/Icon';
-const TroubleshootingAgentPage: React.FC = () => {
+
+const TroubleshooterDemo: React.FC = () => {
     const [troubleshootProblem, setTroubleshootProblem] = useState('');
     const [troubleshootTried, setTroubleshootTried] = useState('');
     const [triedList, setTriedList] = useState<string[]>([]);
@@ -40,7 +41,7 @@ const TroubleshootingAgentPage: React.FC = () => {
         <div className="p-4 max-w-lg mx-auto">
             <div className="flex items-center space-x-3 w-full justify-center mb-10">
                 <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
-                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Troubleshooting Agent</h1>
+                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Troubleshooter</h1>
             </div>
             <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Troubleshoot Problem</label>
@@ -137,4 +138,4 @@ const TroubleshootingAgentPage: React.FC = () => {
     );
 };
 
-export default TroubleshootingAgentPage;
+export default TroubleshooterDemo;

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Icon from "@/components/Icon";
 
-const AgentSearchEngine: React.FC = () => {
+const SearchEngineDemo: React.FC = () => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<any>({ passages: [], ufa: "" });
@@ -178,4 +178,4 @@ const AgentSearchEngine: React.FC = () => {
   );
 };
 
-export default AgentSearchEngine;
+export default SearchEngineDemo;

@@ -2,11 +2,11 @@
 import React, { DragEvent, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
-import ChatHistory from '../../components/ChatHistory';
-import ChatHeader from '../../components/ChatHeader';
+import ChatHistory from '../../(root)/components/ChatHistory';
+import ChatHeader from '../../(root)/components/ChatHeader';
 import { headers } from '@/constants';
 
-const Home = () => {
+const SECDemo = () => {
     const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
@@ -294,4 +294,4 @@ const Home = () => {
 };
 
 
-export default Home;
+export default SECDemo;

@@ -2,8 +2,8 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import Icon from '@/components/Icon';
-import { custom } from 'zod';
-const DocAnalyzerAgent = () => {
+
+const DocAnalyzerDemo = () => {
     const [fileName, setFileName] = useState<string | null>(null);
     const [response, setResponse] = useState<{ answer: string; generation: boolean; warningMessages: string[] } | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -127,7 +127,7 @@ const DocAnalyzerAgent = () => {
                 <div id="upload_section">
                     <br />
                     <div
-                        className="border-2 border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
+                        className="border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
                         onClick={() => fileInputRef.current?.click()}
@@ -215,4 +215,4 @@ const DocAnalyzerAgent = () => {
 };
 
 
-export default DocAnalyzerAgent;
+export default DocAnalyzerDemo;

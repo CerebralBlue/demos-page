@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import Icon from '@/components/Icon';
-const TranslatorAgentPage: React.FC = () => {
+
+const TranslatorDemo: React.FC = () => {
     const [language1, setLanguage1] = useState('en');
     const [language2, setLanguage2] = useState('es');
     const [text, setText] = useState('');
@@ -39,7 +40,7 @@ const TranslatorAgentPage: React.FC = () => {
         <div className="p-4 max-w-4xl mx-auto">
             <div className="flex items-center space-x-3 w-full justify-center mb-10">
                 <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
-                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Translator Agent</h1>
+                <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Translator</h1>
             </div>
 
             <div className="flex space-x-4">
@@ -179,4 +180,4 @@ const TranslatorAgentPage: React.FC = () => {
     );
 };
 
-export default TranslatorAgentPage;
+export default TranslatorDemo;

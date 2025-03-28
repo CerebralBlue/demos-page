@@ -7,7 +7,7 @@ import Icon from "@/components/Icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import LeftSidebar from "@/components/LeftSidebar";
 
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
+export default function DemosLayout({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<string | null>(null);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);

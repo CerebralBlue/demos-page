@@ -1,3 +1,5 @@
+import { DemoConfig } from "@/types/demo.config";
+
 export const headers = {
   accept: "application/json",
   apikey: "6c5aca86-d343615d-60a44b29-c6dbb084",
@@ -15,12 +17,12 @@ export const sidebarLinks = [
     ],
   },
   {
-    category: "SEC Reporting Demo",
+    category: "Reporting Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-sec",
-        label: "SEC Agent",
+        route: "/sec-writer",
+        label: "SEC Writer Demo",
       },
       {
         imgURL: "document",
@@ -35,170 +37,425 @@ export const sidebarLinks = [
     ],
   },
   {
-    category: "D-ID Demo",
+    category: "D-ID Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-d-id",
-        label: "D-ID Agent",
+        route: "/d-id",
+        label: "D-ID Demo",
       },
     ],
   },
   {
-    category: "RFP Writer Demo",
+    category: "Translation Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-rfp-writer",
-        label: "RFP Writer Agent",
+        route: "/translator",
+        label: "Translator Demo",
       },
     ],
   },
   {
-    category: "Doc Analyzer Demo",
+    category: "Writing Use cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-doc-analyzer",
-        label: "DOC Analyzer Agent",
+        route: "/sow-writer",
+        label: "SOW Writer Demo",
+      },
+      {
+        imgURL: "users",
+        route: "/rfp-writer",
+        label: "RFP Writer Demo",
       },
     ],
   },
   {
-    category: "Search Engine Demo",
+    category: "Troubleshooting Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-search-engine",
-        label: "Search Engine Agent",
+        route: "/troubleshooter",
+        label: "Troubleshooter Demo",
       },
     ],
   },
   {
-    category: "SOW Writer Demo",
+    category: "Docs Analyzer Uses Cases",
     links: [
       {
         imgURL: "users",
-        route: "/agent-sow-writer",
-        label: "SOW Writer Agent",
+        route: "/doc-analyzer",
+        label: "DOC Analyzer Demo",
       },
     ],
   },
   {
-    category: "Translator Demo",
+    category: "Search Engine Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/translator-agent",
-        label: "Translator Agent",
+        route: "/search-engine",
+        label: "Search Engine Demo",
       },
     ],
   },
   {
-    category: "Troubleshooting Demo",
+    category: "Customers Use Cases",
     links: [
       {
         imgURL: "users",
-        route: "/troubleshooting-agent",
-        label: "Troubleshooting Agent",
+        route: "/brou-demo",
+        label: "BROU Demo",
       },
     ],
-  },
-  // {
-  //   category: "Law Demo",
-  //   links: [
-  //     {
-  //       imgURL: "document-text",
-  //       route: "/agent-depositions",
-  //       label: "Depositions Agent",
-  //     },
-  //   ],
-  // },
+  }
 ];
 
-export const topCategoryStyles = {
-  "Food and Drink": {
-    bg: "bg-blue-25",
-    circleBg: "bg-blue-100",
-    text: {
-      main: "text-blue-900",
-      count: "text-blue-700",
-    },
-    progress: {
-      bg: "bg-blue-100",
-      indicator: "bg-blue-700",
-    },
-    icon: "/icons/monitor.svg",
+export const demoLinkCards = [
+  {
+    label: "Conversation AI",
+    icon: "chat-bubble-bottom-center-text",
+    description: "Engage in intelligent, context-aware conversations.",
+    creator: "NeuralSeek",
+    route: "/demos/conversation-ai",
+    demoCount: 150
   },
-  Travel: {
-    bg: "bg-success-25",
-    circleBg: "bg-success-100",
-    text: {
-      main: "text-success-900",
-      count: "text-success-700",
-    },
-    progress: {
-      bg: "bg-success-100",
-      indicator: "bg-success-700",
-    },
-    icon: "/icons/coins.svg",
+  {
+    label: "Data Insights",
+    icon: "document-chart-bar",
+    description: "Transform complex data into actionable insights.",
+    creator: "NeuralSeek",
+    route: "/demos/data-insights",
+    demoCount: 75
   },
-  default: {
-    bg: "bg-pink-25",
-    circleBg: "bg-pink-100",
-    text: {
-      main: "text-pink-900",
-      count: "text-pink-700",
-    },
-    progress: {
-      bg: "bg-pink-100",
-      indicator: "bg-pink-700",
-    },
-    icon: "/icons/shopping-bag.svg",
+  {
+    label: "Code Assistant",
+    icon: "command-line",
+    description: "Accelerate your coding with AI-powered suggestions.",
+    creator: "NeuralSeek",
+    route: "/demos/code-assistant",
+    demoCount: 200
   },
-};
+  {
+    label: "Creative Writing",
+    icon: "pencil-square",
+    description: "Generate unique, engaging content across genres.",
+    creator: "NeuralSeek",
+    route: "/demos/creative-writing",
+    demoCount: 120
+  },
+  {
+    label: "Research Helper",
+    icon: "document-text",
+    description: "Streamline research with intelligent summarization.",
+    creator: "NeuralSeek",
+    route: "/demos/research-helper",
+    demoCount: 90
+  },
+  {
+    label: "Trend Analysis",
+    icon: "arrow-trending-up",
+    description: "Uncover emerging trends with predictive analytics.",
+    creator: "NeuralSeek",
+    route: "/demos/trend-analysis",
+    demoCount: 60
+  }
+];
 
-export const transactionCategoryStyles = {
-  "Food and Drink": {
-    borderColor: "border-pink-600",
-    backgroundColor: "bg-pink-500",
-    textColor: "text-pink-700",
-    chipBackgroundColor: "bg-inherit",
+export const SIDEBAR_CONFIGS: DemoConfig[] = [
+  {
+    demo_url: "/sec-writer",
+    description: "Ingest financial documents and generate SEC reports. Edit and download reports. Edit with AI text-editor and create charts based on the data.",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Banking",
+      "Insurance",
+      "Healthcare",
+      "Retail"
+    ],
+    use_cases: [
+      "Docs editing with AI", 
+      "Report generation",
+      "Data visualization"
+    ],
+    details: [
+      {
+        title: "SEC Compliance Automation",
+        content: "AI-driven regulatory compliance tracking and reporting system."
+      },
+      {
+        title: "Implementation",
+        content: "6-8 weeks comprehensive deployment"
+      },
+      {
+        title: "Key Features",
+        content: "Real-time compliance monitoring, Risk assessment, Automated reporting"
+      },
+      {
+        title: "Industry",
+        content: "Financial Services, Legal, Regulatory Compliance"
+      },
+      {
+        title: "Customization",
+        content: "Tailored workflows, Custom compliance rules"
+      },
+      {
+        title: "AI Capabilities",
+        content: "Predictive compliance analysis, Document classification"
+      }
+    ]
   },
-  Payment: {
-    borderColor: "border-success-600",
-    backgroundColor: "bg-green-600",
-    textColor: "text-success-700",
-    chipBackgroundColor: "bg-inherit",
+  {
+    demo_url: "/d-id",
+    description: "",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "SEC Compliance Automation",
+        content: "AI-driven regulatory compliance tracking and reporting system."
+      }
+    ]
   },
-  "Bank Fees": {
-    borderColor: "border-success-600",
-    backgroundColor: "bg-green-600",
-    textColor: "text-success-700",
-    chipBackgroundColor: "bg-inherit",
+  {
+    demo_url: "/ftp-writer",
+    description: "",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "FTP Writer Automation",
+        content: "Intelligent file transfer and data management solution."
+      },
+      {
+        title: "Setup Time",
+        content: "3-5 weeks from concept to full integration"
+      },
+      {
+        title: "Use Cases",
+        content: "Data synchronization, Automated file transfers, Cloud migration"
+      },
+      {
+        title: "Industry",
+        content: "IT, Cloud Services, Data Management"
+      },
+      {
+        title: "Key Features",
+        content: "Secure file transfers, Scheduling, Error handling"
+      },
+      {
+        title: "Technical Capabilities",
+        content: "Multi-protocol support, Advanced encryption"
+      }
+    ]
   },
-  Transfer: {
-    borderColor: "border-red-700",
-    backgroundColor: "bg-red-700",
-    textColor: "text-red-700",
-    chipBackgroundColor: "bg-inherit",
+  {
+    demo_url: "/sow-writter",
+    description: "",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "AI Translation Platform",
+        content: "Advanced multilingual translation and localization service."
+      }
+    ]
   },
-  Processing: {
-    borderColor: "border-[#F2F4F7]",
-    backgroundColor: "bg-gray-500",
-    textColor: "text-[#344054]",
-    chipBackgroundColor: "bg-[#F2F4F7]",
+  {
+    demo_url: "/translator",
+    description: "",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "AI Translation Platform",
+        content: "Advanced multilingual translation and localization service."
+      },
+      {
+        title: "Development Cycle",
+        content: "5-7 weeks comprehensive development"
+      },
+      {
+        title: "Supported Languages",
+        content: "30+ languages, including rare dialects"
+      },
+      {
+        title: "Industry",
+        content: "Global Communication, Education, Business"
+      },
+      {
+        title: "Unique Features",
+        content: "Context-aware translation, Cultural nuance preservation"
+      },
+      {
+        title: "AI Capabilities",
+        content: "Neural machine translation, Continuous learning"
+      }
+    ]
   },
-  Success: {
-    borderColor: "border-[#12B76A]",
-    backgroundColor: "bg-[#12B76A]",
-    textColor: "text-[#027A48]",
-    chipBackgroundColor: "bg-[#ECFDF3]",
-  },
-  default: {
-    borderColor: "",
-    backgroundColor: "bg-blue-500",
-    textColor: "text-blue-700",
-    chipBackgroundColor: "bg-inherit",
-  },
-};
+  {
+    demo_url: "/",
+    description: "",
+    howto: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "Description",
+        content: "AI-powered automation platform with intelligent task routing and predictive analytics."
+      },
+      {
+        title: "Build Time",
+        content: "4-6 weeks from concept to deployment"
+      },
+      {
+        title: "Use Cases",
+        content: "Customer support, IT helpdesk, Sales enablement, Knowledge management"
+      },
+      {
+        title: "Industry",
+        content: "Enterprise SaaS, Technology, Customer Service"
+      },
+      {
+        title: "Custom Functionality",
+        content: "Fully customizable workflow automation, AI-driven insights"
+      },
+      {
+        title: "NeuralSeek Agents",
+        content: "Intelligent routing, Predictive analysis, Natural language processing"
+      }
+    ]
+  }
+  // {
+  //   demo_url: "/",
+  //   description: "",
+  //   details: [
+  //     {
+  //       title: "Description",
+  //       content: "AI-powered automation platform with intelligent task routing and predictive analytics."
+  //     },
+  //     {
+  //       title: "Build Time",
+  //       content: "4-6 weeks from concept to deployment"
+  //     },
+  //     {
+  //       title: "Use Cases",
+  //       content: "Customer support, IT helpdesk, Sales enablement, Knowledge management"
+  //     },
+  //     {
+  //       title: "Industry",
+  //       content: "Enterprise SaaS, Technology, Customer Service"
+  //     },
+  //     {
+  //       title: "Custom Functionality",
+  //       content: "Fully customizable workflow automation, AI-driven insights"
+  //     },
+  //     {
+  //       title: "NeuralSeek Agents",
+  //       content: "Intelligent routing, Predictive analysis, Natural language processing"
+  //     }
+  //   ]
+  // }
+];

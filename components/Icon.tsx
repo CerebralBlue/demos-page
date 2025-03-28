@@ -1,4 +1,4 @@
-import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon} from '@heroicons/react/24/outline';
+import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon} from '@heroicons/react/24/outline';
 
 const Icon = ({ name, className }: { name: string; className?: string }) => {
   switch (name) {
@@ -66,6 +66,8 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <PlayIcon className={className} />;
     case 'bars-3':
       return <Bars3Icon className={className} />;
+    case 'info':
+      return <InformationCircleIcon className={className} />;
     default:
       return null;
   }

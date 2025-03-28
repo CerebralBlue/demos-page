@@ -15,7 +15,7 @@
 // }
 
 // // Create a component that loads only on client-side
-// const DIDAgent = () => {
+// const DIDDemo = () => {
 
 //   const agentId: string = process.env.NEXT_PUBLIC_DID_AGENT_ID || "";
 //   const agentKey: string = process.env.NEXT_PUBLIC_DID_API_KEY || "";
@@ -382,7 +382,7 @@
 // };
 
 // // Export a dynamic component with SSR disabled
-// export default dynamic(() => Promise.resolve(DIDAgent), { ssr: false });
+// export default dynamic(() => Promise.resolve(DIDDemo), { ssr: false });
 
 
 "use client";
@@ -402,7 +402,7 @@ declare global {
 }
 
 // Create a component that loads only on client-side
-const DIDAgent = () => {
+const DIDDemo = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoElement = useRef<HTMLVideoElement>(null);
@@ -772,4 +772,4 @@ const DIDAgent = () => {
 };
 
 // Export a dynamic component with SSR disabled
-export default dynamic(() => Promise.resolve(DIDAgent), { ssr: false });
+export default dynamic(() => Promise.resolve(DIDDemo), { ssr: false });

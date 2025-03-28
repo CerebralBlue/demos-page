@@ -1,17 +1,18 @@
 "use client";
-// filepath: my-nextjs-app/pages/demos/rfp_writer.tsx
 import React, { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import axios from 'axios';
+import Icon from '@/components/Icon';
 
-const RFPWriterAgent: React.FC = () => {
+const RFPWriterDemo: React.FC = () => {
     const [fileName, setFileName] = useState<string | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     var file_data: any;
-    var sheetName: any;
     var columnName: any = null;
     var question_queue: any = [];
+
     const getFileMetadata = async (file: File) => {
         const ext = file.name.split('.').pop()?.toLowerCase();
         const metadata: any = {};
@@ -51,22 +52,6 @@ const RFPWriterAgent: React.FC = () => {
         }
 
         return metadata;
-    };
-    const selectSheet = (event: React.MouseEvent<HTMLLIElement>, file_metadata: any) => {
-        var li = event.target as HTMLLIElement;
-        sheetName = li.textContent;
-        li.classList.add("selected");
-        const columns = file_metadata.columns[sheetName];
-        // iterate columns and display them.
-        var ul = document.createElement("ul");
-        for(var i=0; i < columns.length; i++) {
-            
-            const _li = document.createElement("li");
-            _li.textContent = columns[i];
-            _li.addEventListener('click', () => selectColumn(_li.textContent!));
-            ul.appendChild(_li);
-        }
-        li.appendChild(ul);
     };
 
     async function seek(text: any, url: any, apikey: any, filter = '', prompt = '', session_id = '') {
@@ -118,6 +103,7 @@ const RFPWriterAgent: React.FC = () => {
             throw error;
         }
     };
+
     const answer_question = async () => {
         if (question_queue.length > 0) {
             const row = question_queue.shift();
@@ -136,6 +122,7 @@ const RFPWriterAgent: React.FC = () => {
 
         }
     }
+
     const write_rfp_answer = () => {
         // get the file data
         const data = file_data.data;
@@ -145,20 +132,22 @@ const RFPWriterAgent: React.FC = () => {
         }
         answer_question();
     }
+
     const [tableComponent, setTableData] = useState<React.ReactNode>(null);
+
     const downloadTableContent = () => {
         const table = document.querySelector("table");
         if (!table) return;
-    
+
         let csvContent = "";
         const rows = table.querySelectorAll("tr");
-    
+
         rows.forEach(row => {
             const cols = row.querySelectorAll("td, th");
             const rowData = Array.from(cols).map(col => col.textContent?.trim()).join(",");
             csvContent += rowData + "\n";
         });
-    
+
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
@@ -169,7 +158,7 @@ const RFPWriterAgent: React.FC = () => {
         link.click();
         document.body.removeChild(link);
     };
-    
+
     const renderData = (selectedColumnName: string) => {
         columnName = selectedColumnName;
         setTableData(
@@ -187,9 +176,9 @@ const RFPWriterAgent: React.FC = () => {
                     <table className="w-full border-collapse mt-0 table-auto border border-white" style={{ borderWidth: '5px' }}>
                         <thead>
                             <tr className="bg-[#3D91F0]">
-                                <th className="p-2 text-white" style={{ borderWidth: '4px',whiteSpace: 'nowrap' }}>Row</th>
-                                <th className="p-2 text-white" style={{ borderWidth: '4px',whiteSpace: 'nowrap' }}>{selectedColumnName}</th>
-                                <th className="p-2 text-white" style={{ borderWidth: '4px',width: '100%' }}>Answer</th>
+                                <th className="p-2 text-white" style={{ borderWidth: '4px', whiteSpace: 'nowrap' }}>Row</th>
+                                <th className="p-2 text-white" style={{ borderWidth: '4px', whiteSpace: 'nowrap' }}>{selectedColumnName}</th>
+                                <th className="p-2 text-white" style={{ borderWidth: '4px', width: '100%' }}>Answer</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -206,8 +195,6 @@ const RFPWriterAgent: React.FC = () => {
             </div>
         );
     };
-    
-    
 
     const selectColumn = (event: string) => {
         renderData(event);
@@ -394,84 +381,131 @@ const RFPWriterAgent: React.FC = () => {
         e.preventDefault();
     };
 
-    const openUploadDialog = () => {
-        const modal = document.getElementById("upload_dialog");
-        if (modal) modal.style.display = "block";
-
-        const closeModal = document.getElementById("upload-close");
-        closeModal?.addEventListener('click', () => {
-            if (modal) modal.style.display = "none";
-        });
-
-        window.onclick = (event) => {
-            if (event.target === modal && modal) {
-                modal.style.display = "none";
-            }
-        };
-    };
-
-
     return (
-        <div className=" text-black flex flex-col items-center justify-center mt-5 m-auto">
+        // <div className=" text-black flex flex-col items-center justify-center mt-5 m-auto">
+        //     <div className="grid grid-cols-1 gap-8 max-w-6xl w-full items-center justify-center">
+        //         <div className="flex items-center space-x-3 w-full justify-center">
+        //             <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
+        //             <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">RFP Writer</h1>
+        //         </div>
+        //         <div id="upload_section" style={{ display: fileName ? 'none' : 'block' }}>
+
+
+        //             <section className="mt-12">
+        //                 <h2 className="text-2xl font-semibold mb-4">How to use this demo</h2>
+        //                 <p>
+        //                     First, upload a document having a tabular structure for the work. Valid file types are *.csv. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
+        //                 </p>
+        //             </section>
+        //             <br />
+        //             <div
+        //                 className="border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
+        //                 onDrop={handleDrop}
+        //                 onDragOver={handleDragOver}
+        //                 onClick={() => fileInputRef.current?.click()}
+        //                 onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
+        //                 onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
+        //             >
+        //                 {fileName ? (
+        //                     <span className="text-lg">Selected File: {fileName}</span>
+        //                 ) : (
+        //                     <span className="text-lg">Drag & drop your CSV file here or click to upload</span>
+        //                 )}
+        //                 <input
+        //                     ref={fileInputRef}
+        //                     type="file"
+        //                     className="hidden"
+        //                     onChange={handleFileChange}
+        //                     accept=".csv"
+        //                 />
+        //             </div>
+        //         </div>
+        //         <div>
+        //             <div id="file_name" style={{ display: 'none' }}></div>
+        //             <div id="file_meta">
+        //             {tableComponent}
+        //             {tableComponent && (
+        //                 <button
+        //                     className='button'
+        //                     style={{ padding: '8px', width: '100%', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' }}
+        //                     onClick={downloadTableContent}>
+        //                     Download Content
+        //                 </button>
+        //             )}
+        //             </div>
+        //             <div id="file_data" style={{ display: 'none' }}></div>
+        //         </div>
+
+        //     </div>
+
+        // </div>
+
+        <div className="flex flex-col items-center justify-center mt-5 mx-auto text-black dark:text-white">
             <div className="grid grid-cols-1 gap-8 max-w-6xl w-full items-center justify-center">
                 <div className="flex items-center space-x-3 w-full justify-center">
                     <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
                     <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">RFP Writer</h1>
                 </div>
-                <div id="upload_section" style={{ display: fileName ? 'none' : 'block' }}>
 
-            
-                    <section className="mt-12">
+                {!fileName && (
+                    <section id="upload_section" className="mt-12">
                         <h2 className="text-2xl font-semibold mb-4">How to use this demo</h2>
-                        <p>
-                            First, upload a document having a tabular structure for the work. Valid file types are *.csv. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
+                        <p className="text-gray-700 dark:text-gray-300">
+                            First, upload a document having a tabular structure for the work. Valid file types are <strong>.csv</strong>. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
                         </p>
+
+                        {/* Drag & Drop Container */}
+                        <div className="relative mt-6">
+                            {isDragging && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm pointer-events-none z-10">
+                                    <div className="flex flex-col items-center text-blue-700 dark:text-blue-300">
+                                        <span className="w-10 h-10 mb-2">📤</span>
+                                        <p className="text-lg font-semibold">Drop files anywhere in this section</p>
+                                    </div>
+                                </div>
+                            )}
+                            <div
+                                className="border-dashed border-gray-500 dark:border-gray-400 p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-50 dark:hover:bg-blue-800"
+                                onDrop={handleDrop}
+                                onDragOver={handleDragOver}
+                                onClick={() => fileInputRef.current?.click()}
+                                onDragEnter={() => setIsDragging(true)}
+                                onDragLeave={() => setIsDragging(false)}
+                            >
+                                <p className="text-lg font-semibold">Drop files anywhere in this section</p>
+
+                                {fileName ? (
+                                    <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">Selected File: {fileName}</span>
+                                ) : (
+                                    <span className="text-lg text-gray-600 dark:text-gray-300">Drag & drop your CSV file here or click to upload</span>
+                                )}
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                    accept=".csv"
+                                />
+                            </div>
+                        </div>
                     </section>
-                    <br />
-                    <div
-                        className="border-2 border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                        onClick={() => fileInputRef.current?.click()}
-                        onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
-                        onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
-                    >
-                        {fileName ? (
-                            <span className="text-lg">Selected File: {fileName}</span>
-                        ) : (
-                            <span className="text-lg">Drag & drop your CSV file here or click to upload</span>
-                        )}
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            className="hidden"
-                            onChange={handleFileChange}
-                            accept=".csv"
-                        />
-                    </div>
-                </div>
-                <div>
+                )}
 
-
-                    <div id="file_name" style={{ display: 'none' }}></div>
-                    <div id="file_meta">
-                    {tableComponent}
-                    {tableComponent && (
+                {tableComponent && (
+                    <div id="file_meta" className="mt-6 w-full">
+                        {tableComponent}
                         <button
-                            className='button'
-                            style={{ padding: '8px', width: '100%', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' }}
-                            onClick={downloadTableContent}>
+                            className="w-full py-2 mt-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+                            onClick={downloadTableContent}
+                        >
                             Download Content
                         </button>
-                    )}
                     </div>
-                    <div id="file_data" style={{ display: 'none' }}></div>
-                </div>
-
+                )}
             </div>
-
         </div>
+
     );
 };
 
-export default RFPWriterAgent;
+export default RFPWriterDemo;
