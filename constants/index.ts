@@ -109,6 +109,11 @@ export const sidebarLinks = [
         route: "/brou-demo",
         label: "BROU Demo",
       },
+      {
+        imgURL: "users",
+        route: "/baycrest-demo",
+        label: "BayCrest Demo",
+      },
     ],
   }
 ];
