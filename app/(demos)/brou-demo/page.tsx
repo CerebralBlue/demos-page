@@ -113,6 +113,7 @@ const BrouDemo: React.FC = () => {
   };
   const handlePrePromptClick = (message: string) => {
     setQuery(message);
+    handleChat();
   };
   const handleEditedMarkdown = async () => {
     const editedText = (document.getElementById('markdownEdit') as HTMLTextAreaElement)?.value;
@@ -252,7 +253,7 @@ const BrouDemo: React.FC = () => {
         }
 
       </>
-      <div className="grid grid-cols-2 gap-4 w-full  justify-items-center mb-4 m-auto w-[50%]">
+      <div className="grid grid-cols-2 gap-4 justify-items-center mb-4 m-auto w-[50%]">
       {chatHistory.length == 0 && (
             prePrompts?.map((item, index) => (
               <div
