@@ -162,7 +162,7 @@ const BrouDemo: React.FC = () => {
       <div className="flex flex-col items-center justify-center">
         <header className="flex flex-col items-center space-y-3 mb-5 mt-8">
           <div className="flex items-center space-x-3">
-            <img src={`/demos-page/brou_logo.svg`} alt="NeuralSeek Logo" className="w-70 h-20" />
+            <img src={`/demos-page/brou_logo.svg`} alt="NeuralSeek Logo" className="w-[400px]" />
           </div>
           
 
@@ -252,22 +252,22 @@ const BrouDemo: React.FC = () => {
         }
 
       </>
-      <div className="justify-items-center mb-4 m-auto w-[50%]">
+      <div className="grid grid-cols-2 gap-4 w-full  justify-items-center mb-4 m-auto w-[50%]">
       {chatHistory.length == 0 && (
             prePrompts?.map((item, index) => (
               <div
                 key={index}
-                className="m-2 flex items-center py-1 px-2 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                className="m-2 p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                 onClick={() => handlePrePromptClick(item.prompt)}
               >
                 <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">{item.label}</p>
+                <p className="text-sm font-semibold text-center text-gray-500 dark:text-gray-300">{item.label}</p>
               </div>
             ))
           )}
       </div>
         
-      <div className={`w-[50%] mb-0 m-auto mt-0 ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center"}`}>
+      <div className={`w-[50%] mb-5 m-auto mt-0 ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center"}`}>
         <div className="relative w-[100%]">
           <textarea
             id="query"
