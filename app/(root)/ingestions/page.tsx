@@ -3,7 +3,7 @@
 import HeaderBox from '@/components/HeaderBox';
 import Icon from "@/components/Icon";
 import React, { useState, useEffect } from 'react';
-import { IntegrationDetailModal } from '../components/IntegrationDetail';
+import { IntegrationDetailModal } from '../../components/IntegrationDetail';
 import axios from 'axios';
 import { Ingestion } from '@/types/ingestion';
 import { DataSource } from '@/types/data.source';

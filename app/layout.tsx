@@ -12,7 +12,7 @@ const ibmPlexSerif = IBM_Plex_Serif({
 export const metadata: Metadata = {
   title: "Demos Page | NS",
   icons: {
-    // icon: "/favicon-new.ico",
+    icon: "/demos-page/favicon.ico",
   },
 };
 

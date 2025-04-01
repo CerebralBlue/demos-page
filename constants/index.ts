@@ -4,6 +4,10 @@ export const headers = {
   accept: "application/json",
   apikey: "6c5aca86-d343615d-60a44b29-c6dbb084",
 }
+export const headers2 = {
+  accept: "application/json",
+  apikey: "598063fe-d9682db0-634ac42c-67bea8bb",
+}
 
 export const sidebarLinks = [
   {

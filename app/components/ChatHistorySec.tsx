@@ -4,7 +4,7 @@ import Icon from "@/components/Icon";
 import { FileItem } from "@/types/file.item";
 import { headers } from "@/constants";
 
-interface ChatHistoryProps {
+interface ChatHistorySecProps {
     messages: { message: string; type: "agent" | "user"; isFile?: boolean; fileName?: string; reportId?: string }[];
     setChatHistory: React.Dispatch<React.SetStateAction<
         { message: string; type: "agent" | "user"; isFile?: boolean; fileName?: string }[]
@@ -12,8 +12,8 @@ interface ChatHistoryProps {
     chatEndRef: React.RefObject<HTMLDivElement>;
 }
 
-const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, chatEndRef }) => {
-    
+const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistory, chatEndRef }) => {
+
     const baseAppUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
 
     const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
@@ -93,7 +93,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
     };
 
     return (
-        <div className="w-full p-4 rounded-lg mb-4 overflow-y-auto max-h-[700px] bg-transparent">
+        <div className="w-full p-4 rounded-lg mb-4 max-h-[700px] bg-transparent">
             {messages.length > 0 && (
                 <ul className="space-y-2">
                     {messages.map((msg, index) => (
@@ -132,7 +132,15 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
                                     ))}
                                 </select>
                             ) : (
-                                <p className={`${msg.type === "user" ? "text-right" : "text-left"} w-full`}>{msg.message}</p>
+                                // <p className={`${msg.type === "user" ? "text-right" : "text-left"} w-full`}>{msg.message}</p>
+                                <p
+                                    className={`
+                                  ${msg.type === "user" ? "text-right whitespace-normal" : "text-left whitespace-pre-line"} 
+                                  w-full
+                                `}
+                                >
+                                    {msg.message}
+                                </p>
                             )}
                         </li>
                     ))}
@@ -143,4 +151,4 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, setChatHistory, cha
     );
 };
 
-export default ChatHistory;
+export default ChatHistorySec;

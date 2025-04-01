@@ -1,4 +1,5 @@
-import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon} from '@heroicons/react/24/outline';
+import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon, ChevronDoubleDownIcon, ChevronUpIcon} from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from 'lucide-react';
 
 const Icon = ({ name, className }: { name: string; className?: string }) => {
   switch (name) {
@@ -68,6 +69,10 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <Bars3Icon className={className} />;
     case 'info':
       return <InformationCircleIcon className={className} />;
+    case 'chevron-down':
+      return <ChevronDownIcon className={className} />;
+    case 'chevron-up':
+      return <ChevronUpIcon className={className} />;
     default:
       return null;
   }

@@ -2,7 +2,7 @@
 import HeaderBox from '@/components/HeaderBox';
 import { Globe, BrainCircuit } from 'lucide-react';
 import React, { useState } from 'react';
-import { IntegrationDetailModal } from '../components/IntegrationDetail';
+import { IntegrationDetailModal } from '../../components/IntegrationDetail';
 
 const Integrations = () => {
 

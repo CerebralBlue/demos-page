@@ -2,7 +2,7 @@
 
 import HeaderBox from '@/components/HeaderBox';
 import React, { useEffect, useState } from 'react';
-import ReportDetail from '../components/ReportDetail';
+import ReportDetail from '../../components/ReportDetail';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Icon from '@/components/Icon';

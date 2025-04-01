@@ -2,8 +2,8 @@
 import React, { DragEvent, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
-import ChatHistory from '../../(root)/components/ChatHistory';
-import ChatHeader from '../../(root)/components/ChatHeader';
+import ChatHistorySec from '../../components/ChatHistorySec';
+import ChatHeader from '../../components/ChatHeader';
 import { headers } from '@/constants';
 
 const SECDemo = () => {
@@ -97,10 +97,10 @@ const SECDemo = () => {
 
                 if (ocrText && ocrText.length > 0) {
                     // Store OCR sheet only if there is meaningful text
-                    
+
                     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
                     const url = `${baseUrl}/ingestions`;
-        
+
                     const responsePost = await axios.post(
                         url,
                         { file_name: fileName, type: fileExtension, data: ocrText },
@@ -176,6 +176,19 @@ const SECDemo = () => {
 
     };
 
+    const prePrompts: any = [
+        {
+            prompt: "Ingest a balance or income statement file",
+            iconName: "document-chart-bar",
+            label: "Ingest Periods Data"
+        },
+        {
+            prompt: "Generate a detailed AI 10K Report file",
+            iconName: "chart-bar",
+            label: "Generate AI 10K Report"
+        }
+    ];
+
     return (
         <section
             className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white"
@@ -184,18 +197,16 @@ const SECDemo = () => {
             onDrop={handleDrop}
         >
 
-            {/* Header and Chat History */}
             {chatHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full">
-                    <ChatHeader handlePrePromptClick={handlePrePromptClick} />
+                    <ChatHeader title="SEC Reporting Demo" subtitle="What reporting task do you want to run today?" image="neuralseek_logo.png" handlePrePromptClick={handlePrePromptClick} prePrompts={prePrompts} />
                 </div>
             ) : (
                 <div className="flex-grow w-full max-w-3xl mx-auto overflow-y-auto h-[500px]">
-                    <ChatHistory messages={chatHistory} setChatHistory={setChatHistory} chatEndRef={chatEndRef} />
+                    <ChatHistorySec messages={chatHistory} setChatHistory={setChatHistory} chatEndRef={chatEndRef} />
                 </div>
             )}
 
-            {/* Inputs */}
             <div className={`w-full ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center h-full"}`}>
                 <div className="relative w-full max-w-3xl">
                     <textarea
