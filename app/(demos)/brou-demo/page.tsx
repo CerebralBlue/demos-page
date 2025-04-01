@@ -63,13 +63,22 @@ const BrouDemo: React.FC = () => {
           },
         }),
       });
-      setPrePrompts([
-        {
-          prompt: "¿En qué época del año se hace la transferencia al tesoro nacional?",
-          iconName: "",
-          label: "¿En qué época del año se hace la transferencia al tesoro nacional?"
-        }
-      ]);
+      if(query == "¿En qué época del año se hace la transferencia al tesoro nacional?")
+        setPrePrompts([
+          {
+            prompt: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?",
+            iconName: "",
+            label: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?"
+          }
+        ]);
+      else
+        setPrePrompts([
+          {
+            prompt: "¿En qué época del año se hace la transferencia al tesoro nacional?",
+            iconName: "",
+            label: "¿En qué época del año se hace la transferencia al tesoro nacional?"
+          }
+        ]);
       const data = await response.json();
       let text = data.answer.trim();
       if (!text.startsWith("```markdown")) {
