@@ -20,24 +20,24 @@ const BrouDemo: React.FC = () => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [prePrompts, setPrePrompts] = useState<PrePromptItem[]>([
     {
-      prompt: "¿Cómo cierro una caja de ahorro de un titular fallecido?",
-      iconName: "",
-      label: "¿Cómo cierro una caja de ahorro de un titular fallecido?"
-    },
-    {
       prompt: "¿En qué época del año se hace la transferencia al tesoro nacional?",
       iconName: "",
       label: "¿En qué época del año se hace la transferencia al tesoro nacional?"
     },
     {
+      prompt: " ¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?",
+      iconName: "",
+      label: " ¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?"
+    },
+    {
+      prompt: "¿Cómo recupero dinero que ya fue enviado al Tesoro Nacional?",
+      iconName: "",
+      label: "¿Cómo recupero dinero que ya fue enviado al Tesoro Nacional?"
+    },
+    {
       prompt: "¿Qué pasa si una cuenta que pasa al tesoro nacional tiene más de un titular?",
       iconName: "",
       label: "¿Qué pasa si una cuenta que pasa al tesoro nacional tiene más de un titular?"
-    },
-    {
-      prompt: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?",
-      iconName: "",
-      label: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?"
     }
   ]);
 
@@ -65,9 +65,9 @@ const BrouDemo: React.FC = () => {
       });
       setPrePrompts([
         {
-          prompt: "¿Cómo cierro una caja de ahorro de un titular fallecido?",
+          prompt: "¿En qué época del año se hace la transferencia al tesoro nacional?",
           iconName: "",
-          label: "¿Cómo cierro una caja de ahorro de un titular fallecido?"
+          label: "¿En qué época del año se hace la transferencia al tesoro nacional?"
         }
       ]);
       const data = await response.json();
@@ -258,11 +258,11 @@ const BrouDemo: React.FC = () => {
             prePrompts?.map((item, index) => (
               <div
                 key={index}
-                className="m-2 p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                className="m-0 flex p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                 onClick={() => handlePrePromptClick(item.prompt)}
               >
                 <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                <p className="text-sm font-semibold text-center text-gray-500 dark:text-gray-300">{item.label}</p>
+                <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">{item.label}</p>
               </div>
             ))
           )}
@@ -290,7 +290,7 @@ const BrouDemo: React.FC = () => {
               prePrompts?.map((item, index) => (
                 <div
                   key={index}
-                  className="w-[50%] flex items-center py-2 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                  className="w-[60%] flex items-center py-2 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                   onClick={() => handlePrePromptClick(item.prompt)}
                 >
                   <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />

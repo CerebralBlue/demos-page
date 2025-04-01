@@ -39,6 +39,25 @@
     margin-bottom: 0.5rem;
     margin-left: 0;              /* Evita doble sangría si el ul ya tiene padding */
   }
+  a {
+    display: block;
+    width: 100%;
+    font-weight: bold;
+    color: #2563EB; /* Azul para modo claro */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    a {
+      color: #60A5FA; /* Azul claro para modo oscuro */
+    }
+  }
+  .markdown-container a *{
+    
+    width: 100%;
+  }
   .markdownClass{
     overflow: hidden;
     position: relative;
