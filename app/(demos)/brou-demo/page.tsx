@@ -40,12 +40,12 @@ const BrouDemo: React.FC = () => {
       label: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?"
     }
   ]);
-  
-useEffect(() => {
-  if (chatContainerRef.current) {
-    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-  }
-}, [chatHistory]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
   const handleChat = async () => {
     if (!query.trim()) return;
     setIsLoading(true);
@@ -159,115 +159,115 @@ useEffect(() => {
     <section
       className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white"
     >
-      <div className="flex flex-col items-center justify-center h-full">
-          <header className="flex flex-col items-center space-y-3 mb-0">
-            <div className="flex items-center space-x-3">
-              <img src={`/demos-page/brou_logo.svg`} alt="NeuralSeek Logo" className="w-50 h-20" />
-            </div>
-            {chatHistory.length == 0 && (
-        prePrompts?.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center py-1 px-2 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-            onClick={() => handlePrePromptClick(item.prompt)}
-          >
-            <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-            <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">{item.label}</p>
+      <div className="flex flex-col items-center justify-center">
+        <header className="flex flex-col items-center space-y-3 mb-5 mt-8">
+          <div className="flex items-center space-x-3">
+            <img src={`/demos-page/brou_logo.svg`} alt="NeuralSeek Logo" className="w-70 h-20" />
           </div>
-        ))
-      )}
-            
-          </header>
-        </div>
- 
-        <>
+          
+
+        </header>
+      </div>
+
+      <>
         {chatHistory.length > 0 && (
-           <div className="h-[55%] flex flex-col items-center">
-           {selectedMarkdown && (
-             <div className="fixed backdrop-blur-sm  top-10 inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="h-[55%] flex flex-col items-center">
+            {selectedMarkdown && (
+              <div className="fixed backdrop-blur-sm  top-10 inset-0 bg-black/30 flex items-center justify-center z-50">
 
-               <div className="h-[80%] w-[50%] bg-white dark:bg-gray-900 p-6 rounded-lg w-[90%] max-w-6xl relative flex flex-col gap-4">
-                 <button
-                   onClick={() => setSelectedMarkdown(null)}
-                   className="absolute top-6 right-6 text-gray-500 hover:text-gray-700"
-                 >
-                   ✖
-                 </button>
-                 <h2 className="text-xl font-bold mb-4">Markdown Base</h2>
-                 <div className="flex flex-row gap-6 max-h-[70vh] overflow-y-auto">
-                   <pre className="w-1/2 whitespace-pre-wrap overflow-auto p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm">
-                     {selectedMarkdown}
-                   </pre>
-                   <div className="flex flex-col w-1/2">
-                     <textarea
-                       rows={16}
-                       className="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm border border-gray-300 dark:border-gray-700 resize-none focus:outline-none"
-                       placeholder="Promt something new for this response..."
-                       id="markdownEdit"
-                       defaultValue=""
-                     />
-                     <button
-                       onClick={handleEditedMarkdown}
-                       className={`mt-4 p-2 rounded-lg w-full ${isLoading
-                         ? 'bg-gray-400 cursor-not-allowed'
-                         : 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'}`}
-                       disabled={isLoading}
-                     >
-                       {isLoading ? 'Sending...' : 'Prompt'}
-                     </button>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           )}
+                <div className="h-[80%] w-[50%] bg-white dark:bg-gray-900 p-6 rounded-lg w-[90%] max-w-6xl relative flex flex-col gap-4">
+                  <button
+                    onClick={() => setSelectedMarkdown(null)}
+                    className="absolute top-6 right-6 text-gray-500 hover:text-gray-700"
+                  >
+                    ✖
+                  </button>
+                  <h2 className="text-xl font-bold mb-4">Markdown Base</h2>
+                  <div className="flex flex-row gap-6 max-h-[70vh] overflow-y-auto">
+                    <pre className="w-1/2 whitespace-pre-wrap overflow-auto p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm">
+                      {selectedMarkdown}
+                    </pre>
+                    <div className="flex flex-col w-1/2">
+                      <textarea
+                        rows={16}
+                        className="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm border border-gray-300 dark:border-gray-700 resize-none focus:outline-none"
+                        placeholder="Promt something new for this response..."
+                        id="markdownEdit"
+                        defaultValue=""
+                      />
+                      <button
+                        onClick={handleEditedMarkdown}
+                        className={`mt-4 p-2 rounded-lg w-full ${isLoading
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'}`}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? 'Sending...' : 'Prompt'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
 
-               <div
-                 ref={chatContainerRef}
-                 className="w-[50%] mt-0 mb-5 overflow-y-auto p-4 rounded-xl bg-gray-50 dark:bg-gray-800"
-               >
-             {chatHistory.map((chat) => (
-               <div
-                 key={chat.id}
-                 className="mb-4 p-4 rounded-lg shadow-md bg-white dark:bg-gray-900 markdown-container relative"
-               >
-                 <button
-                   onClick={() => {
-                     setSelectedMarkdown(chat.answer.replace(/```markdown/g, ''));
-                     setSelectedChatId(chat.id);
-                   }}
-                   className="absolute top-2 right-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600"
-                 >
-                   <Icon name="pencil-square" className="w-5 h-5" />
-                 </button>
-                 <p className="font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                   You: {chat.query}
-                 </p>
-                 <div className="prose dark:prose-invert">
-                   <hr />
-                   <div className="markdownClass">
-                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{
-                       `
+            <div
+              ref={chatContainerRef}
+              className="w-[50%] mt-0 mb-5 overflow-y-auto p-4 rounded-xl bg-gray-50 dark:bg-gray-800"
+            >
+              {chatHistory.map((chat) => (
+                <div
+                  key={chat.id}
+                  className="mb-4 p-4 rounded-lg shadow-md bg-white dark:bg-gray-900 markdown-container relative"
+                >
+                  <button
+                    onClick={() => {
+                      setSelectedMarkdown(chat.answer.replace(/```markdown/g, ''));
+                      setSelectedChatId(chat.id);
+                    }}
+                    className="absolute top-2 right-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600"
+                  >
+                    <Icon name="pencil-square" className="w-5 h-5" />
+                  </button>
+                  <p className="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    You: {chat.query}
+                  </p>
+                  <div className="prose dark:prose-invert">
+                    <hr />
+                    <div className="markdownClass">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{
+                        `
                        ${chat.answer}
                        `
-                       }
-</ReactMarkdown>
-                   </div>
-                 </div>
-               </div>
-             ))}
-           </div>
-         </div>
+                      }
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )
 
         }
-         
-        </>
-        <div className="grid grid-cols-2 gap-4 w-full justify-items-center mb-4 m-auto w-[50%]">
 
-</div>
-
-      <div className={`w-[50%] mb-0 m-auto mt-auto ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center h-full"}`}>
+      </>
+      <div className="justify-items-center mb-4 m-auto w-[50%]">
+      {chatHistory.length == 0 && (
+            prePrompts?.map((item, index) => (
+              <div
+                key={index}
+                className="m-2 flex items-center py-1 px-2 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                onClick={() => handlePrePromptClick(item.prompt)}
+              >
+                <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
+                <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">{item.label}</p>
+              </div>
+            ))
+          )}
+      </div>
+        
+      <div className={`w-[50%] mb-0 m-auto mt-0 ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center"}`}>
         <div className="relative w-[100%]">
           <textarea
             id="query"
@@ -285,20 +285,20 @@ useEffect(() => {
           />
 
           <div className="absolute bottom-2 left-3 right-3 flex justify-between items-end p-4">
-          {chatHistory.length > 0 && (
-        prePrompts?.map((item, index) => (
-          <div
-            key={index}
-            className="w-[50%] flex items-center py-2 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-            onClick={() => handlePrePromptClick(item.prompt)}
-          >
-            <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-            <p className="text-sm font-semibold text-gray-500 dark:text-gray-300 m-auto text-center">{item.label}</p>
-          </div>
-        ))
-      )}
-            
-          <button
+            {chatHistory.length > 0 && (
+              prePrompts?.map((item, index) => (
+                <div
+                  key={index}
+                  className="w-[50%] flex items-center py-2 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                  onClick={() => handlePrePromptClick(item.prompt)}
+                >
+                  <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-300 m-auto text-center">{item.label}</p>
+                </div>
+              ))
+            )}
+
+            <button
               onClick={handleChat}
               disabled={isLoading}
               className={`p-2 rounded-lg transition ml-auto ${isLoading
@@ -312,7 +312,7 @@ useEffect(() => {
               )}
             </button>
           </div>
-            
+
         </div>
       </div>
       {chatHistory.length > 0 && (
