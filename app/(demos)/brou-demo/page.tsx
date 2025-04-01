@@ -295,7 +295,7 @@ const BrouDemo: React.FC = () => {
           />
 
           <div className="absolute bottom-2 left-3 right-3 flex justify-between items-end p-4">
-            {chatHistory.length > 0 && (
+            {chatHistory.length > 0 && query.length == 0 && (
               prePrompts?.map((item, index) => (
                 <div
                   key={index}
