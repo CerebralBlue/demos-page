@@ -29,8 +29,15 @@
     margin-left: 1.5rem;
   }
   
+  .markdown-container ul {
+    list-style-type: disc;       /* Muestra viñetas */
+    padding-left: 1.5rem;        /* Sangría estándar */
+    margin-bottom: 1rem;         /* Espacio debajo de la lista */
+  }
+  
   .markdown-container li {
     margin-bottom: 0.5rem;
+    margin-left: 0;              /* Evita doble sangría si el ul ya tiene padding */
   }
   .markdownClass{
     overflow: hidden;
