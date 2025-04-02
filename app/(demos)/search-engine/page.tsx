@@ -74,7 +74,7 @@ const SearchEngineDemo: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white">
-      <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex flex-col items-center justify-center h-full mt-5">
         <header className="flex flex-col items-center space-y-3 mb-8">
           <div className="flex items-center space-x-3">
             <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
@@ -134,7 +134,7 @@ const SearchEngineDemo: React.FC = () => {
 
       {/* Results Container */}
       <div className="flex items-center justify-center w-full max-w-3xl m-auto mt-4">
-        <div className="w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <div className="w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
           {/* Direct Answer Section */}
           {results.ufa && (
             <div className="font-bold mb-4">
