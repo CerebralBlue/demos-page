@@ -4,8 +4,7 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryBayCrest from '@/app/components/ChatHistoryBayCrest';
-import { headers } from '@/constants';
-headers.apikey = "598063fe-d9682db0-634ac42c-67bea8bb";
+import { headers2 } from '@/constants';
 
 const BayCrestDemo = () => {
     const [query, setQuery] = useState("");
@@ -56,7 +55,7 @@ const BayCrestDemo = () => {
             const responseNs = await axios.post(
                 "https://stagingapi.neuralseek.com/v1/baycrest/maistro",
                 maistroCallBody,
-                { headers }
+                { headers: headers2 }
             );
 
             if (responseNs.data.answer && responseNs.data.variables.query) {
