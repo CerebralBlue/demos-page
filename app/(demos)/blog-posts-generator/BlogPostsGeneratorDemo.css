@@ -65,3 +65,26 @@
   .markdownClass pre{
     display: none;
   }
+
+
+  .animated-title {
+    background: linear-gradient(90deg, #3D91F0, #9D2FF9, #3D91F0);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientAnimation 3s ease infinite;
+  }
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+    100% {
+      background-position: 0% center;
+    }
+  }
+  
