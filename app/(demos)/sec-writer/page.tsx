@@ -74,9 +74,10 @@ const SECDemo = () => {
 
                 if (fileName) {
                     maistroCallBody = {
-                        agent: "ocr_sheet",
+                        // agent: "ocr_sheet",
+                        agent: "ocr_document",
                         params: [
-                            { name: "fileName", value: fileName },
+                            { name: "name", value: fileName },
                         ],
                         options: {
                             returnVariables: false,
@@ -99,11 +100,11 @@ const SECDemo = () => {
                     // Store OCR sheet only if there is meaningful text
 
                     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                    const url = `${baseUrl}/ingestions`;
+                    const url = `${baseUrl}/ingestions/create`;
 
-                    const responsePost = await axios.post(
+                    await axios.post(
                         url,
-                        { file_name: fileName, type: fileExtension, data: ocrText },
+                        { database: "sec_demo", file_name: fileName, type: fileExtension, data: ocrText },
                         { headers }
                     );
 
@@ -179,12 +180,12 @@ const SECDemo = () => {
     const prePrompts: any = [
         {
             prompt: "Ingest a balance or income statement file",
-            iconName: "document-chart-bar",
+            iconName: "document-text",
             label: "Ingest Periods Data"
         },
         {
             prompt: "Generate a detailed AI 10K Report file",
-            iconName: "chart-bar",
+            iconName: "document-chart-bar",
             label: "Generate AI 10K Report"
         }
     ];
