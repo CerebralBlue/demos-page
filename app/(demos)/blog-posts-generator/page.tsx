@@ -93,7 +93,7 @@ const BlogPostsGeneratorDemo: React.FC = () => {
  
       setGenerated(false);
     } catch (error) {
-      console.error("Error calling Write with AI 10 Articles API:", error);
+      console.error("Error calling Write with AI Multiple Articles API:", error);
     } finally {
       setAiMultipleLoading(false);
     }
@@ -240,10 +240,10 @@ const BlogPostsGeneratorDemo: React.FC = () => {
                       d="M4 12a8 8 0 018-8v8H4z"
                     ></path>
                   </svg>
-                  <span>Generating 10 Articles...</span>
+                  <span>Generating Articles...</span>
                 </>
               ) : (
-                <span>Write with AI 10 Articles</span>
+                <span>Write with AI Multiple Articles</span>
               )}
             </button>
           </div>
