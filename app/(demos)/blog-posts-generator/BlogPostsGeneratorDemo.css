@@ -1,0 +1,90 @@
+.markdown-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  .markdown-container h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .markdown-container h3 {
+    font-size: 1.75rem;
+    font-weight: bold;
+  }
+  
+  .markdown-container h4 {
+    font-size: 1.5rem;
+  }
+  
+  .markdown-container h5 {
+    font-size: 1.25rem;
+  }
+  
+  .markdown-container h6 {
+    font-size: 1rem;
+  }
+  .markdown-container ol {
+    list-style-type: decimal;
+    margin-left: 1.5rem;
+  }
+  
+  .markdown-container ul {
+    list-style-type: disc;       /* Muestra viñetas */
+    padding-left: 1.5rem;        /* Sangría estándar */
+    margin-bottom: 1rem;         /* Espacio debajo de la lista */
+  }
+  
+  .markdown-container li {
+    margin-bottom: 0.5rem;
+    margin-left: 0;              /* Evita doble sangría si el ul ya tiene padding */
+  }
+  a {
+    display: block;
+    width: 100%;
+    font-weight: bold;
+    color: #2563EB; /* Azul para modo claro */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    a {
+      color: #60A5FA; /* Azul claro para modo oscuro */
+    }
+  }
+  .markdown-container a *{
+    
+    width: 100%;
+  }
+  .markdownClass{
+    overflow: hidden;
+    position: relative;
+  }
+  .markdownClass pre{
+    display: none;
+  }
+
+
+  .animated-title {
+    background: linear-gradient(90deg, #3D91F0, #9D2FF9, #3D91F0);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientAnimation 3s ease infinite;
+  }
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+    100% {
+      background-position: 0% center;
+    }
+  }
+  

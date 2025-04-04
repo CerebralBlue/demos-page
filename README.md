@@ -29,6 +29,53 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Deploy to LATAM Server
+
+Follow these steps to deploy your application:
+
+1. **Prepare Your Code**  
+   - Merge your local changes and push the updated code to your remote repository.
+
+2. **Access the LATAM Server**  
+   - SSH into the LATAM server:
+     ```bash
+     ssh user@latam-server-address
+     ```
+
+3. **Navigate to the Project Directory**  
+   - Change directory to your project:
+     ```bash
+     cd /path/to/your/project
+     ```
+
+4. **Update the Codebase**  
+   - Pull the latest changes:
+     ```bash
+     git pull origin main
+     ```
+
+5. **Install Dependencies**  
+   - Install any new dependencies:
+     ```bash
+     npm install
+     ```
+
+6. **Build the Application**  
+   - Build your project:
+     ```bash
+     npm run build
+     ```
+
+7. **Restart the Application**  
+   - Restart the application using PM2:
+     ```bash
+     pm2 restart 0
+     ```
+
+8. **Verify the Deployment**  
+   - Check logs and functionality to ensure a successful deployment.
+
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
