@@ -65,6 +65,16 @@ export const sidebarLinks = [
     ],
   },
   {
+    category: "SEO Use Cases",
+    links: [
+      {
+        imgURL: "paper-clip",
+        route: "/blog-posts-generator",
+        label: "Blog Posts Generator Demo",
+      },
+    ],
+  },
+  {
     category: "Writing Use cases",
     links: [
       {
@@ -349,6 +359,57 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
     description: "",
     howto: [
       "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    industries: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    use_cases: [
+      "Upload your 10K or 10Q document.",
+      "Click on the 'Generate SEC Report' button.",
+      "Edit the report using the AI text editor.",
+      "Download the report in your desired format.",
+      "Create charts based on the data in the report."
+    ],
+    details: [
+      {
+        title: "AI Translation Platform",
+        content: "Advanced multilingual translation and localization service."
+      },
+      {
+        title: "Development Cycle",
+        content: "5-7 weeks comprehensive development"
+      },
+      {
+        title: "Supported Languages",
+        content: "30+ languages, including rare dialects"
+      },
+      {
+        title: "Industry",
+        content: "Global Communication, Education, Business"
+      },
+      {
+        title: "Unique Features",
+        content: "Context-aware translation, Cultural nuance preservation"
+      },
+      {
+        title: "AI Capabilities",
+        content: "Neural machine translation, Continuous learning"
+      }
+    ]
+  },
+  {
+    demo_url: "/posts-creator",
+    description: "",
+    howto: [
+      "Hola mundo",
       "Click on the 'Generate SEC Report' button.",
       "Edit the report using the AI text editor.",
       "Download the report in your desired format.",
