@@ -49,6 +49,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.1",
     "react-markdown": "^8.0.7",
+    "react-pdf": "^9.2.1",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^1.0.0",
     "tailwind-merge": "^2.5.3",
