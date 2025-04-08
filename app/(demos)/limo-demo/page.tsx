@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import './limo.css';
-
+import Icon from '@/components/Icon';
 interface IntroResponse {
   answer: string;
 }
@@ -14,13 +14,17 @@ interface BookingResponse {
 
 const LimosDemo: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const bookingRef = useRef<HTMLDivElement>(null);
   const [introData, setIntroData] = useState<string>("");
   const [query, setQuery] = useState<string>("");
-  const [mapCoords, setMapCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [mapDescription, setMapDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [bookingMessage, setBookingMessage] = useState<string>("");
-
+  type BookingResult = {
+    place: string;
+    coords: { lat: number; lng: number };
+    bookingMessage?: string;
+  };
+  
+  const [results, setResults] = useState<BookingResult[]>([]);
   // Array de horarios disponibles
   const availableTimes = ["9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM", "5:00 PM"];
 
@@ -57,7 +61,7 @@ const LimosDemo: React.FC = () => {
     const q = customQuery || query;
     if (!q.trim()) return;
     setIsLoading(true);
-
+  
     try {
       const response = await fetch("/demos-page/api/proxy", {
         method: "POST",
@@ -67,40 +71,61 @@ const LimosDemo: React.FC = () => {
           params: { place: q, city: "Los Angeles" },
         }),
       });
-
+  
       const data: BookingResponse = await response.json();
       const parsed = JSON.parse(data.answer + "}");
-      setMapCoords({ lat: parsed.lat, lng: parsed.lng });
-      setMapDescription(`Here is the location you asked for: **${q}**`);
-
-      // Scroll al mapa
+  
+      setResults((prev) => [
+        ...prev,
+        {
+          place: q,
+          coords: { lat: parsed.lat, lng: parsed.lng },
+        },
+      ]);
+  
       setTimeout(() => {
         mapRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     } catch (error) {
       console.error("Error sending booking query:", error);
     }
-
+  
     setIsLoading(false);
     if (!customQuery) setQuery("");
   };
 
   // Función para manejar la selección de un horario
-  const handleBookingTime = (time: string) => {
-    setBookingMessage(`Reservation confirmed for ${time}.`);
+  const handleBookingTime = (index: number, time: string) => {
+    setResults((prev) =>
+      prev.map((r, i) =>
+        i === index ? { ...r, bookingMessage: `Reservation confirmed for ${time}.` } : r
+      )
+    );
+  
+    setTimeout(() => {
+      mapRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
-
   const CustomMarkdownComponents = {
     ol: ({ children }: { children: React.ReactNode }) => (
       <ol className="grid grid-cols-3 gap-3 mt-4">{children}</ol>
     ),
     li: ({ children }: { children: React.ReactNode }) => {
-      const text = String(children).replace(/^\*\*/, "").replace(/\*\*$/, "").trim();
-
+      const text = React.Children.toArray(children)
+        .map((child) => {
+          if (typeof child === "string") return child;
+          if (typeof child === "object" && "props" in child) return child.props.children;
+          return "";
+        })
+        .join("")
+        .replace(/^\*\*/, "")
+        .replace(/\*\*$/, "")
+        .trim();
+    
       return (
         <li>
           <div
-            className="m-0 flex h-[60px] p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+            className="m-0 flex h-[60px] p-3 w-full bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-transparent dark:hover:bg-transparent transition cursor-pointer"
             onClick={() => handleSendQuery(text)}
           >
             <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">
@@ -113,7 +138,7 @@ const LimosDemo: React.FC = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-between min-h-screen p-6 dark:bg-gray-900 dark:text-white">
+    <section className="flex flex-col items-center p-6 dark:bg-gray-900 dark:text-white">
       <div className="flex items-center justify-center mb-6">
             <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-12 h-12 mr-3" />
             <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Accredited Limo</h1>
@@ -134,48 +159,49 @@ const LimosDemo: React.FC = () => {
           </div>
         )}
 
-        {mapCoords && (
-          <div ref={mapRef}>
-            <div className="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {mapDescription}
-              </ReactMarkdown>
-            </div>
-            <iframe
-              title="map"
-              width="100%"
-              height="300"
-              style={{ border: 0, borderRadius: "12px" }}
-              loading="lazy"
-              allowFullScreen
-              src={`https://www.google.com/maps?q=${mapCoords.lat},${mapCoords.lng}&z=15&output=embed`}
-            ></iframe>
+{results.map((res, index) => (
+  <div key={index} className="mt-6" ref={mapRef}>
+    <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {`Here is the location you asked for: **${res.place}**`}
+      </ReactMarkdown>
+    </div>
 
-            {/* Sección de horarios para el booking */}
-            <div className="mt-4">
-              <h2 className="text-xl font-bold mb-2">Select a preferred time range:</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {availableTimes.map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => handleBookingTime(time)}
-                    className="p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
-              {bookingMessage && (
-                <div className="mt-4 p-3 bg-green-100 text-green-800 rounded">
-                  {bookingMessage}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+    <iframe
+      title={`map-${index}`}
+      width="100%"
+      height="200"
+      style={{ border: 0, borderRadius: "12px", marginTop: "20px" }}
+      loading="lazy"
+      allowFullScreen
+      src={`https://www.google.com/maps?q=${res.coords.lat},${res.coords.lng}&z=15&output=embed`}
+    ></iframe>
+
+    <div className="mt-4">
+      <h2 className="text-xl font-bold mb-2">Select a preferred time range:</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {availableTimes.map((time) => (
+          <button
+            key={time}
+            onClick={() => handleBookingTime(index, time)}
+            className="p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+          >
+            {time}
+          </button>
+        ))}
+      </div>
+      {res.bookingMessage && (
+        <div className="mt-4 p-3 bg-green-100 text-green-800 rounded">
+          {res.bookingMessage} Do you need anything else?
+        </div>
+      )}
+    </div>
+  </div>
+))}
+
       </div>
 
-      <div className="w-full max-w-5xl mt-0 mb-5">
+      <div className="w-full max-w-5xl mt-5 mb-5 relative">
         <textarea
           rows={3}
           value={query}
@@ -189,13 +215,22 @@ const LimosDemo: React.FC = () => {
           className="w-full p-3 rounded-lg border bg-gray-100 dark:bg-gray-800 dark:border-gray-700 focus:outline-none"
           placeholder="Ask about booking details..."
         />
-        <button
-          onClick={() => handleSendQuery()}
-          disabled={isLoading}
-          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {isLoading ? "Loading..." : "Send"}
-        </button>
+        <div className="absolute w-[100px] right-0 right-0 flex justify-between items-end p-4 bottom-0">
+
+          <button
+                onClick={()=>handleSendQuery()}
+                disabled={isLoading}
+                className={`p-2 rounded-lg transition ml-auto ${isLoading
+                  ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'}`}
+                title={isLoading ? "Processing..." : "Send"}
+              >
+                {isLoading ? (
+                  <Icon name="loader" className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Icon name="paper-plane" className="w-5 h-5" />
+                )}
+              </button>
+        </div>
       </div>
     </section>
   );
