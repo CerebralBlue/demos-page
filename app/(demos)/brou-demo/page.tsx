@@ -185,7 +185,7 @@ const BrouDemo: React.FC = () => {
             {selectedMarkdown && (
               <div className="fixed backdrop-blur-sm  top-10 inset-0 bg-black/30 flex items-center justify-center z-50">
 
-                <div className="h-[80%] w-[50%] bg-white dark:bg-gray-900 p-6 rounded-lg w-[90%] max-w-6xl relative flex flex-col gap-4">
+                <div className="h-[80%] w-[50%] bg-white dark:bg-gray-900 p-6 rounded-lg max-w-6xl relative flex flex-col gap-4">
                   <button
                     onClick={() => setSelectedMarkdown(null)}
                     className="absolute top-6 right-6 text-gray-500 hover:text-gray-700"
@@ -290,7 +290,7 @@ const BrouDemo: React.FC = () => {
                 handleChat();
               }
             }}
-            className="w-full pl-9 pr-4 py-3 bg-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16"
+            className="w-full pl-9 pr-4 py-3 bg-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none"
             placeholder="Message NeuralSeek"
           />
 

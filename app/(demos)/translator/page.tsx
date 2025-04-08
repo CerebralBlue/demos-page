@@ -48,7 +48,7 @@ const TranslatorDemo: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <div className="flex-1">
                             <label className="block mb-2 text-gray-700 dark:text-gray-300">From:</label>
-                            <select
+                            <select 
                                 value={language1}
                                 onChange={(e) => setLanguage1(e.target.value)}
                                 className="border p-2 rounded w-full 

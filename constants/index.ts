@@ -13,6 +13,12 @@ export const headers3 = {
   apikey: "1cb87dc6-03e47a65-d69ce2a3-83d3f947",
 }
 
+export const headers4 = {
+  accept: "application/json",
+  apikey: "cb04b8cf-4f808510-eb1f4890-817d2c15",
+}
+
+
 export const sidebarLinks = [
   {
     category: "",
@@ -126,6 +132,16 @@ export const sidebarLinks = [
         imgURL: "users",
         route: "/search-engine",
         label: "Search Engine Demo",
+      },
+    ],
+  },
+  {
+    category: "PII Use Cases",
+    links: [
+      {
+        imgURL: "users",
+        route: "/pii-analyzer",
+        label: "PII Analyzer Demo"
       },
     ],
   },
