@@ -1,0 +1,46 @@
+/* TuringDemo.css */
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  /* Animated Title Fix: */
+  .animated-title {
+    background: linear-gradient(90deg, #3D91F0, #9D2FF9, #3D91F0);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientAnimation 3s ease infinite;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;    /* Increase as needed */
+    overflow: visible;
+  }
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+    100% {
+      background-position: 0% center;
+    }
+  }
+  
+  /* Prevent vertical scrolling (optional) */
+  html, body {
+    overflow-y: hidden;
+  }
+
