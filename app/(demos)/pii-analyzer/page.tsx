@@ -4,10 +4,12 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import { headers4 } from '@/constants';
-import { Document, Page, pdfjs } from 'react-pdf';
+import dynamic from 'next/dynamic';
 
-// Configure the PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+const PDFViewer = dynamic(
+    () => import('../../components/PDFViewer'),
+    { ssr: false }
+);
 
 type PiiTypeMatch = {
     pii: string[];
@@ -273,11 +275,7 @@ const PIIAnalyzerDemo = () => {
                     </div>
 
                     {pdfURL && (
-                        <div className="w-2/3 h-1/2">
-                            <Document file={pdfURL}>
-                                <Page pageNumber={1} />
-                            </Document>
-                        </div>
+                        <PDFViewer url={pdfURL} />
                     )}
                 </div>
 
@@ -325,7 +323,7 @@ const PIIAnalyzerDemo = () => {
                                         </div>
                                     </div>
                                 )}
-                              
+
                                 <div className="mt-4">
                                     <div className="flex justify-between items-center mb-3">
                                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Processed content:</h3>

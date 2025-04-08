@@ -40,7 +40,7 @@ const BrouDemo: React.FC = () => {
       label: "¿Qué pasa si una cuenta que pasa al tesoro nacional tiene más de un titular?"
     }
   ]);
-
+  const key = Math.floor(1000 + Math.random() * 9000);
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -57,9 +57,10 @@ const BrouDemo: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          agent: 'markdown',
+          agent: 'markdown_2',
           params: {
             question: query,
+            key:key
           },
         }),
       });
