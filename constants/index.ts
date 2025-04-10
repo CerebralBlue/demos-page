@@ -89,9 +89,9 @@ export const sidebarLinks = [
         label: "Turing Test",
       },
       {
-        imgURL: "paper-clip",
-        route: "/llm-pricing-cal",
-        label: "LLM Pricing Cal",
+        imgURL: "users",
+        route: "/llm-cost-analyzer",
+        label: "LLM Cost Analyzer",
       },
     ],
   },
@@ -754,8 +754,8 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
     ]
   },
   {
-    "demo_url": "/llm-pricing-cal",
-    "description": "The LLM Pricing Comparator demo allows users to compare and analyze pricing, performance, cost, and safety metrics of multiple LLM models with interactive graphs and a futuristic UI. Input parameters like model, size, runs per document, runs per day, and use case complexity to generate detailed metrics and visualizations.",
+    "demo_url": "/llm-cost-analyzer",
+    "description": "The LLM Cost Analyzer demo allows users to compare and analyze pricing, performance, cost, and safety metrics of multiple LLM models with interactive graphs and a futuristic UI. Input parameters like model, size, runs per document, runs per day, and use case complexity to generate detailed metrics and visualizations.",
     "howto": [
       "Select your desired LLM model and size on the left and right cards.",
       "Enter the number of runs per document and estimated runs per day.",
