@@ -472,12 +472,10 @@ const RFPWriterDemo: React.FC = () => {
                                 onDragEnter={() => setIsDragging(true)}
                                 onDragLeave={() => setIsDragging(false)}
                             >
-                                <p className="text-lg font-semibold">Drop files anywhere in this section</p>
-
                                 {fileName ? (
                                     <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">Selected File: {fileName}</span>
                                 ) : (
-                                    <span className="text-lg text-gray-600 dark:text-gray-300">Drag & drop your CSV file here or click to upload</span>
+                                    <span className="text-lg text-gray-600 dark:text-gray-300 pointer-events-none">Drag & drop your CSV file here or click to upload</span>
                                 )}
                                 <input
                                     ref={fileInputRef}

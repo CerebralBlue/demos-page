@@ -131,13 +131,13 @@ const DocAnalyzerDemo = () => {
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
                         onClick={() => fileInputRef.current?.click()}
-                        onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
-                        onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
+                        onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm')}
+                        onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm')}
                     >
                         {fileName ? (
                             <span className="text-lg">Selected File: {fileName}</span>
                         ) : (
-                            <span className="text-lg">Drag & drop your .csv, .pdf, .doc, .txt, or docx file here or click to upload</span>
+                            <span className="text-lg pointer-events-none">Drag & drop your .csv, .pdf, .doc, .txt, or docx file here or click to upload</span>
                         )}
                         <input
                             ref={fileInputRef}

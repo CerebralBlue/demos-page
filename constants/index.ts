@@ -579,6 +579,166 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
     ]
   },  
   {
+    demo_url: "/pii-analyzer",
+    description: "Upload a PDF document to detect and analyze Personally Identifiable Information (PII) using NeuralSeek. View detected elements and download a redacted version or detailed PII report.",
+    howto: [
+      "Drag and drop a PDF file into the upload area or click to select a file.",
+      "Wait while the document is analyzed for PII.",
+      "View the summary of detected PII types and instances.",
+      "Click 'Show content' to view the processed redacted content.",
+      "Download either the redacted PDF or the detailed PII report."
+    ],
+    industries: [
+      "Legal",
+      "Healthcare",
+      "Finance",
+      "Government"
+    ],
+    use_cases: [
+      "PII detection and redaction in compliance documents.",
+      "Pre-processing sensitive files before sharing.",
+      "Automated privacy audits for uploaded content.",
+      "Generating reports for data privacy assessments."
+    ],
+    details: [
+      {
+        title: "Drag-and-Drop PDF Upload",
+        content: "Users can upload PDF files with a simple drag-and-drop interface for immediate PII scanning."
+      },
+      {
+        title: "Automated PII Detection",
+        content: "NeuralSeek identifies potential PII content and classifies it into specific types for easier understanding."
+      },
+      {
+        title: "PDF Redaction and Export",
+        content: "Download a redacted version of the uploaded document with PII removed."
+      },
+      {
+        title: "Detailed Report Generation",
+        content: "Export a full PII analysis report in PDF format, including detected elements and their classifications."
+      }
+    ]
+  },  
+  {
+    demo_url: "/derrick-law",
+    description: "An advanced legal document analysis assistant that supports file ingestion, OCR processing, and prompt-based contextual queries.",
+    howto: [
+      "Drag and drop or upload legal documents in PDF format on the left panel.",
+      "Wait for the file ingestion and OCR process to complete (visible through progress bars).",
+      "Use the text input to type your question about a file. You can type '@' to insert an ingested file or '/' to select a predefined prompt.",
+      "Submit the message and receive a contextual answer based on file contents and prompt instructions.",
+      "Repeat the process for more queries or upload additional files as needed."
+    ],
+    industries: [
+      "Legal",
+      "Compliance",
+      "Insurance"
+    ],
+    use_cases: [
+      "OCR-based legal document understanding and summarization.",
+      "Automated legal question answering using firm-specific data.",
+      "Context-aware interactions using predefined legal instructions.",
+      "Interactive legal document ingestion and exploration."
+    ],
+    details: [
+      {
+        title: "File Ingestion with OCR",
+        content: "Supports PDF and other file uploads. Files are automatically processed using OCR to extract their content for analysis."
+      },
+      {
+        title: "Prompt Engineering Autocomplete",
+        content: "Users can trigger predefined prompts using '/' or link to files using '@' for precise context building."
+      },
+      {
+        title: "Integrated Document Memory",
+        content: "Uploaded file contents are stored and reused for future queries, allowing continuity and reuse of insights."
+      },
+      {
+        title: "Chat-Based Interaction",
+        content: "An LLM-based agent interprets questions and responds using both user input and ingested file data for intelligent responses."
+      }
+    ]
+  },  
+  {
+    demo_url: "/baycrest-demo",
+    description: "Conversational agent for interactive analytical queries within the BayCrest context. Users can input free-form questions and receive smart answers with context memory.",
+    howto: [
+      "Start by entering a message in the text box, such as a data-related question or request.",
+      "Use predefined prompts at the beginning to test typical questions.",
+      "Press 'Enter' or click the send button to submit your query.",
+      "Wait for the agent's response, which appears in the chat feed.",
+      "Continue the conversation using context-aware queries."
+    ],
+    industries: [
+      "Healthcare",
+      "Research",
+      "Senior Care"
+    ],
+    use_cases: [
+      "Running conversational analytics on organization-specific data.",
+      "Assisting users with knowledge queries in a natural language format.",
+      "Maintaining context over multiple questions for deeper analysis."
+    ],
+    details: [
+      {
+        title: "Context-Aware Conversations",
+        content: "Uses historical message data to provide contextually relevant responses, improving the flow and continuity of analysis."
+      },
+      {
+        title: "Seamless User Input",
+        content: "Users can input messages via keyboard or trigger from predefined questions. The interface supports multiline text and Enter-to-send behavior."
+      },
+      {
+        title: "Agent-Driven Analysis",
+        content: "Powered by a custom Maistro agent tailored for BayCrest that processes user input and generates insightful answers."
+      },
+      {
+        title: "Responsive Chat UI",
+        content: "Includes auto-scrolling and rich chat message formatting for clear visualization of interactions."
+      }
+    ]
+  },  
+  {
+    demo_url: "/blog-posts-generator",
+    description: "Create AI-powered blog posts with title, tags, markdown content, and images. Generate one or multiple posts using web-scraping agents, and interact with them using comments and reactions.",
+    howto: [
+      "Fill in the blog title, tags, and content manually or click 'Write with AI' to auto-generate one article.",
+      "Click 'Write with AI Multiple Articles' to generate 10 different posts.",
+      "Click 'Generate Post' to preview your manually written or AI-generated content.",
+      "View and interact with the rendered blog post(s), including adding comments or reactions."
+    ],
+    industries: [
+      "Content Marketing",
+      "Journalism",
+      "SEO Optimization",
+      "Education"
+    ],
+    use_cases: [
+      "Quickly generating blog drafts from web-scraped content.",
+      "Creating educational posts with markdown support.",
+      "Automating SEO article creation based on trending topics.",
+      "Generating multiple post templates for batch editing."
+    ],
+    details: [
+      {
+        title: "AI-Powered Post Generation",
+        content: "Leverages web scraping and LLMs to generate full blog content including title, tags, body, and images."
+      },
+      {
+        title: "Markdown Support",
+        content: "Allows the content body to be authored or displayed in Markdown with formatting support via ReactMarkdown."
+      },
+      {
+        title: "Multiple Article Generation",
+        content: "Generates 10 blog posts at once using a separate agent, ideal for content planning or exploration."
+      },
+      {
+        title: "Reader Interaction",
+        content: "Supports user engagement through comments and predefined emoji-based reactions like Like, Love, and Clap."
+      }
+    ]
+  },  
+  {
     demo_url: "/doc-analyzer",
     description: "Upload and analyze documents using NeuralSeek. Quickly extract insights from your files or ask custom questions about their contents with AI-powered intelligence.",
     howto: [
