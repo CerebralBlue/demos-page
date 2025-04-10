@@ -15,7 +15,7 @@
     100% { background-position: 0% center; }
   }
   
-  /* Futuristic Panel (for cards) */
+ 
   .futuristic-panel {
     border: 1px solid rgba(157, 47, 249, 0.5);
     background: rgba(61, 145, 240, 0.05);
@@ -25,14 +25,14 @@
     text-align: left;
   }
   
-  /* Ensure equal spacing and width for grid cards */
+
   @media (min-width: 768px) {
     .futuristic-panel {
       height: 100%;
     }
   }
   
-  /* Enhance focus for selects/inputs inside panels */
+
   .futuristic-panel select:focus,
   .futuristic-panel input:focus {
     outline: none !important;
@@ -40,7 +40,7 @@
     box-shadow: 0 0 8px rgba(157, 47, 249, 0.5);
   }
   
-  /* Progress Bar for Safety Metrics */
+
   .progress-bar {
     background: #e2e8f0;
     height: 10px;
