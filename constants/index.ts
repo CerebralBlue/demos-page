@@ -88,6 +88,11 @@ export const sidebarLinks = [
         route: "/turing-test",
         label: "Turing Test",
       },
+      {
+        imgURL: "paper-clip",
+        route: "/llm-pricing-cal",
+        label: "LLM Pricing Cal",
+      },
     ],
   },
   {
@@ -748,6 +753,55 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
       }
     ]
   },
+  {
+    "demo_url": "/llm-pricing-cal",
+    "description": "The LLM Pricing Comparator demo allows users to compare and analyze pricing, performance, cost, and safety metrics of multiple LLM models with interactive graphs and a futuristic UI. Input parameters like model, size, runs per document, runs per day, and use case complexity to generate detailed metrics and visualizations.",
+    "howto": [
+      "Select your desired LLM model and size on the left and right cards.",
+      "Enter the number of runs per document and estimated runs per day.",
+      "Choose the use case complexity from the dropdown.",
+      "View the calculated metrics in real time on the performance radar chart and cost bar chart.",
+      "Review safety metrics represented with progress bars."
+    ],
+    "industries": [
+      "Technology and AI research companies",
+      "Financial services for budget forecasting",
+      "Operational consulting in tech",
+      "Enterprise-level decision making"
+    ],
+    "use_cases": [
+      "LLM cost and performance analysis",
+      "Budget forecasting for AI projects",
+      "Comparing vendor pricing for LLM models",
+      "Operational efficiency and ROI estimation"
+    ],
+    "details": [
+      {
+        "title": "Real-Time Comparison",
+        "content": "Compare cost, performance, and safety metrics of different LLM models in real time."
+      },
+      {
+        "title": "Customizable Inputs",
+        "content": "Adjust parameters like runs per document, daily runs, and complexity to see how costs vary."
+      },
+      {
+        "title": "Interactive Visualizations",
+        "content": "Includes responsive radar charts, bar charts, and progress bars for comprehensive metric analysis."
+      },
+      {
+        "title": "Futuristic Interface",
+        "content": "Modern UI with neon gradients, sleek futuristic design, and dark mode support."
+      },
+      {
+        "title": "Comprehensive Metrics",
+        "content": "Analyzes pricing, performance, cost per day, and safety metrics for multiple LLM models."
+      },
+      {
+        "title": "Flexible Use Cases",
+        "content": "Ideal for cost analysis, budgeting, vendor comparison, and strategic planning in AI implementations."
+      }
+    ]
+  },  
   {
     "demo_url": "/turing-test",
     "description": "A modern, interactive Turing Test demo that compares hardcoded human responses with AI-generated responses from leading LLMs. Evaluate whether the AI can pass as human.",
