@@ -1,10 +1,10 @@
 "use client";
-
+import { demoLinkCards } from "@/lib/demoLinks";
 import React from "react";
 import Link from "next/link";
 import HeaderBox from "@/components/HeaderBox";
 import Icon from "@/components/Icon";
-import { demoLinkCards } from "@/constants";
+
 
 const Home = () => {
   return (
@@ -17,13 +17,13 @@ const Home = () => {
         />
       </header>
       
-      <div className="relative flex-1 overflow-hidden max-h-[70vh] pr-4">
+      <div className="relative flex-1 overflow-hidden pr-4">
         <div className="overflow-y-auto h-full pr-4 mr-[-10px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {demoLinkCards.map((agent, index) => (
               <div 
                 key={index} 
-                className="group relative"
+                className="group relative m-5"
               >
                 <Link 
                   href={agent.route} 
