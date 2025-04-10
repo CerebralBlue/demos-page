@@ -105,7 +105,7 @@ export default function DemosLayout({ children }: { children: React.ReactNode })
                                 </button>
 
                                 {/* Play Mode */}
-                                <Popover>
+                                {/* <Popover>
                                     <PopoverTrigger asChild>
                                         <button
                                             onClick={autoPlay}
@@ -138,7 +138,7 @@ export default function DemosLayout({ children }: { children: React.ReactNode })
                                             </div>
                                         </div>
                                     </PopoverContent>
-                                </Popover>
+                                </Popover> */}
                             </>
                         ) : (
                             <></>
@@ -152,7 +152,7 @@ export default function DemosLayout({ children }: { children: React.ReactNode })
             </div>
 
             {leftSidebarOpen && (
-                <div className="h-screen sticky top-0 left-0 z-10">
+                <div className="h-screen w-1000 sticky top-0 left-0 z-10">
                     <LeftSidebar />
                 </div>
             )}
