@@ -1,10 +1,8 @@
 "use client";
 import React, { useRef, useState } from 'react';
 import Icon from '@/components/Icon';
-import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryBayCrest from '@/app/components/ChatHistoryBayCrest';
-import { headers2 } from '@/constants';
 
 const BayCrestDemo = () => {
     const [query, setQuery] = useState("");
@@ -52,14 +50,17 @@ const BayCrestDemo = () => {
                 maistroCallBody.params[1].value = JSON.stringify(chatHistory);
             }
 
-            const responseNs = await axios.post(
-                "https://stagingapi.neuralseek.com/v1/baycrest/maistro",
-                maistroCallBody,
-                { headers: headers2 }
-            );
-
-            if (responseNs.data.answer && responseNs.data.variables.query) {
-                setChatHistory((prev) => [...prev, { message: responseNs.data.answer, type: "agent", query: responseNs.data.variables.query }]);
+            
+            const responseNs = await fetch('/demos-page/api/baycrest', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(maistroCallBody),
+              });
+              const data = await responseNs.json();
+            if (data.answer && data.variables.query) {
+                setChatHistory((prev) => [...prev, { message: data.answer, type: "agent", query: data.variables.query }]);
                 scrollToBottom();
             }
 

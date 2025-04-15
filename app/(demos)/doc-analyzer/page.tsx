@@ -34,7 +34,7 @@ const DocAnalyzerDemo = () => {
             const remoteResponse = await axios.post("https://stagingconsoleapi.neuralseek.com/NS-ES-V2/exploreUpload", form, {
                 headers: {
                     'accept': 'application/json',
-                    'apikey': "e907252c-a14c702d-a0ae2b3b-490872cd" // Replace with your API key
+                    'apikey': "e907252c-a14c702d-a0ae2b3b-490872cd" 
                 }
             });
             summarize(remoteResponse.data.fn);

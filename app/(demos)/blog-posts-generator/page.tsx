@@ -37,12 +37,10 @@ const BlogPostsGeneratorDemo: React.FC = () => {
   const handleWriteWithAI = async () => {
     setAiLoading(true);
     try {
-      const response = await fetch("https://stagingapi.neuralseek.com/v1/testnew/maistro", {
-        method: "POST",
+      const response = await fetch("/demos-page/api/testnew", {
+        method: 'POST',
         headers: {
-          "accept": "application/json",
-          "apikey": "bbd04989-613cbbb9-553e52fb-d0cd4033",
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ agent: "generatePostWebScrape" })
       });
@@ -69,12 +67,10 @@ const BlogPostsGeneratorDemo: React.FC = () => {
   const handleWriteWithAI10 = async () => {
     setAiMultipleLoading(true);
     try {
-      const response = await fetch("https://stagingapi.neuralseek.com/v1/testnew/maistro", {
-        method: "POST",
+      const response = await fetch("/demos-page/api/testnew", {
+        method: 'POST',
         headers: {
-          "accept": "application/json",
-          "apikey": "bbd04989-613cbbb9-553e52fb-d0cd4033",
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ agent: "generatePostWebScrape10" })
       });

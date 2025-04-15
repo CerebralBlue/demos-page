@@ -610,12 +610,11 @@ const DIDDemo = () => {
       showAnswer(text, "user");
       setText("");
 
-      const response = await fetch('https://api-usw.neuralseek.com/v1/e688e6f2bfe772fdae28dc9f/seek', {
+      const response = await fetch('/demos-page/api/d_id', {
         method: 'POST',
         //mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': 'e389d36b-a9af93af-ac08626f-c829870d'
         },
         body: JSON.stringify({ question }),
       });

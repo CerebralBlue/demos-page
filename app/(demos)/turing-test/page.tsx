@@ -83,12 +83,11 @@ const TuringDemo: React.FC = () => {
   // Fetch LLM answer from the selected agent.
   const fetchLLMAnswer = async (question: string): Promise<string> => {
     const agent = selectedLLM;
-    const response = await fetch("https://stagingapi.neuralseek.com/v1/turing/maistro", {
-      method: "POST",
+
+    const response = await fetch('/demos-page/api/turing', {
+      method: 'POST',
       headers: {
-        accept: "application/json",
-        apikey: "f5ca3423-1c27c087-b261f348-467ce701",
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         agent,

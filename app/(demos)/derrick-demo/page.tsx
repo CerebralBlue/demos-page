@@ -141,14 +141,17 @@ const DerrickDemo = () => {
                 };
 
                 // OCR file within mAIstro
-                const responseOCR = await axios.post(
-                    "https://stagingapi.neuralseek.com/v1/derrick-law-demo/maistro",
-                    maistroCallBody,
-                    { headers: headers3 }
-                );
-
-                let ocrText = responseOCR.data.answer?.trim();
-
+                
+                const response = await fetch('/demos-page/api/derrick-law-demo', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(maistroCallBody),
+                  });
+                  const data = await response.json();
+                let ocrText = data.answer?.trim();
+                  
                 // Set progress to 100% after OCR
                 setIngestProgress(prev => ({
                     ...prev,
@@ -263,14 +266,16 @@ const DerrickDemo = () => {
             }
         };
 
-        const llmResponse = await axios.post(
-            "https://stagingapi.neuralseek.com/v1/derrick-law-demo/maistro",
-            maistroCallBody,
-            { headers: headers3 }
-        );
-
+        const response = await fetch('/demos-page/api/derrick-law-demo', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(maistroCallBody),
+          });
+          const data = await response.json();
         // let ocrText = llmResponse.data.answer?.trim();
-        let result = llmResponse.data.answer?.trim();
+        let result = data.answer?.trim();
 
         // Update chat history with the result
         setChatHistory((prev) => [...prev, { message: result, type: "agent" }]);

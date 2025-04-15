@@ -110,13 +110,16 @@ const PIIAnalyzerDemo = () => {
                 };
 
                 // Remove PII from file within mAIstro
-                const responsePII = await axios.post(
-                    "https://stagingapi.neuralseek.com/v1/pii-detection-demo/maistro",
-                    maistroCallBody,
-                    { headers: headers4 }
-                );
 
-                setPiiVariables(responsePII.data);
+                const response = await fetch('/demos-page/api/pii-detection-demo', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(maistroCallBody),
+                  });
+                  const data = await response.json();
+                setPiiVariables(data);
             }
 
         } catch (error) {
@@ -143,13 +146,16 @@ const PIIAnalyzerDemo = () => {
 
         try {
             // Response html
-            const responseHTML = await axios.post(
-                "https://stagingapi.neuralseek.com/v1/pii-detection-demo/maistro",
-                maistroCallBody,
-                { headers: headers4 }
-            );
 
-            const htmlContent = responseHTML.data.answer;
+            const responseApi = await fetch('/demos-page/api/pii-detection-demo', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(maistroCallBody),
+              });
+              const data = await responseApi.json();
+            const htmlContent = data.answer;
 
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             const url = `${baseUrl}/create-pdf`;

@@ -51,7 +51,7 @@ const BrouDemo: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/demos-page/api/proxy_brou', {
+      const response = await fetch('/demos-page/api/bank-instance', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
