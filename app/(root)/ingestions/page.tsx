@@ -24,6 +24,7 @@ const Ingestions = () => {
     useEffect(() => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const url = `${baseUrl}/ingestions`;
+
         axios.get(url)
             .then((response) => {
                 if (response.data.success) {
@@ -38,6 +39,7 @@ const Ingestions = () => {
 
     useEffect(() => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        
         const url = `${baseUrl}/data-sources`;
         axios.get(url)
             .then((response) => {

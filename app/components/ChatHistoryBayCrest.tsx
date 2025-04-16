@@ -17,7 +17,7 @@ interface ChatHistoryBayCrestProps {
 
 const ChatHistoryBayCrest: React.FC<ChatHistoryBayCrestProps> = ({ messages, setChatHistory, chatEndRef }) => {
     const baseAppUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
-    
+
     const [expandedMessages, setExpandedMessages] = useState<Record<number, boolean>>({});
 
     const toggleExpanded = (index: number) => {
@@ -40,19 +40,20 @@ const ChatHistoryBayCrest: React.FC<ChatHistoryBayCrestProps> = ({ messages, set
                                 }`}
                         >
                             {msg.isFile ? (
-                                <div className={`flex items-center gap-2 ${msg.type === "user" ? "text-right" : "text-left"}`}>
-                                    <Icon name="document" className="w-5 h-5 text-blue-500 dark:text-blue-300" />
-                                    <p className="text-sm font-semibold">{msg.fileName}</p>
-                                    {msg.reportId && (
-                                        <a
-                                            href={`${baseAppUrl}/reports/${msg.reportId}`}
-                                            className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                                        >
-                                            <Icon name="eye" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">View Report</p>
-                                        </a>
-                                    )}
-                                </div>
+                                <></>
+                                // <div className={`flex items-center gap-2 ${msg.type === "user" ? "text-right" : "text-left"}`}>
+                                //     <Icon name="document" className="w-5 h-5 text-blue-500 dark:text-blue-300" />
+                                //     <p className="text-sm font-semibold">{msg.fileName}</p>
+                                //     {msg.reportId && (
+                                //         <a
+                                //             href={`${baseAppUrl}/reports/${msg.reportId}`}
+                                //             className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+                                //         >
+                                //             <Icon name="eye" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
+                                //             <p className="text-sm font-semibold text-gray-500 dark:text-gray-300">View Report</p>
+                                //         </a>
+                                //     )}
+                                // </div>
                             ) : (
                                 <div className="relative w-full mb-5">
                                     <p

@@ -4,7 +4,6 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHistorySec from '../../components/ChatHistorySec';
 import ChatHeader from '../../components/ChatHeader';
-// import { headers } from '@/constants';
 
 const SECDemo = () => {
     const [query, setQuery] = useState("");
@@ -112,7 +111,7 @@ const SECDemo = () => {
                         'Content-Type': 'application/json',
                     },
                 });
-                const ocrText = responseOCR.data;
+                const ocrText = responseOCR.data.answer;
 
                 // Store OCR sheet only if there is meaningful text
                 if (ocrText && ocrText.length > 0) {
@@ -148,7 +147,7 @@ const SECDemo = () => {
             setChatHistory((prev) => [...prev, { message: queryToUse, type: "user" }]);
             scrollToBottom();
 
-            setQuery(""); // Clear query field
+            setQuery("");
             setIsLoading(true);
 
             try {
@@ -165,26 +164,19 @@ const SECDemo = () => {
                     }
                 };
 
-                // const responseIngestion = await axios.post(
-                //     "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                //     maistroCallBody,
-                // );
-
-                // OCR file within mAIstro
-                const ingestionResquest = await axios.post(urlMaistro, maistroCallBody, {
+                const chatResponse = await axios.post(urlMaistro, maistroCallBody, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-                const responseIngestion = ingestionResquest.data;
 
-                if (responseIngestion.data.answer === "trigger_ingestion") {
+                if (chatResponse.data.answer === "trigger_ingestion") {
                     setChatHistory((prev) => [...prev, { message: "Upload the PDF sheet file", type: "agent" }]);
                     scrollToBottom();
-                } else if (responseIngestion.data.answer === "trigger_10k_creation") {
+                } else if (chatResponse.data.answer === "trigger_10k_creation") {
                     setChatHistory((prev) => [...prev, { message: "Select the ingested file", type: "agent" }]);
                     scrollToBottom();
-                } else if (responseIngestion.data.answer === "out_of_reporting_context_request") {
+                } else if (chatResponse.data.answer === "out_of_reporting_context_request") {
                     setChatHistory((prev) => [...prev, { message: "The request is out of the 10K Reporting context", type: "agent" }]);
                     scrollToBottom();
                 }

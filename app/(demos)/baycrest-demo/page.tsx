@@ -3,10 +3,10 @@ import React, { useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryBayCrest from '@/app/components/ChatHistoryBayCrest';
+import axios from 'axios';
 
 const BayCrestDemo = () => {
     const [query, setQuery] = useState("");
-    const [files, setFiles] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [chatHistory, setChatHistory] = useState<{ message: string, type: "agent" | "user", isFile?: boolean, fileName?: string }[]>([]);
     const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -23,6 +23,10 @@ const BayCrestDemo = () => {
     };
 
     const handleChat = async (message?: string) => {
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/maistro`;
+
         const queryToUse = message ?? query;
         if (!queryToUse.trim()) return;
 
@@ -35,6 +39,7 @@ const BayCrestDemo = () => {
 
         try {
             const maistroCallBody = {
+                url_name: "staging-baycrest",
                 agent: "Main",
                 params: [
                     { name: "userQuestion", value: queryToUse },
@@ -50,17 +55,14 @@ const BayCrestDemo = () => {
                 maistroCallBody.params[1].value = JSON.stringify(chatHistory);
             }
 
-            
-            const responseNs = await fetch('/demos-page/api/baycrest', {
-                method: 'POST',
+            const responseSql = await axios.post(urlMaistro, maistroCallBody, {
                 headers: {
-                  'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(maistroCallBody),
-              });
-              const data = await responseNs.json();
-            if (data.answer && data.variables.query) {
-                setChatHistory((prev) => [...prev, { message: data.answer, type: "agent", query: data.variables.query }]);
+            });
+
+            if (responseSql.data.answer && responseSql.data.variables.query) {
+                setChatHistory((prev) => [...prev, { message: responseSql.data.answer, type: "agent", query: responseSql.data.variables.query }]);
                 scrollToBottom();
             }
 
@@ -106,10 +108,10 @@ const BayCrestDemo = () => {
                         <div className="flex gap-2 justify-end">
                             <button
                                 onClick={() => { handleChat() }}
-                                disabled={isLoading}
+                                disabled={isLoading || query.trim().length === 0}
                                 className={`p-2 rounded-lg transition ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
                                     }`}
-                                title={isLoading ? "Processing..." : files.length === 0 && query.trim().length === 0 ? "Enter a message or upload files" : "Send"}
+                                title={isLoading ? "Processing..." : query.trim().length === 0 ? "Enter a message" : "Send"}
                             >
                                 {isLoading ? (
                                     <Icon name="loader" className="w-5 h-5 animate-spin" />
@@ -119,6 +121,7 @@ const BayCrestDemo = () => {
                             </button>
                         </div>
                     </div>
+
                 </div>
             </div>
 

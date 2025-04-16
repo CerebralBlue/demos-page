@@ -1,24 +1,5 @@
 import { DemoConfig } from "@/types/demo.config";
 
-export const headers = {
-  accept: "application/json",
-  apikey: "6c5aca86-d343615d-60a44b29-c6dbb084",
-}
-export const headers2 = {
-  accept: "application/json",
-  apikey: "598063fe-d9682db0-634ac42c-67bea8bb",
-}
-export const headers3 = {
-  accept: "application/json",
-  apikey: "1cb87dc6-03e47a65-d69ce2a3-83d3f947",
-}
-
-export const headers4 = {
-  accept: "application/json",
-  apikey: "cb04b8cf-4f808510-eb1f4890-817d2c15",
-}
-
-
 export const sidebarLinks = [
   {
     category: "",
@@ -38,11 +19,11 @@ export const sidebarLinks = [
         route: "/sec-writer",
         label: "SEC Writer Demo",
       },
-      {
-        imgURL: "document",
-        route: "/ingestions",
-        label: "Ingestions",
-      },
+      // {
+      //   imgURL: "document",
+      //   route: "/ingestions",
+      //   label: "Ingestions",
+      // },
       {
         imgURL: "document-chart-bar",
         route: "/reports",
@@ -1028,58 +1009,5 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
         content: "Intelligent routing, Predictive analysis, Natural language processing"
       }
     ]
-  }
-];
-
-export const derrickPrompts = [
-  {
-    "Record_Type": "EMS/Medical Transport Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an EMS or medical transport provider that transported our client from the scene of the accident. Please use all of the information provided to you to draft a detailed summary of the narrative report in the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well.\n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Hospital ER Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an emergency room (ER) visit or same-day hospital visit. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider name \n2. Client Name & DOB\n3. Complaint and/or Reason for visit\n4. History of present illness \n5. Preexisting conditions related to present complaints \n6. Tests performed with interpretation (imaging, lab work, etc) \n7. Discharge plan, to include medications prescribed and/or treatment recommended, referrals or follow ups\n8. Assignment of benefits or liens\n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Routine Office Visit Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an routine medical office visit after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name & DOB\n3. Complaints and/or Reason for visit\n4. Preexisting conditions related to present complaints \n5. Type of tests performed with interpretation (imaging), \n6. In-office/hospital treatment performed on that date of service\n7. Treatment plan, to include the medications prescribed, referrals to specialist, physical therapy, follow-up appointment, and if a client is at MMI (maximum medical improvement) or has been released from treatment\n8. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Therapy Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from therapy appointments after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider name \n2. Client Name & DOB\n3. Presenting concerns and/or chief complaints \n4. Initial assessment\n5. Discharge assessment \n6. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Hospital Admission Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from their overnight hospital admission after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name & DOB\n3. Complaint and/or reason for visit\n4. History of present illness \n5. Preexisting conditions related to present complaints \n6. Tests performed with interpretation (imaging, lab work, etc) \n7. Consults – name of physician consulted \n8. Surgery performed (if applicable) \n9. Treatment plan for hospital stay\n10. Discharge plan, to include medications prescribed, follow-up appointments, and referrals \n11. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Special Evaluation Record (IME, Questionnaires, FCE)",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from a special evaluation done after the accident, which can include an independent medical exam (IME) by a physician, a physician questionnaire, or a functional capacity evaluation. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name and DOB \n3. Reason for evaluation \n4. Presenting concerns and/or complaints \n5. Preexisting conditions related to current complaints \n6. Provider impression, recommendations, and treatment plan\n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Imaging Only Report",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from imaging results, review, and interpretations done by a physician after X-Rays, MRI, CT scan, or other related imaging is done. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name and DOB \n3. Reason for evaluation \n4. Results or impression of interpreting doctor \n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "Client Communication Notes",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you a copy of the Medical Liaison Paralegal's notes from their calls with our clients while our clients are treating. I need you to summarize those call notes by date, in chronological order, and provide a timeline by month of the highlights across the client's treatment period. If there are any red flags, please identify those as well. We specifically want these items addressed:\n\n1. Date of each call, text, or email\n2. Summary of all notes in chronological order starting with the oldest and going to the newest, separated by month and in a timeline format\n\nFormat -- Put the draft into a document."
-  },
-  {
-    "Record_Type": "All Medical Record",
-    "DLF_Dept_Category": "ML",
-    "Project_Instructions": "Instructions -- I am going to give you a collection of all the medical records related to the treatment of our personal injury client. Please use all of the information provided to you to draft a chronological summary of the records provided. We specifically want these items addressed in any/all record summaries:\n\n1. Date of Service\n2. Provider Name \n3. Complaint and/or reason for visit\n4. Treatment Plan\n\nFormat -- Please put them in chronological order from oldest to newest by date of service. Please include the Date of Service as the first item on the chronology. \n\nTimeline -- After the summary, I want you to create a timeline of medical treatment noting each date of service, along with the date of accident noted in a different colored dot on the graph. "
-  },
-  {
-    "Record_Type": "All Medical Record",
-    "DLF_Dept_Category": "WC",
-    "Project_Instructions": "Instructions -- I am going to give you a collection of all the medical records related to the treatment of our personal injury client. Please use all of the information provided to you to draft a chronological summary of the records provided. We specifically want these items addressed in any/all record summaries:\n\n1. Date of Service\n2. Provider Name \n3. Complaint and/or reason for visit\n4. Rating\n5. If MMI (Maximum Medical Improvement) has been reached, to a reasonable degree of medical certainty noted by the physician\n6. Diagnosis\n7. Prior medical history mentioned\n8. Key words \"more likely than not\" and the word \"aggravated\"\n\nFormat -- Please put them in chronological order from oldest to newest by date of service. Please include the Date of Service as the first item on the chronology. After the summary, I want you to create a time series graph of each date of service noted, along with the date of accident noted in a different colored dot on the graph. "
   }
 ];

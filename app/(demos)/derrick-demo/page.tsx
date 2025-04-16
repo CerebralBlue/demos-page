@@ -4,7 +4,59 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryDerrickLaw from '@/app/components/ChatHistoryDerrickLaw';
-import { derrickPrompts, headers3 } from '@/constants';
+
+export const derrickPrompts = [
+    {
+        "Record_Type": "EMS/Medical Transport Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an EMS or medical transport provider that transported our client from the scene of the accident. Please use all of the information provided to you to draft a detailed summary of the narrative report in the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well.\n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Hospital ER Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an emergency room (ER) visit or same-day hospital visit. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider name \n2. Client Name & DOB\n3. Complaint and/or Reason for visit\n4. History of present illness \n5. Preexisting conditions related to present complaints \n6. Tests performed with interpretation (imaging, lab work, etc) \n7. Discharge plan, to include medications prescribed and/or treatment recommended, referrals or follow ups\n8. Assignment of benefits or liens\n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Routine Office Visit Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from an routine medical office visit after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name & DOB\n3. Complaints and/or Reason for visit\n4. Preexisting conditions related to present complaints \n5. Type of tests performed with interpretation (imaging), \n6. In-office/hospital treatment performed on that date of service\n7. Treatment plan, to include the medications prescribed, referrals to specialist, physical therapy, follow-up appointment, and if a client is at MMI (maximum medical improvement) or has been released from treatment\n8. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Therapy Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from therapy appointments after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider name \n2. Client Name & DOB\n3. Presenting concerns and/or chief complaints \n4. Initial assessment\n5. Discharge assessment \n6. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Hospital Admission Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from their overnight hospital admission after their accident. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name & DOB\n3. Complaint and/or reason for visit\n4. History of present illness \n5. Preexisting conditions related to present complaints \n6. Tests performed with interpretation (imaging, lab work, etc) \n7. Consults – name of physician consulted \n8. Surgery performed (if applicable) \n9. Treatment plan for hospital stay\n10. Discharge plan, to include medications prescribed, follow-up appointments, and referrals \n11. Assignment of benefits or liens \n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Special Evaluation Record (IME, Questionnaires, FCE)",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from a special evaluation done after the accident, which can include an independent medical exam (IME) by a physician, a physician questionnaire, or a functional capacity evaluation. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name and DOB \n3. Reason for evaluation \n4. Presenting concerns and/or complaints \n5. Preexisting conditions related to current complaints \n6. Provider impression, recommendations, and treatment plan\n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Imaging Only Report",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you medical records related to the treatment of our personal injury client. These records are from imaging results, review, and interpretations done by a physician after X-Rays, MRI, CT scan, or other related imaging is done. Please use all of the information provided to you to draft a detailed summary of the records provided. Please include citations to any quotes or information pulled from the materials. If there are any red flags, please identify those as well. We specifically want these items addressed in any/all record summaries:\n\n1. Provider Name \n2. Client name and DOB \n3. Reason for evaluation \n4. Results or impression of interpreting doctor \n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "Client Communication Notes",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you a copy of the Medical Liaison Paralegal's notes from their calls with our clients while our clients are treating. I need you to summarize those call notes by date, in chronological order, and provide a timeline by month of the highlights across the client's treatment period. If there are any red flags, please identify those as well. We specifically want these items addressed:\n\n1. Date of each call, text, or email\n2. Summary of all notes in chronological order starting with the oldest and going to the newest, separated by month and in a timeline format\n\nFormat -- Put the draft into a document."
+    },
+    {
+        "Record_Type": "All Medical Record",
+        "DLF_Dept_Category": "ML",
+        "Project_Instructions": "Instructions -- I am going to give you a collection of all the medical records related to the treatment of our personal injury client. Please use all of the information provided to you to draft a chronological summary of the records provided. We specifically want these items addressed in any/all record summaries:\n\n1. Date of Service\n2. Provider Name \n3. Complaint and/or reason for visit\n4. Treatment Plan\n\nFormat -- Please put them in chronological order from oldest to newest by date of service. Please include the Date of Service as the first item on the chronology. \n\nTimeline -- After the summary, I want you to create a timeline of medical treatment noting each date of service, along with the date of accident noted in a different colored dot on the graph. "
+    },
+    {
+        "Record_Type": "All Medical Record",
+        "DLF_Dept_Category": "WC",
+        "Project_Instructions": "Instructions -- I am going to give you a collection of all the medical records related to the treatment of our personal injury client. Please use all of the information provided to you to draft a chronological summary of the records provided. We specifically want these items addressed in any/all record summaries:\n\n1. Date of Service\n2. Provider Name \n3. Complaint and/or reason for visit\n4. Rating\n5. If MMI (Maximum Medical Improvement) has been reached, to a reasonable degree of medical certainty noted by the physician\n6. Diagnosis\n7. Prior medical history mentioned\n8. Key words \"more likely than not\" and the word \"aggravated\"\n\nFormat -- Please put them in chronological order from oldest to newest by date of service. Please include the Date of Service as the first item on the chronology. After the summary, I want you to create a time series graph of each date of service noted, along with the date of accident noted in a different colored dot on the graph. "
+    }
+];
 
 const DerrickDemo = () => {
     const [query, setQuery] = useState("");
@@ -62,8 +114,14 @@ const DerrickDemo = () => {
     };
 
     const ingestFile = async (file: File) => {
+
         setIsIngesting(true);
         setIsLoading(true);
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlUpload = `${baseUrl}/maistro/upload-file`;
+        const urlMaistro = `${baseUrl}/maistro`;
+        const urlIngestion = `${baseUrl}/ingestions/create`;
 
         try {
             // Initialize progress for this file
@@ -85,6 +143,7 @@ const DerrickDemo = () => {
             // Create FormData for file upload
             const formData = new FormData();
             formData.append("file", file);
+            formData.append("url_name", "staging-derrick-law-demo");
 
             // Simulate upload progress
             const progressInterval = setInterval(() => {
@@ -100,36 +159,33 @@ const DerrickDemo = () => {
                 });
             }, 300);
 
-            // File Upload
-            const response = await axios.post(
-                "https://stagingconsoleapi.neuralseek.com/derrick-law-demo/exploreUpload",
-                formData,
-                {
-                    headers: headers3,
-                    onUploadProgress: (progressEvent) => {
-                        if (progressEvent.total) {
-                            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                            setIngestProgress(prev => ({
-                                ...prev,
-                                [file.name]: percentCompleted
-                            }));
-                        }
+            // Use axios for upload
+            const uploadResponse = await axios.post(urlUpload, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setIngestProgress(prev => ({
+                            ...prev,
+                            [file.name]: percentCompleted
+                        }));
                     }
                 }
-            );
-
+            });
             clearInterval(progressInterval);
             setIngestProgress(prev => ({
                 ...prev,
-                [file.name]: 95 // Almost done
+                [file.name]: 95
             }));
-
-            const dataResponse = response.data;
+            const dataResponse = uploadResponse.data;
             const uploadedFileName = dataResponse.fn;
 
             // Process the file with OCR if filename exists
             if (uploadedFileName) {
                 const maistroCallBody = {
+                    url_name: "staging-derrick-law-demo",
                     agent: "orc_document",
                     params: [
                         { name: "name", value: uploadedFileName },
@@ -141,17 +197,12 @@ const DerrickDemo = () => {
                 };
 
                 // OCR file within mAIstro
-                
-                const response = await fetch('/demos-page/api/derrick-law-demo', {
-                    method: 'POST',
+                const ocrData = await axios.post(urlMaistro, maistroCallBody, {
                     headers: {
-                      'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(maistroCallBody),
-                  });
-                  const data = await response.json();
-                let ocrText = data.answer?.trim();
-                  
+                });
+
                 // Set progress to 100% after OCR
                 setIngestProgress(prev => ({
                     ...prev,
@@ -159,40 +210,29 @@ const DerrickDemo = () => {
                 }));
 
                 // Store OCR sheet
-                if (ocrText && ocrText.length > 0) {
+                if (ocrData.data.answer && ocrData.data.answer.length > 0) {
                     // Store OCR sheet only if there is meaningful text
-                    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                    const url = `${baseUrl}/ingestions/create`;
-
                     await axios.post(
-                        url,
-                        { database: "derrick_demo", file_name: uploadedFileName, type: fileExtension, data: ocrText },
-                        { headers: headers3 }
+                        urlIngestion,
+                        { database: "derrick_demo", file_name: fileName, type: fileExtension, data: ocrData.data.answer },
                     );
 
                     // Show success message
                     setChatHistory((prev) => [...prev, { message: "Ingested file successful!", type: "agent" }]);
                     scrollToBottom();
 
-                    // Clear files
                     setFiles([]);
 
-                    // Recall fetch
                     await fetchIngestions();
                 } else {
-                    // Show error message
                     setChatHistory((prev) => [...prev, { message: "Ingestion could not be done!", type: "agent" }]);
                     scrollToBottom();
                 }
             } else {
-                // Show error if no filename in response
                 setChatHistory((prev) => [...prev, { message: "File upload failed. Please try again.", type: "agent" }]);
             }
 
         } catch (error) {
-            console.error(`Error ingesting file ${file.name}:`, error);
-
-            // Add error message to chat
             setChatHistory(prev => [
                 ...prev,
                 {
@@ -201,7 +241,6 @@ const DerrickDemo = () => {
                 }
             ]);
         } finally {
-            // Clear progress for this file
             setIngestProgress(prev => {
                 const newProgress = { ...prev };
                 delete newProgress[file.name];
@@ -216,8 +255,6 @@ const DerrickDemo = () => {
         if (e.target.files && e.target.files.length > 0) {
             const newFiles = Array.from(e.target.files);
             setFiles(prev => [...prev, ...newFiles]);
-
-            // Begin ingestion process for the file
             await ingestFile(newFiles[0]);
         }
     };
@@ -229,6 +266,10 @@ const DerrickDemo = () => {
     };
 
     const handleChat = async (message?: string) => {
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/maistro`;
+        
         setIsLoading(true);
         setQuery("");
 
@@ -256,36 +297,31 @@ const DerrickDemo = () => {
 
         // mAIstro LLM call
         const maistroCallBody = {
+            url_name: "staging-derrick-law-demo",
             agent: "llm_call",
             params: [
                 { name: "prompt", value: queryToUse },
             ],
             options: {
                 returnVariables: false,
-                returnVariablesExpanded: false
-            }
+                returnVariablesExpanded: false,
+            },
         };
 
-        const response = await fetch('/demos-page/api/derrick-law-demo', {
-            method: 'POST',
+        const dataResponse = await axios.post(urlMaistro, maistroCallBody, {
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(maistroCallBody),
-          });
-          const data = await response.json();
-        // let ocrText = llmResponse.data.answer?.trim();
-        let result = data.answer?.trim();
+        });
 
         // Update chat history with the result
-        setChatHistory((prev) => [...prev, { message: result, type: "agent" }]);
+        setChatHistory((prev) => [...prev, { message: dataResponse.data.answer, type: "agent" }]);
         scrollToBottom();
 
         setIsLoading(false);
     };
 
     // Autocomplete text area with @ and /
-
     const [showFileSelect, setShowFileSelect] = useState(false);
     const [showPromptSelect, setShowPromptSelect] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);

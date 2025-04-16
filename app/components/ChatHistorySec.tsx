@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Icon from "@/components/Icon";
 import { FileItem } from "@/types/file.item";
-import { headers } from "@/constants";
 
 interface ChatHistorySecProps {
     messages: { message: string; type: "agent" | "user"; isFile?: boolean; fileName?: string; reportId?: string }[];
@@ -38,6 +37,11 @@ const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistor
     }, []);
 
     const handleFileSelection = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/maistro`;
+        const urlReports = `${baseUrl}/reports`;
+
         const fileName = e.target.value;
         const fileObject = fileList.find((file) => file.name === fileName);
 
@@ -45,6 +49,7 @@ const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistor
             setSelectedFile(fileObject);
 
             const maistroCallBody = {
+                url_name: "staging-SEC-demo",
                 agent: "generate_10k",
                 params: [
                     { name: "dataset", value: fileObject.data }
@@ -56,21 +61,18 @@ const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistor
             };
 
             // Create 10K file within mAIstro
-            const response10k = await axios.post(
-                "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                maistroCallBody,
-                { headers }
-            );
-            const content10k = response10k.data.answer;
+            const content10k = await axios.post(urlMaistro, maistroCallBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
             // Store generated 10k
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const url = `${baseUrl}/reports`;
             const responsePost = await axios.post(
-                url,
-                { file_name: fileName, content: content10k },
-                { headers }
+                urlReports,
+                { file_name: fileName, content: content10k.data.answer },
             );
+
             const reportId = responsePost.data.data.insertedId;
             setChatHistory((prev) => [
                 ...prev,
@@ -111,6 +113,7 @@ const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistor
                                     {msg.reportId && (
                                         <a
                                             href={`${baseAppUrl}/reports/${msg.reportId}`}
+                                            target="_blank"
                                             className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                                         >
                                             <Icon name="eye" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />

@@ -3,7 +3,6 @@ import React, { DragEvent, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
-import { headers4 } from '@/constants';
 import dynamic from 'next/dynamic';
 
 const PDFViewer = dynamic(
@@ -94,7 +93,6 @@ const PIIAnalyzerDemo = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
             const uploadedFileName = uploadResponse.data.fn;
 
             if (uploadedFileName) {
@@ -109,13 +107,11 @@ const PIIAnalyzerDemo = () => {
                         returnVariablesExpanded: true,
                     },
                 };
-
                 const piiResponse = await axios.post(urlMaistro, maistroCallBody, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-
                 const piiData = piiResponse.data;
                 setPiiVariables(piiData);
             }
@@ -131,7 +127,7 @@ const PIIAnalyzerDemo = () => {
         setIsLoadingDownload(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlCreatePdf = `${baseUrl}/pii-detection-demo/create-pdf`;
+        const urlCreatePdf = `${baseUrl}/create-pdf`;
         const urlMaistro = `${baseUrl}/maistro`;
 
         const maistroCallBody = {
@@ -186,7 +182,7 @@ const PIIAnalyzerDemo = () => {
         setIsLoadingDownloadReport(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlCreatePdf = `${baseUrl}/pii-detection-demo/create-pdf`;
+        const urlCreatePdf = `${baseUrl}/create-pdf`;
         const urlMaistro = `${baseUrl}/maistro`;
 
         const piiPayload = {

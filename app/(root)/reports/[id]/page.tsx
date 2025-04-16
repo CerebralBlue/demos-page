@@ -14,7 +14,6 @@ import { EmailModal } from "../../../components/EmailModal";
 import { AnalysisModal } from "../../../components/Analysis";
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { headers } from "@/constants";
 
 const styles = StyleSheet.create({
     page: { padding: 20 },
@@ -31,11 +30,8 @@ const ReportEditionPage = () => {
     const id = params?.id as string;
 
     const [drafts, setDrafts] = useState<Version[]>([]);
-
     const [isLoading, setIsLoading] = useState(false);
-
     const [selectedMode, setSelectedMode] = useState("analytics");
-
     const [query, setQuery] = useState("");
     const [wholeText, setWholeText] = useState<string>("");
     const [selectedText, setSelectedText] = useState<string | null>(null);
@@ -44,11 +40,6 @@ const ReportEditionPage = () => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
     const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
-
-    // const [emailTitle, setEmailTitle] = useState("");
-    // const [emailContent, setEmailContent] = useState("");
-    // const [recipients, setRecipients] = useState([]);
-    // const [selectedRecipients, setSelectedRecipients] = useState([]);
 
     useEffect(() => {
         if (id) {
@@ -59,10 +50,10 @@ const ReportEditionPage = () => {
     const fetchReportById = async (id: string) => {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const url = `${baseUrl}/reports/${id}`;
-            const res = await axios.get(url);
-            setWholeText(res.data?.data?.content || "No content available.");
-            setDrafts(res.data?.data?.versions || []);
+            const urlReports = `${baseUrl}/reports/${id}`;
+            const response = await axios.get(urlReports);
+            setWholeText(response.data?.data?.content || "No content available.");
+            setDrafts(response.data?.data?.versions || []);
         } catch (error) {
             console.error("Error fetching report:", error);
         }
@@ -77,12 +68,10 @@ const ReportEditionPage = () => {
 
     const storeDraftVersion = async (updatedText: string) => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const url = `${baseUrl}/reports/drafts`;
-        const responsePost = await axios.post(
-            url,
-            { id, content: updatedText },
-            { headers }
-        );
+        const urlDrafts = `${baseUrl}/reports/drafts`;
+
+        const responsePost = await axios.post(urlDrafts, { id, content: updatedText });
+
         drafts.unshift({
             version: responsePost.data.version,
             content: updatedText,
@@ -91,50 +80,48 @@ const ReportEditionPage = () => {
     };
 
     const handleSend = async () => {
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/maistro`;
+
         const maistroCallBody = {
-            "agent": "",
-            "params": [
-                {
-                    "name": "",
-                    "value": ""
-                },
-                {
-                    "name": "",
-                    "value": ""
-                }
+            url_name: "staging-SEC-demo",
+            agent: "",
+            params: [
+                { name: "prompt", value: "" },
+                { name: "selectedSection", value: "" },
             ],
-            "options": {
-                "returnVariables": true,
-                "returnVariablesExpanded": false,
-            }
+            options: {
+                returnVariables: true,
+                returnVariablesExpanded: true,
+            },
         };
-        const maistroAgent = selectedMode == "editing" ? "modify_10k" : "generate_analytics";
 
         if (query && selectedText) {
+            const maistroAgent = selectedMode == "editing" ? "modify_10k" : "generate_analytics";
             maistroCallBody.agent = maistroAgent;
-            maistroCallBody.params[0].name = "prompt";
             maistroCallBody.params[0].value = query;
-            maistroCallBody.params[1].name = "selectedSection";
             maistroCallBody.params[1].value = selectedText;
+
             setIsLoading(true);
+
             try {
                 // Modify fragment with mAIstro
-                const responseEdition = await axios.post(
-                    "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                    maistroCallBody,
-                    { headers }
-                );
-                const newText = responseEdition.data.answer;
+                const responseEdition = await axios.post(urlMaistro, maistroCallBody, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
+                // Set output differently
                 if (selectedMode == "editing") {
-                    // Compute updated text synchronously
-                    const updatedText = wholeText.replace(selectedText, newText);
+                    const updatedText = wholeText.replace(selectedText, responseEdition.data.answer);
                     setWholeText(updatedText);
                     storeDraftVersion(updatedText);
                     setQuery("");
                     setSelectedText(null);
                 } else {
-                    setAnalysisReponse(newText);
+                    setAnalysisReponse(responseEdition.data.answer);
                     setIsAnalysisModalOpen(true);
                     setQuery("");
                     setSelectedText(null);
@@ -191,36 +178,36 @@ const ReportEditionPage = () => {
         saveAs(blob, "NeuralSeek 10K AI Generator.pdf");
     };
 
-    const generateWord = async (wholeText: string) => {
-        const maistroCallBody = {
-            agent: "generate_word_doc",
-            params: [
-                { name: "content", value: wholeText }
-            ],
-            options: {
-                returnVariables: false,
-                returnVariablesExpanded: false
-            }
-        };
+    // const generateWord = async (wholeText: string) => {
+    //     const maistroCallBody = {
+    //         agent: "generate_word_doc",
+    //         params: [
+    //             { name: "content", value: wholeText }
+    //         ],
+    //         options: {
+    //             returnVariables: false,
+    //             returnVariablesExpanded: false
+    //         }
+    //     };
 
-        const responseIngestion = await axios.post(
-            "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-            maistroCallBody,
-            { headers }
-        );
-        const file = responseIngestion.data.answer;
-        console.log(file)
-    };
+    //     const responseIngestion = await axios.post(
+    //         "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
+    //         maistroCallBody,
+    //         { headers }
+    //     );
+    //     const file = responseIngestion.data.answer;
+    //     console.log(file)
+    // };
 
-    const handleSave = async () => {
-    };
+    // const handleSave = async () => {
+    // };
 
-    const handleSendEmail = async () => {
-    };
+    // const handleSendEmail = async () => {
+    // };
 
-    const handleSendToApprove = async () => {
+    // const handleSendToApprove = async () => {
 
-    };
+    // };
 
     const cleanText = () => {
         if (!selectedText) return;
