@@ -4,7 +4,7 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHistorySec from '../../components/ChatHistorySec';
 import ChatHeader from '../../components/ChatHeader';
-import { headers } from '@/constants';
+// import { headers } from '@/constants';
 
 const SECDemo = () => {
     const [query, setQuery] = useState("");
@@ -47,6 +47,15 @@ const SECDemo = () => {
     };
 
     const handleChat = async (message?: string) => {
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlUpload = `${baseUrl}/maistro/upload-file`;
+        const urlMaistro = `${baseUrl}/maistro`;
+        const urlIngestion = `${baseUrl}/ingestions/create`;
+
+        let maistroCallBody;
+
+
         if (files.length > 0) {
             const formData = new FormData();
             const fileName = files[0].name;
@@ -62,22 +71,33 @@ const SECDemo = () => {
 
             try {
                 // File Upload
-                const response = await axios.post(
-                    "https://stagingconsoleapi.neuralseek.com/SEC-demo/exploreUpload",
-                    formData,
-                    { headers }
-                );
+                // const response = await axios.post(
+                //     "https://stagingconsoleapi.neuralseek.com/SEC-demo/exploreUpload",
+                //     formData,
+                //     { headers }
+                // );
 
-                const dataResponse = response.data;
-                const fileName = dataResponse.fn;
-                let maistroCallBody;
+                // const dataResponse = response.data;
+                // const fileName = dataResponse.fn;
 
-                if (fileName) {
+                // Upload file to mAIstro
+                const formData = new FormData();
+                formData.append("file", files[0]);
+                formData.append("url_name", "staging-SEC-demo");
+                const uploadResponse = await axios.post(urlUpload, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                const uploadedFileName = uploadResponse.data.fn;
+
+                if (uploadedFileName) {
                     maistroCallBody = {
-                        // agent: "ocr_sheet",
+                        url_name: "staging-SEC-demo",
                         agent: "ocr_document",
                         params: [
-                            { name: "name", value: fileName },
+                            { name: "name", value: uploadedFileName },
                         ],
                         options: {
                             returnVariables: false,
@@ -87,25 +107,18 @@ const SECDemo = () => {
                 }
 
                 // OCR file within mAIstro
-                const responseOCR = await axios.post(
-                    "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                    maistroCallBody,
-                    { headers }
-                );
-                let ocrText = responseOCR.data.answer?.trim();
+                const responseOCR = await axios.post(urlMaistro, maistroCallBody, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const ocrText = responseOCR.data;
 
-                // Store OCR sheet
-
+                // Store OCR sheet only if there is meaningful text
                 if (ocrText && ocrText.length > 0) {
-                    // Store OCR sheet only if there is meaningful text
-
-                    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                    const url = `${baseUrl}/ingestions/create`;
-
                     await axios.post(
-                        url,
+                        urlIngestion,
                         { database: "sec_demo", file_name: fileName, type: fileExtension, data: ocrText },
-                        { headers }
                     );
 
                     // Show success message
@@ -139,7 +152,8 @@ const SECDemo = () => {
             setIsLoading(true);
 
             try {
-                const maistroCallBody = {
+                maistroCallBody = {
+                    url_name: "staging-SEC-demo",
                     agent: "chat_agent",
                     params: [
                         { name: "message", value: queryToUse },
@@ -151,11 +165,18 @@ const SECDemo = () => {
                     }
                 };
 
-                const responseIngestion = await axios.post(
-                    "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                    maistroCallBody,
-                    { headers }
-                );
+                // const responseIngestion = await axios.post(
+                //     "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
+                //     maistroCallBody,
+                // );
+
+                // OCR file within mAIstro
+                const ingestionResquest = await axios.post(urlMaistro, maistroCallBody, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const responseIngestion = ingestionResquest.data;
 
                 if (responseIngestion.data.answer === "trigger_ingestion") {
                     setChatHistory((prev) => [...prev, { message: "Upload the PDF sheet file", type: "agent" }]);

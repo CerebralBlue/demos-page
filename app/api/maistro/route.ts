@@ -5,6 +5,11 @@ const urls = [
     name: "staging-pii-detection-demo",
     url: "https://stagingapi.neuralseek.com/v1/pii-detection-demo/maistro",
     api_key: "cb04b8cf-4f808510-eb1f4890-817d2c15"
+  },
+  {
+    name: "staging-SEC-demo",
+    url: "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
+    api_key: "6c5aca86-d343615d-60a44b29-c6dbb084"
   }
 ]
 
@@ -40,9 +45,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(maistroCallBody)
     });
 
-    console.log(response)
     const data = await response.json();
-
     if (!response.ok) {
       return NextResponse.json({ error: "Remote server error", details: data }, { status: response.status });
     }

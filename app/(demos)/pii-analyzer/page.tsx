@@ -80,12 +80,13 @@ const PIIAnalyzerDemo = () => {
         setIsLoading(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlUpload = `${baseUrl}/pii-detection-demo/upload`;
+        const urlUpload = `${baseUrl}/maistro/upload-file`;
         const urlMaistro = `${baseUrl}/maistro`;
 
         try {
             const formData = new FormData();
             formData.append("file", file);
+            formData.append("url_name", "staging-pii-detection-demo");
 
             // Use axios for upload
             const uploadResponse = await axios.post(urlUpload, formData, {
@@ -184,15 +185,20 @@ const PIIAnalyzerDemo = () => {
     const handleDownloadReport = async () => {
         setIsLoadingDownloadReport(true);
 
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlCreatePdf = `${baseUrl}/pii-detection-demo/create-pdf`;
+        const urlMaistro = `${baseUrl}/maistro`;
+
         const piiPayload = {
             "PII.pii": piiVariables?.variables["PII.pii"],
             "PII.possiblePII": piiVariables?.variables["PII.possiblePII"],
             "PII.piiTypes": piiVariables?.variables["PII.piiTypes"],
             "PII.piiTypeMatches": piiVariables?.variables["PII.piiTypeMatches"],
             "fileName": piiVariables?.variables.fileName
-        }
+        };
 
         const maistroCallBody = {
+            url_name: "staging-pii-detection-demo",
             agent: "create-pii-report",
             params: [
                 { name: "content", value: JSON.stringify(piiPayload) },
@@ -204,44 +210,33 @@ const PIIAnalyzerDemo = () => {
         };
 
         try {
-            // Response html
-            const responseHTML = await axios.post(
-                "https://stagingapi.neuralseek.com/v1/pii-detection-demo/maistro",
-                maistroCallBody,
-                { headers: headers4 }
-            );
+            // Get HTML content
+            const responseHTML = await axios.post(urlMaistro, maistroCallBody, {
+                headers: { 'Content-Type': 'application/json' }
+            });
 
             const htmlContent = responseHTML.data.answer;
 
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const url = `${baseUrl}/create-pdf`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ html: htmlContent }),
+            // Generate PDF
+            const pdfResponse = await axios.post(urlCreatePdf, { html: htmlContent }, {
+                headers: { 'Content-Type': 'application/json' },
+                responseType: 'blob', // This is how you tell axios to expect a binary file
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to generate PDF');
-            }
-
-            // Convert to blob and download
-            const blob = await response.blob();
-            const urlFile = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = urlFile;
-            a.download = 'pii_report.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(urlFile);
+            // Download PDF
+            const url = window.URL.createObjectURL(new Blob([pdfResponse.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'pii_report.pdf');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
 
         } catch (error) {
             console.error('Error downloading PDF:', error);
         } finally {
-            setIsLoadingDownloadReport(false); // Stop loading
+            setIsLoadingDownloadReport(false);
         }
     };
 
