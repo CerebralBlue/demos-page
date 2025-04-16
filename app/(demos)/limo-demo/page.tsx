@@ -177,7 +177,7 @@ const LimosDemo: React.FC = () => {
       return (
         <li>
           <div
-            className="m-0 flex h-[60px] p-3 w-full bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-transparent dark:hover:bg-transparent transition cursor-pointer"
+            className="m-0 flex h-[60px] p-3 w-full bg-gray-200 border border-gray-400 dark:border-gray-600 rounded-full dark:bg-gray-800 hover:bg-transparent dark:hover:bg-transparent transition cursor-pointer"
             onClick={() => handleSendQuery(text)}
           >
             <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">
