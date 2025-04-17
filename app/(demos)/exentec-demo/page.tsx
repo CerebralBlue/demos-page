@@ -27,7 +27,26 @@ const exentecPrompts = [
 const ExentecDemo = () => {
     const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
     const [ingestions, setIngestions] = useState<{ id: string, file_name: string, data: string }[]>([]);
+    const allFileNames = ingestions?.map(file => file.file_name) || [];
+    const allSelected = selectedFiles.length === allFileNames.length;
+
+    const toggleAll = () => {
+        if (allSelected) {
+            setSelectedFiles([]);
+        } else {
+            setSelectedFiles(allFileNames);
+        }
+    };
+
+    const toggleFile = (fileName: string) => {
+        setSelectedFiles(prev =>
+            prev.includes(fileName)
+                ? prev.filter(name => name !== fileName)
+                : [...prev, fileName]
+        );
+    };
 
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -235,7 +254,7 @@ const ExentecDemo = () => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const urlMaistro = `${baseUrl}/maistro`;
-        
+
         setIsLoading(true);
         setQuery("");
 
@@ -254,19 +273,30 @@ const ExentecDemo = () => {
             }
         });
 
-        // Find matching file_name in ingestions
-        ingestions.forEach((file) => {
-            if (queryToUse.includes(`<${file.file_name}>`)) {
-                queryToUse = queryToUse.replace(`<${file.file_name}>`, file.data);
-            }
-        });
+        // Build documentation from ingestions
+        let documentation = "### Documentation\n\n";
+
+        if (selectedFiles.length === 0) {
+            // Use all ingestions if none are selected
+            documentation += ingestions
+                .map(ingestion => `### ${ingestion.file_name}\n${ingestion.data}`)
+                .join("\n\n");
+        } else {
+            // Use only selected files
+            documentation += ingestions
+                .filter(ingestion => selectedFiles.includes(ingestion.file_name))
+                .map(ingestion => `### ${ingestion.file_name}\n${ingestion.data}`)
+                .join("\n\n");
+        }
+
+        const prompt = `### Instructions\n${queryToUse}\n\n### Documentation\n${documentation}`;
 
         // mAIstro LLM call
         const maistroCallBody = {
             url_name: "staging-exentec-demo",
             agent: "llm_call",
             params: [
-                { name: "prompt", value: queryToUse },
+                { name: "prompt", value: prompt },
             ],
             options: {
                 returnVariables: false,
@@ -287,8 +317,7 @@ const ExentecDemo = () => {
         setIsLoading(false);
     };
 
-    // Autocomplete text area with @ and /
-    const [showFileSelect, setShowFileSelect] = useState(false);
+    // Autocomplete text area with /
     const [showPromptSelect, setShowPromptSelect] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const prompts = exentecPrompts.map(item => item.Record_Type);
@@ -297,31 +326,9 @@ const ExentecDemo = () => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleChat();
-        } else if (e.key === "@") {
-            setShowFileSelect(true);
         } else if (e.key === "/") {
             setShowPromptSelect(true);
         }
-    };
-
-    const handleSelectFile = (fileName: string) => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        const startPos = textarea.selectionStart;
-        const textBefore = query.substring(0, startPos);
-        const atIndex = textBefore.lastIndexOf("@");
-        if (atIndex !== -1) {
-            const beforeAt = textBefore.substring(0, atIndex);
-            const afterAt = query.substring(startPos);
-
-            setQuery(`${beforeAt} <${fileName}> ${afterAt}`);
-        }
-        setShowFileSelect(false);
-        setTimeout(() => {
-            textarea.focus();
-            textarea.setSelectionRange(startPos + fileName.length, startPos + fileName.length);
-        }, 0);
     };
 
     const handleSelectPrompt = (prompt: string) => {
@@ -354,18 +361,48 @@ const ExentecDemo = () => {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                 >
+
                     <div className="p-3 border-b dark:border-gray-700">
                         <h4 className="text-sm font-medium mb-2">Ingested Files</h4>
                         {ingestions && ingestions.length > 0 ? (
-                            <div className="grid grid-cols-1 gap-2 max-h-100 overflow-y-auto">
-                                {ingestions.map((file, index) => (
-                                    <div key={index} className="p-2 border rounded dark:border-gray-700 flex items-center justify-between">
-                                        <div className="flex items-center overflow-hidden">
-                                            <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0" />
-                                            <span className="truncate text-sm">{file.file_name}</span>
+                            <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
+                                {/* Select All Checkbox */}
+                                <div className="flex items-center space-x-2 mb-1 px-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={allSelected}
+                                        onChange={toggleAll}
+                                        className="form-checkbox rounded border-gray-300 dark:border-gray-600"
+                                    />
+                                    <label className="text-sm font-medium">Select All</label>
+                                </div>
+
+                                {/* Files List */}
+                                {ingestions.map((file, index) => {
+                                    const isSelected = selectedFiles.includes(file.file_name);
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={`p-2 border rounded flex items-center cursor-pointer transition${isSelected
+                                                ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'} hover:bg-blue-100 dark:hover:bg-blue-800/40`}
+                                            onClick={() => toggleFile(file.file_name)}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => toggleFile(file.file_name)}
+                                                onClick={e => e.stopPropagation()}
+                                                className="form-checkbox mr-2 rounded border-gray-300 dark:border-gray-600"
+                                            />
+                                            <div className="flex items-center overflow-hidden">
+                                                <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
+                                                <span className="truncate text-sm text-gray-800 dark:text-gray-100">
+                                                    {file.file_name}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="py-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded">
@@ -377,7 +414,6 @@ const ExentecDemo = () => {
 
                     {/* Current Upload Section */}
                     <div className="flex-grow overflow-y-auto">
-                        {/* File Grid - Shows currently uploaded files */}
                         <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {files.map((file, index) => (
                                 <div key={index} className="p-2 border rounded dark:border-gray-700 flex items-center">
@@ -460,30 +496,9 @@ const ExentecDemo = () => {
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16 text-gray-900 dark:text-gray-100"
-                                placeholder="Message NeuralSeek using @ for files and / for prompts"
+                                placeholder="Message NeuralSeek using / for pre saved prompts"
                                 disabled={isIngesting}
                             />
-
-                            {showFileSelect && (
-                                <div className="absolute bottom-12 left-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-lg rounded-md w-50 p-2 z-10 animate-fade-in max-h-56 overflow-y-auto">
-                                    {ingestions.length > 0 ? (
-                                        ingestions.map((file, index) => (
-                                            <div
-                                                key={index}
-                                                className="relative p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 rounded truncate"
-                                                onClick={() => handleSelectFile(file.file_name)}
-                                            >
-                                                <span className="truncate block">{file.file_name}</span>
-                                                <div className="absolute left-0 bottom-full mb-1 hidden w-auto bg-black text-white text-xs rounded-md px-2 py-1 shadow-md group-hover:block">
-                                                    {file.file_name}
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="p-2 text-gray-500 dark:text-gray-400">No files available</div>
-                                    )}
-                                </div>
-                            )}
 
                             {showPromptSelect && (
                                 <div className="absolute bottom-12 left-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-lg rounded-md w-64 p-2 z-10 animate-fade-in max-h-56 overflow-y-auto">
@@ -509,7 +524,7 @@ const ExentecDemo = () => {
                             <div className="absolute bottom-2 right-3 flex items-end p-2">
                                 <button
                                     onClick={() => handleChat}
-                                    disabled={isLoading}
+                                    disabled={isLoading && query.trim().length === 0}
                                     className={`p-2 rounded-lg transition ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"}`}
                                     title={isLoading ? "Processing..." : query.trim().length === 0 ? "Enter a message" : "Send"}
                                 >
