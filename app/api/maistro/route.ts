@@ -20,6 +20,21 @@ const urls = [
     name: "staging-baycrest",
     url: "https://stagingapi.neuralseek.com/v1/baycrest/maistro",
     api_key: "598063fe-d9682db0-634ac42c-67bea8bb"
+  },
+  {
+    name: "staging-turing",
+    url: "https://stagingapi.neuralseek.com/v1/turing/maistro",
+    api_key: "f5ca3423-1c27c087-b261f348-467ce701"
+  },
+  {
+    name: "staging-testnew", // Blog posts creator
+    url: "https://stagingapi.neuralseek.com/v1/testnew/maistro",
+    api_key: "bbd04989-613cbbb9-553e52fb-d0cd4033"
+  },
+  {
+    name: "staging-bank-instance",
+    url: "https://stagingapi.neuralseek.com/v1/bank-instance/maistro/",
+    api_key: "754fb875-e0794f9d-e6b03a46-07f95776"
   }
 ]
 
@@ -73,7 +88,7 @@ export async function POST(req: NextRequest) {
         {
           error: 'Expected JSON response but received non-JSON content',
           contentType,
-          body: text.slice(0, 300) // truncate to prevent flooding
+          body: text.slice(0, 300)
         },
         { status: response.status }
       );

@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import './BrouDemo.css';
 import Icon from '@/components/Icon';
 import jsPDF from 'jspdf';
+import axios from 'axios';
 interface PrePromptItem {
   prompt: string;
   iconName: string;
@@ -41,30 +42,34 @@ const BrouDemo: React.FC = () => {
     }
   ]);
   const key = Math.floor(1000 + Math.random() * 9000);
+  
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatHistory]);
+
   const handleChat = async () => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const urlMaistro = `${baseUrl}/maistro`;
+
     if (!query.trim()) return;
     setIsLoading(true);
 
     try {
-      const response = await fetch('/demos-page/api/bank-instance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const maistroCallBody = {
+        url_name: "staging-bank-instance",
+        agent: "markdown_2",
+        params: [
+          { name: "key", value: key },
+          { name: "question", value: query }],
+        options: {
+          returnVariables: false,
+          returnVariablesExpanded: false,
         },
-        body: JSON.stringify({
-          agent: 'markdown_2',
-          params: {
-            question: query,
-            key:key
-          },
-        }),
-      });
-      if(query == "¿En qué época del año se hace la transferencia al tesoro nacional?")
+      };
+
+      if (query == "¿En qué época del año se hace la transferencia al tesoro nacional?")
         setPrePrompts([
           {
             prompt: "¿Cuándo se deben realizar gestiones con los titulares cuentas para que no pasen al tesoro nacional?",
@@ -80,7 +85,12 @@ const BrouDemo: React.FC = () => {
             label: "¿En qué época del año se hace la transferencia al tesoro nacional?"
           }
         ]);
-      const data = await response.json();
+      const brouResponse = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = brouResponse.data;
       let text = data.answer.trim();
       if (!text.startsWith("```markdown")) {
         text = `\`\`\`markdown\n${text}\n\`\`\``;
@@ -94,6 +104,7 @@ const BrouDemo: React.FC = () => {
 
     setIsLoading(false);
   };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
     let y = 10;
@@ -121,31 +132,37 @@ const BrouDemo: React.FC = () => {
 
     doc.save('conversacion_neuralseek.pdf');
   };
+
   const handlePrePromptClick = (message: string) => {
     setQuery(message);
     handleChat();
   };
+
   const handleEditedMarkdown = async () => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const urlMaistro = `${baseUrl}/maistro`;
     const editedText = (document.getElementById('markdownEdit') as HTMLTextAreaElement)?.value;
     if (!editedText.trim() || !selectedChatId) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch('/demos-page/api/proxy_brou', {
-        method: 'POST',
+      const maistroCallBody = {
+        url_name: "staging-bank-instance",
+        agent: "markdown_repromt",
+        params: [
+          { name: "markdown", value: selectedMarkdown },
+          { name: "promt", value: editedText }],
+        options: {
+          returnVariables: false,
+          returnVariablesExpanded: false,
+        },
+      };
+      const brouResponse = await axios.post(urlMaistro, maistroCallBody, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          agent: 'markdown_repromt',
-          params: {
-            markdown: selectedMarkdown,
-            promt: editedText
-          },
-        }),
       });
-
-      const data = await response.json();
+      const data = await brouResponse.data.json();
       const newAnswer = `${data.answer}`;
 
       // Actualizar solo el chat correspondiente
@@ -165,7 +182,6 @@ const BrouDemo: React.FC = () => {
     setIsLoading(false);
   };
 
-
   return (
     <section
       className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white"
@@ -175,11 +191,8 @@ const BrouDemo: React.FC = () => {
           <div className="flex items-center space-x-3">
             <img src={`/demos-page/brou_logo.svg`} alt="NeuralSeek Logo" className="w-[400px]" />
           </div>
-          
-
         </header>
       </div>
-
       <>
         {chatHistory.length > 0 && (
           <div className="h-[55%] flex flex-col items-center">
@@ -220,8 +233,6 @@ const BrouDemo: React.FC = () => {
                 </div>
               </div>
             )}
-
-
             <div
               ref={chatContainerRef}
               className="w-[50%] mt-0 mb-5 overflow-y-auto p-4 rounded-xl bg-gray-50 dark:bg-gray-800"
@@ -259,25 +270,24 @@ const BrouDemo: React.FC = () => {
             </div>
           </div>
         )
-
         }
 
       </>
       <div className="grid grid-cols-2 gap-4 justify-items-center mb-4 m-auto w-[50%]">
-      {chatHistory.length == 0 && (
-            prePrompts?.map((item, index) => (
-              <div
-                key={index}
-                className="m-0 flex p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                onClick={() => handlePrePromptClick(item.prompt)}
-              >
-                <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">{item.label}</p>
-              </div>
-            ))
-          )}
+        {chatHistory.length == 0 && (
+          prePrompts?.map((item, index) => (
+            <div
+              key={index}
+              className="m-0 flex p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+              onClick={() => handlePrePromptClick(item.prompt)}
+            >
+              <Icon name={item.iconName} className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
+              <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">{item.label}</p>
+            </div>
+          ))
+        )}
       </div>
-        
+
       <div className={`w-[50%] mb-5 m-auto mt-0 ${chatHistory.length > 0 ? "mb-4 flex justify-center" : "flex items-center justify-center"}`}>
         <div className="relative w-[100%]">
           <textarea

@@ -7,7 +7,6 @@ import { IntegrationDetailModal } from '../../components/IntegrationDetail';
 import axios from 'axios';
 import { Ingestion } from '@/types/ingestion';
 import { DataSource } from '@/types/data.source';
-import { headers } from '@/constants';
 
 const Ingestions = () => {
 
@@ -53,47 +52,47 @@ const Ingestions = () => {
             .finally(() => setLoadingDataSources(false));
     }, []);
 
-    const handleUpdateData = async (source_id: string, year: string) => {
-        setFetchLoading((prev) => ({ ...prev, [source_id]: true }));
-        try {
-            const maistroCallBody = {
-                agent: "get_bank_data_by_year",
-                params: [{ name: "year", value: year }],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
-                }
-            };
+    // const handleUpdateData = async (source_id: string, year: string) => {
+    //     setFetchLoading((prev) => ({ ...prev, [source_id]: true }));
+    //     try {
+    //         const maistroCallBody = {
+    //             agent: "get_bank_data_by_year",
+    //             params: [{ name: "year", value: year }],
+    //             options: {
+    //                 returnVariables: false,
+    //                 returnVariablesExpanded: false
+    //             }
+    //         };
 
-            const responseIngestion = await axios.post(
-                "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
-                maistroCallBody,
-                { headers }
-            );
+    //         const responseIngestion = await axios.post(
+    //             "https://stagingapi.neuralseek.com/v1/SEC-demo/maistro",
+    //             maistroCallBody,
+    //             { headers }
+    //         );
 
-            // Ensure Maistro response has valid data before updating the database
-            if (!responseIngestion.data || Object.keys(responseIngestion.data).length === 0) {
-                throw new Error("Maistro returned empty data");
-            }
+    //         // Ensure Maistro response has valid data before updating the database
+    //         if (!responseIngestion.data || Object.keys(responseIngestion.data).length === 0) {
+    //             throw new Error("Maistro returned empty data");
+    //         }
 
-            const { answer } = responseIngestion.data;
+    //         const { answer } = responseIngestion.data;
 
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const url = `${baseUrl}/data-sources`;
+    //         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    //         const url = `${baseUrl}/data-sources`;
 
-            // Call API to update the database
-            const updateResponse = await axios.put(url, {
-                id: source_id,
-                data: answer
-            });
+    //         // Call API to update the database
+    //         const updateResponse = await axios.put(url, {
+    //             id: source_id,
+    //             data: answer
+    //         });
 
-            console.log(updateResponse)
-        } catch (error) {
-            console.error("Error updating data:", error);
-        } finally {
-            setFetchLoading((prev) => ({ ...prev, [source_id]: false }));
-        }
-    };
+    //         console.log(updateResponse)
+    //     } catch (error) {
+    //         console.error("Error updating data:", error);
+    //     } finally {
+    //         setFetchLoading((prev) => ({ ...prev, [source_id]: false }));
+    //     }
+    // };
 
     return (
         <div>
@@ -212,7 +211,7 @@ const Ingestions = () => {
                                         </div>
                                         <div
                                             className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                                            onClick={() => { handleUpdateData(dataSource._id, dataSource.year) }}
+                                            // onClick={() => { handleUpdateData(dataSource._id, dataSource.year) }}
                                         >
                                             <Icon name="loader" className="w-5 h-5 text-blue-500 dark:text-blue-400 mr-2" />
                                             <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">

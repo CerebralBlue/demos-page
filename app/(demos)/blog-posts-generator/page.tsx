@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from '@/components/Icon';
 import './BlogPostsGeneratorDemo.css';
+import axios from 'axios';
 
 interface BlogPost {
   Title: string;
@@ -22,7 +23,7 @@ const BlogPostsGeneratorDemo: React.FC = () => {
   const [newComment, setNewComment] = useState('');
 
   const [generated, setGenerated] = useState(false);
-  const [generatedPosts, setGeneratedPosts] = useState<BlogPost[]>([]); 
+  const [generatedPosts, setGeneratedPosts] = useState<BlogPost[]>([]);
 
   const [aiLoading, setAiLoading] = useState(false);
   const [aiMultipleLoading, setAiMultipleLoading] = useState(false);
@@ -36,18 +37,26 @@ const BlogPostsGeneratorDemo: React.FC = () => {
 
   const handleWriteWithAI = async () => {
     setAiLoading(true);
-    try {
-      const response = await fetch("/demos-page/api/testnew", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ agent: "generatePostWebScrape" })
-      });
-      const data = await response.json();
- 
-      const answerObj = JSON.parse(data.answer);
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const urlMaistro = `${baseUrl}/maistro`;
 
+    try {
+      const maistroCallBody = {
+        url_name: "staging-testnew",
+        agent: "generatePostWebScrape",
+        params: [],
+        options: {
+          returnVariables: false,
+          returnVariablesExpanded: false,
+        },
+      };
+      const blogpostsResponse = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const answerObj = JSON.parse(blogpostsResponse.data.answer);
 
       setTitle(answerObj.Title || '');
       setTags(answerObj.Tags || '');
@@ -63,18 +72,28 @@ const BlogPostsGeneratorDemo: React.FC = () => {
     }
   };
 
-
   const handleWriteWithAI10 = async () => {
     setAiMultipleLoading(true);
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const urlMaistro = `${baseUrl}/maistro`;
+
     try {
-      const response = await fetch("/demos-page/api/testnew", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+      const maistroCallBody = {
+        url_name: "staging-testnew",
+        agent: "generatePostWebScrape10",
+        params: [],
+        options: {
+          returnVariables: false,
+          returnVariablesExpanded: false,
         },
-        body: JSON.stringify({ agent: "generatePostWebScrape10" })
+      };
+      const blogpostsResponse = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      const data = await response.json();
+      const data = blogpostsResponse.data;
+
       let articlesArray: BlogPost[];
       try {
         articlesArray = JSON.parse(data.answer);
@@ -86,7 +105,7 @@ const BlogPostsGeneratorDemo: React.FC = () => {
         articlesArray = JSON.parse(fixedAnswer);
       }
       setGeneratedPosts(articlesArray);
- 
+
       setGenerated(false);
     } catch (error) {
       console.error("Error calling Write with AI Multiple Articles API:", error);
@@ -269,13 +288,13 @@ const BlogPostsGeneratorDemo: React.FC = () => {
                   <span className="font-semibold">Tags: </span>
                   {post.Tags
                     ? post.Tags.split(',').map((tag, i) => (
-                        <span
-                          key={i}
-                          className="inline-block bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1 mr-2 rounded"
-                        >
-                          {tag.trim()}
-                        </span>
-                      ))
+                      <span
+                        key={i}
+                        className="inline-block bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1 mr-2 rounded"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))
                     : <span>No tags provided</span>}
                 </div>
               </div>
@@ -303,13 +322,13 @@ const BlogPostsGeneratorDemo: React.FC = () => {
               <span className="font-semibold">Tags: </span>
               {tags
                 ? tags.split(',').map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-block bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1 mr-2 rounded"
-                    >
-                      {tag.trim()}
-                    </span>
-                  ))
+                  <span
+                    key={index}
+                    className="inline-block bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1 mr-2 rounded"
+                  >
+                    {tag.trim()}
+                  </span>
+                ))
                 : <span>No tags provided</span>}
             </div>
 

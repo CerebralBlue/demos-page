@@ -5,7 +5,7 @@ import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryDerrickLaw from '@/app/components/ChatHistoryDerrickLaw';
 
-export const derrickPrompts = [
+const derrickPrompts = [
     {
         "Record_Type": "EMS/Medical Transport Record",
         "DLF_Dept_Category": "ML",

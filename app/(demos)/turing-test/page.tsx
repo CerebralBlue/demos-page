@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import "./TuringDemo.css";
+import axios from "axios";
 
 interface QA {
   question: string;
@@ -82,20 +83,29 @@ const TuringDemo: React.FC = () => {
 
   // Fetch LLM answer from the selected agent.
   const fetchLLMAnswer = async (question: string): Promise<string> => {
-    const agent = selectedLLM;
 
-    const response = await fetch('/demos-page/api/turing', {
-      method: 'POST',
+    const agent = selectedLLM;
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const urlMaistro = `${baseUrl}/maistro`;
+
+    const maistroCallBody = {
+      url_name: "staging-turing",
+      agent: agent,
+      params: [
+        { name: "question", value: question },
+      ],
+      options: {
+        returnVariables: true,
+        returnVariablesExpanded: true,
+      },
+    };
+    const turingResponse = await axios.post(urlMaistro, maistroCallBody, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        agent,
-        params: [{ name: "question", value: question }],
-      }),
     });
-    const data = await response.json();
-    return data.answer || `No answer received from ${agent}.`;
+
+    return turingResponse.data.answer || `No answer received from ${agent}.`;
   };
 
   // Build the two answer options: human and LLM-generated.
