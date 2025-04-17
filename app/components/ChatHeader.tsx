@@ -19,7 +19,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ title, subtitle, image, handleP
     return (
         <header className="flex flex-col items-center space-y-3 mb-2">
             <div className="flex items-center space-x-3">
-                <img src={`/demos-page/${image ? image : "neuralseek_logo.png"}`} alt="NeuralSeek Logo" className="w-20 h-20" />
+                <img src={`/demos-page/${image ? image : "neuralseek_logo.png"}`} alt="NeuralSeek Logo" className="w-30 h-20" />
                 <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">{title}</h1>
             </div>
             <p className="text-center text-lg">{subtitle}</p>

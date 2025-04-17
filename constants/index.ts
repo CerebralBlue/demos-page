@@ -15,7 +15,7 @@ export const sidebarLinks = [
     category: "Reporting Use Cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "pencil",
         route: "/sec-writer",
         label: "SEC Writer Demo",
       },
@@ -45,7 +45,7 @@ export const sidebarLinks = [
     category: "Translation Use Cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "document-text",
         route: "/translator",
         label: "Translator Demo",
       },
@@ -65,7 +65,7 @@ export const sidebarLinks = [
     category: "NS Features",
     links: [
       {
-        imgURL: "paper-clip",
+        imgURL: "computer",
         route: "/turing-test",
         label: "Turing Test",
       },
@@ -80,12 +80,12 @@ export const sidebarLinks = [
     category: "Writing Use cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "pencil",
         route: "/sow-writer",
         label: "SOW Writer Demo",
       },
       {
-        imgURL: "users",
+        imgURL: "pencil",
         route: "/rfp-writer",
         label: "RFP Writer Demo",
       },
@@ -105,7 +105,7 @@ export const sidebarLinks = [
     category: "Docs Analyzer Uses Cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "document-text",
         route: "/doc-analyzer",
         label: "DOC Analyzer Demo",
       },
@@ -115,7 +115,7 @@ export const sidebarLinks = [
     category: "Search Engine Use Cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "search",
         route: "/search-engine",
         label: "Search Engine Demo",
       },
@@ -125,7 +125,7 @@ export const sidebarLinks = [
     category: "PII Use Cases",
     links: [
       {
-        imgURL: "users",
+        imgURL: "card",
         route: "/pii-analyzer",
         label: "PII Analyzer Demo"
       },
@@ -148,6 +148,11 @@ export const sidebarLinks = [
         imgURL: "users",
         route: "/derrick-demo",
         label: "Derrick Law Demo",
+      },
+      {
+        imgURL: "users",
+        route: "/exentec-demo",
+        label: "Exentec Demo",
       }
     ],
   }

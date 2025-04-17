@@ -1,5 +1,5 @@
 import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon, ChevronDoubleDownIcon, ChevronUpIcon} from '@heroicons/react/24/outline';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, ComputerIcon, IdCardIcon, SearchIcon } from 'lucide-react';
 
 const Icon = ({ name, className }: { name: string; className?: string }) => {
   switch (name) {
@@ -73,6 +73,12 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <ChevronDownIcon className={className} />;
     case 'chevron-up':
       return <ChevronUpIcon className={className} />;
+    case 'card':
+      return <IdCardIcon className={className} />;
+    case 'computer':
+      return <ComputerIcon className={className} />;
+    case 'search':
+      return <SearchIcon className={className} />;
     default:
       return null;
   }

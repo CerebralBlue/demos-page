@@ -15,6 +15,11 @@ const urls = [
         name: "staging-derrick-law-demo",
         url: "https://stagingconsoleapi.neuralseek.com/derrick-law-demo/exploreUpload",
         api_key: "f2d85bde-aa86902a-aea925ba-ca0bbb1e"
+    },
+    {
+        name: "staging-exentec-demo",
+        url: "https://stagingconsoleapi.neuralseek.com/exentec-demo/exploreUpload",
+        api_key: "cd25eca8-ac1a97c9-ded59613-045c4f90"
     }
 ];
 

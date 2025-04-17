@@ -33,8 +33,13 @@ const urls = [
   },
   {
     name: "staging-bank-instance",
-    url: "https://stagingapi.neuralseek.com/v1/bank-instance/maistro/",
+    url: "https://stagingapi.neuralseek.com/v1/bank-instance/maistro",
     api_key: "754fb875-e0794f9d-e6b03a46-07f95776"
+  },
+  {
+    name: "staging-exentec-demo",
+    url: "https://stagingapi.neuralseek.com/v1/exentec-demo/maistro",
+    api_key: "cd25eca8-ac1a97c9-ded59613-045c4f90"
   }
 ]
 
