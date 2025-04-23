@@ -5,6 +5,7 @@ import { Mic } from 'lucide-react';
 
 export default function VoiceChat() {
   const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [appointmentsData, setAppointmentsData] = useState([
     { day: 'May 1st', hour: '4:00PM', appointment: 'Book' },
     { day: 'May 1st', hour: '5:00PM', appointment: 'Book' },
@@ -33,6 +34,7 @@ export default function VoiceChat() {
   const handleStop = async () => {
     if (mediaRecorderRef.current && isRecording) {
       setIsRecording(false);
+      setIsProcessing(true);
       mediaRecorderRef.current.onstop = async () => {
         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
         const audioBuffer = await audioBlob.arrayBuffer();
@@ -58,6 +60,8 @@ export default function VoiceChat() {
         const url = URL.createObjectURL(audioData);
         const audio = new Audio(url);
         audio.play();
+
+        setIsProcessing(false);
       };
 
       mediaRecorderRef.current.stop();
@@ -86,12 +90,17 @@ export default function VoiceChat() {
       <div className="flex gap-8 p-6">
         <div className="flex items-center justify-center w-3/5">
           <button
-            onMouseDown={handleStart}
-            onMouseUp={handleStop}
-            onTouchStart={handleStart}
-            onTouchEnd={handleStop}
+            onMouseDown={!isProcessing ? handleStart : undefined}
+            onMouseUp={!isProcessing ? handleStop : undefined}
+            onTouchStart={!isProcessing ? handleStart : undefined}
+            onTouchEnd={!isProcessing ? handleStop : undefined}
+            disabled={isProcessing}
             className={`rounded-full w-72 h-72 flex items-center justify-center transition duration-200 shadow-lg ${
-              isRecording ? 'bg-red-600 animate-pulse' : 'bg-blue-600'
+              isProcessing
+                ? 'bg-gray-400 cursor-not-allowed'
+                : isRecording
+                ? 'bg-red-600 animate-pulse'
+                : 'bg-blue-600'
             }`}
           >
             <Mic size={92} color="white" />
