@@ -13,13 +13,29 @@ const SOWWriterDemo: React.FC = () => {
         setLoading(true);
         setResult({ answer: '', generation: '', warningMessages: [] });
         try {
-            const response = await axios.post('/demos-page/api/proxy', {
-                agent: "SOW_Agent",
-                params: {
-                    projectName: projectName,
-                    keywords: keywords
-                }
-            });
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+      const maistroCallBody = {
+        url_name: "NS-ES-V2",
+        agent: "SOW_Agent",
+        params: [
+          {
+            name: "projectName",
+            value: projectName
+          },
+          {
+            name:"keywords",
+            value: keywords
+          }
+        ]
+    };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+           
             setResult(response.data);
             console.log(response.data);
         } catch (error) {

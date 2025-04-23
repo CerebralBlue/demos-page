@@ -21,13 +21,29 @@ const TroubleshooterDemo: React.FC = () => {
         setLoading(true);
         setResult(null);
         try {
-            const response = await axios.post('/demos-page/api/proxy', {
-                agent: 'troubleshoot_agent',
-                params: {
-                    troubleshoot_problem: troubleshootProblem,
-                    troubleshoot_tried: triedList,
-                },
-            });
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+      const maistroCallBody = {
+        url_name: "NS-ES-V2",
+        agent: "troubleshoot_agent",
+        params: [
+          {
+            name: "troubleshoot_problem",
+            value: troubleshootProblem
+          },
+          {
+            name:"troubleshoot_tried",
+            value: triedList
+          }
+        ]
+    };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+            
             setResult(response.data.answer);
         } catch (error) {
             console.error('Error fetching data:', error);

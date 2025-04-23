@@ -79,8 +79,8 @@ const PIIAnalyzerDemo = () => {
         setIsLoading(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlUpload = `${baseUrl}/maistro/upload-file`;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlUpload = `${baseUrl}/neuralseek/upload-file`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         try {
             const formData = new FormData();
@@ -128,7 +128,7 @@ const PIIAnalyzerDemo = () => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const urlCreatePdf = `${baseUrl}/create-pdf`;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         const maistroCallBody = {
             url_name: "staging-pii-detection-demo",
@@ -183,7 +183,7 @@ const PIIAnalyzerDemo = () => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const urlCreatePdf = `${baseUrl}/create-pdf`;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         const piiPayload = {
             "PII.pii": piiVariables?.variables["PII.pii"],

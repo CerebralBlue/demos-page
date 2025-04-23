@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import './limo.css';
 import Icon from '@/components/Icon';
+import axios from "axios";
 
 interface IntroResponse {
   answer: string;
@@ -17,8 +18,12 @@ const LimosDemo: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const bookingRef = useRef<HTMLDivElement>(null);
   const [introData, setIntroData] = useState<string>("");
+  const topRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [itinerary, setItinerary] = useState<{ place: string; time: string }[]>([]);
+  const [usedTimes, setUsedTimes] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   type BookingResult = {
     place: string;
@@ -33,15 +38,26 @@ const LimosDemo: React.FC = () => {
   useEffect(() => {
     const fetchIntro = async () => {
       try {
-        const response = await fetch("/demos-page/api/proxy", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            agent: "limos_intro",
-            params: { city: "Los Angeles" },
-          }),
-        });
-        const data: IntroResponse = await response.json();
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+        const maistroCallBody = {
+          url_name: "NS-ES-V2",
+          agent: "limos_intro",
+          params: [
+            {
+              name: "city",
+              value: "Los Angeles"
+            }
+          ]
+      };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+  
+        const data: IntroResponse = await response.data;
 
         let cleanedText = data.answer
           .replace(/^```markdown\n?/, "")
@@ -67,16 +83,30 @@ const LimosDemo: React.FC = () => {
     // Lógica para mensajes escritos manualmente por el usuario
     if (!customQuery) {
       try {
-        const response = await fetch("/demos-page/api/proxy", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            agent: "limos-chat",
-            params: { place: "Los Angeles", answer: q },
-          }),
-        });
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
-        const data: BookingResponse = await response.json();
+        const maistroCallBody = {
+          url_name: "NS-ES-V2",
+          agent: "limos-chat",
+          params: [
+            {
+              name: "place",
+              value: "Los Angeles"
+            },
+            {
+              name:"answer",
+              value: q
+            }
+          ]
+      };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+        const data: BookingResponse = await response.data;
         setResults((prev) => [
           ...prev,
           { place: q, rawAnswer: data.answer },
@@ -96,16 +126,31 @@ const LimosDemo: React.FC = () => {
 
     // Lógica para ítems sugeridos o botones predefinidos
     try {
-      const response = await fetch("/demos-page/api/proxy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agent: "booking",
-          params: { place: q, city: "Los Angeles" },
-        }),
-      });
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
-      const data: BookingResponse = await response.json();
+      const maistroCallBody = {
+        url_name: "NS-ES-V2",
+        agent: "booking",
+        params: [
+          {
+            name: "place",
+            value: q
+          },
+          {
+            name:"city",
+            value: "Los Angeles"
+          }
+        ]
+    };
+
+    const response = await axios.post(urlMaistro, maistroCallBody, {
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  });
+
+      const data: BookingResponse = await response.data;
       let answer = data.answer.trim();
 
       answer = answer.replace(/\.(\s|\}|$)/, ".0$1");
@@ -147,16 +192,22 @@ const LimosDemo: React.FC = () => {
   };
 
   const handleBookingTime = (index: number, time: string) => {
-    setResults((prev) =>
-      prev.map((r, i) =>
-        i === index ? { ...r, bookingMessage: `Okay, I'll add that to the itinerary. See you at ${time}.` } : r
-      )
-    );
+  const selectedPlace = results[index].place;
 
-    setTimeout(() => {
-      mapRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
+  setResults((prev) =>
+    prev.map((r, i) =>
+      i === index ? { ...r, bookingMessage: `Okay, I'll add that to the itinerary. See you at ${time}.` } : r
+    )
+  );
+
+  setItinerary((prev) => [...prev, { place: selectedPlace, time }]);
+  setUsedTimes((prev) => [...prev, time]);
+  setShowSuggestions(true);
+
+  setTimeout(() => {
+    mapRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, 100);
+};
 
   const CustomMarkdownComponents = {
     ol: ({ children }: { children: React.ReactNode }) => (
@@ -191,18 +242,24 @@ const LimosDemo: React.FC = () => {
 
   return (
     <section className="flex flex-col items-center p-6 dark:bg-gray-900 dark:text-white">
-      <div className="flex items-center justify-center mb-6">
+      
+      <div className="flex w-full max-w-6xl space-x-6">
+        <div className="flex-1">
+        <div className="flex items-center justify-center mb-6">
         <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-12 h-12 mr-3" />
         <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">Accredited Limo</h1>
       </div>
 
       <div
+        
         className="w-full max-w-5xl flex-1 overflow-y-auto mb-0 p-4 bg-white dark:bg-gray-800 rounded-lg shadow space-y-4"
         style={{ maxHeight: "60vh" }}
       >
         {introData && (
-          <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded">
+          <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded"
+          ref={topRef}>
             <ReactMarkdown
+            
               remarkPlugins={[remarkGfm]}
               components={CustomMarkdownComponents}
             >
@@ -234,58 +291,53 @@ const LimosDemo: React.FC = () => {
                 <div className="mt-4">
                   <h2 className="text-xl font-bold mb-2">Select a preferred time range:</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {availableTimes.map((time) => (
-                      <button
-                        key={time}
-                        onClick={() => handleBookingTime(index, time)}
-                        className="p-3 w-full border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                      >
-                        {time}
-                      </button>
-                    ))}
+                  {availableTimes.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => handleBookingTime(index, time)}
+                      disabled={usedTimes.includes(time)}
+                      className={`p-3 w-full border rounded-full transition cursor-pointer 
+                        ${usedTimes.includes(time)
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}>
+                      {time}
+                    </button>
+                  ))}
                   </div>
                   {res.bookingMessage && (
                     <div className="mt-4 p-3 bg-green-100 text-green-800 rounded">
                       {res.bookingMessage} Do you need anything else?
                     </div>
                   )}
+                 
                 </div>
+                
               </>
             )}
           </div>
+          
         ))}
+         {showSuggestions && (
+                    <div className="mt-6">
+                      <button
+                        onClick={() => {setShowSuggestions(false);topRef.current?.scrollIntoView({ behavior: "smooth" });}}
+                        className="mr-4 p-2 bg-blue-500 text-white rounded">Visit another place</button>
+                      <button
+                        className="p-2 bg-green-600 text-white rounded">Finish</button>
+                    </div>
+                  )}
       </div>
-
-      <div className="w-full max-w-5xl mt-5 mb-5 relative">
-        <textarea
-          rows={3}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSendQuery();
-            }
-          }}
-          className="w-full p-3 rounded-lg border bg-gray-100 dark:bg-gray-800 dark:border-gray-700 focus:outline-none"
-          placeholder="Ask about booking details..."
-        />
-        <div className="absolute w-[100px] right-0 right-0 flex justify-between items-end p-4 bottom-0">
-          <button
-            onClick={() => handleSendQuery()}
-            disabled={isLoading}
-            className={`p-2 rounded-lg transition ml-auto ${isLoading
-              ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'}`}
-            title={isLoading ? "Processing..." : "Send"}
-          >
-            {isLoading ? (
-              <Icon name="loader" className="w-5 h-5 animate-spin" />
-            ) : (
-              <Icon name="paper-plane" className="w-5 h-5" />
-            )}
-          </button>
+           </div>
+        <div className="w-1/5 p-4 bg-gray-100 dark:bg-gray-700 rounded">
+          <h2 className="text-xl font-bold mb-4">My itinerary</h2>
+          {itinerary.map((item, i) => (
+            <div key={i} className="mb-2">
+              <p><strong>{item.time}</strong> - {item.place}</p>
+            </div>
+          ))}
         </div>
       </div>
+      
     </section>
   );
 };

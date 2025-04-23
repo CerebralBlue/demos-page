@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Icon from '@/components/Icon';
+import axios from 'axios';
 
 const TranslatorDemo: React.FC = () => {
     const [language1, setLanguage1] = useState('en');
@@ -13,21 +14,35 @@ const TranslatorDemo: React.FC = () => {
         setLoading(true);
         setTranslatedText('');
         try {
-            const response = await fetch('/demos-page/api/proxy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    agent: 'translate_agent',
-                    params: {
-                        language1,
-                        language2,
-                        text,
-                    },
-                }),
-            });
-            const data = await response.json();
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+      const maistroCallBody = {
+        url_name: "NS-ES-V2",
+        agent: "translate_agent",
+        params: [
+          {
+            name: "language1",
+            value: language1
+          },
+          {
+            name:"language2",
+            value: language2
+          },
+          {
+            name:"text",
+            value: text
+          }
+        ]
+    };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+            
+            const data = await response.data;
             setTranslatedText(data.answer);
         } catch (error) {
             console.error('Error translating text:', error);

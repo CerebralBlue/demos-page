@@ -39,7 +39,7 @@ const ChatHistorySec: React.FC<ChatHistorySecProps> = ({ messages, setChatHistor
     const handleFileSelection = async (e: React.ChangeEvent<HTMLSelectElement>) => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
         const urlReports = `${baseUrl}/reports`;
 
         const fileName = e.target.value;

@@ -48,8 +48,8 @@ const SECDemo = () => {
     const handleChat = async (message?: string) => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlUpload = `${baseUrl}/maistro/upload-file`;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlUpload = `${baseUrl}/neuralseek/upload-file`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
         const urlIngestion = `${baseUrl}/ingestions/create`;
 
         let maistroCallBody;

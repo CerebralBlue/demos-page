@@ -5,7 +5,7 @@ import Icon from "@/components/Icon";
 import ChatHeader from "../../components/ChatHeader";
 import axios from "axios";
 
-export default function FileChatApp() {
+export default function DocAnalyzerDemo() {
   const [files, setFiles] = useState<File[]>([]);
   const [query, setQuery] = useState("");
   const [chatHistory, setChatHistory] = useState<{ sender: string; message: string }[]>([]);
@@ -66,22 +66,30 @@ export default function FileChatApp() {
         .join(",");
 
       // const cleanedQuery = query.replace(/@\S+/g, '').trim();
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
-      const response = await fetch('/demos-page/api/proxy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          agent: "docAnalyzer",
-          params: {
-            fileNames: mentionedFileNames,
-            query: query
+      const maistroCallBody = {
+        url_name: "NS-ES-V2",
+        agent: "docAnalyzer",
+        params: [
+          {
+            name: "query",
+            value: query
+          },
+          {
+            name:"fileNames",
+            value: mentionedFileNames
           }
-        }),
-      });
+        ]
+    };
+      const response = await axios.post(urlMaistro, maistroCallBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
-      const data = await response.json();
+      const data = await response.data;
       console.log("Search response:", data);
       setChatHistory((prev) => [...prev, { sender: "user", message: query }, { sender: "bot", message: data.answer || "No response" }]);
     } catch (error) {

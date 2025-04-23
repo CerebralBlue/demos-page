@@ -102,13 +102,18 @@ export const sidebarLinks = [
     ],
   },
   {
-    category: "Docs Analyzer Uses Cases",
+    category: "Docs Analyzer Use Cases",
     links: [
       {
         imgURL: "document-text",
         route: "/doc-analyzer",
         label: "DOC Analyzer Demo",
       },
+      {
+        imgURL: "document-text",
+        route: "/doc-analyzer-3",
+        label: "DOC Analyzer 3 Demo",
+      }
     ],
   },
   {

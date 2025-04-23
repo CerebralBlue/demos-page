@@ -51,7 +51,7 @@ const BrouDemo: React.FC = () => {
 
   const handleChat = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const urlMaistro = `${baseUrl}/maistro`;
+    const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
     if (!query.trim()) return;
     setIsLoading(true);
@@ -140,7 +140,7 @@ const BrouDemo: React.FC = () => {
 
   const handleEditedMarkdown = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const urlMaistro = `${baseUrl}/maistro`;
+    const urlMaistro = `${baseUrl}/neuralseek/maistro`;
     const editedText = (document.getElementById('markdownEdit') as HTMLTextAreaElement)?.value;
     if (!editedText.trim() || !selectedChatId) return;
 
