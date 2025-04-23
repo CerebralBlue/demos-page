@@ -3,8 +3,6 @@
 import React, { useRef, useState } from 'react';
 import { Mic } from 'lucide-react';
 
-
-
 export default function VoiceChat() {
   const [isRecording, setIsRecording] = useState(false);
   const [appointmentsData, setAppointmentsData] = useState([
@@ -55,7 +53,7 @@ export default function VoiceChat() {
         if (updatedJson) {
           const parsedJson = JSON.parse(updatedJson);
           setAppointmentsData(parsedJson);
-          console.log(parsedJson)
+          console.log(parsedJson);
         }
         const url = URL.createObjectURL(audioData);
         const audio = new Audio(url);
@@ -73,41 +71,50 @@ export default function VoiceChat() {
   }, {} as Record<string, { hour: string; appointment: string }[]>);
 
   return (
-    
-    <div className="flex gap-8 p-6">
-      <div className="flex items-center justify-center mb-6">
-        <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-12 h-12 mr-3" />
-        <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">AWS</h1>
-      </div>
-      <div className="flex items-center justify-center w-3/5">
-      
-        <button
-          onMouseDown={handleStart}
-          onMouseUp={handleStop}
-          onTouchStart={handleStart}
-          onTouchEnd={handleStop}
-          className={`rounded-full w-72 h-72 flex items-center justify-center transition duration-200 ${
-            isRecording ? 'bg-red-600 animate-pulse' : 'bg-blue-600'
-          }`}
-        >
-          <Mic size={92} color="white" />
-        </button>
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <div className="flex items-center justify-center mb-6 mt-5">
+        <img
+          src="/demos-page/neuralseek_logo.png"
+          alt="NeuralSeek Logo"
+          className="w-12 h-12 mr-3"
+        />
+        <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">
+          AWS Voice Model Chatbot
+        </h1>
       </div>
 
-      <div className="w-2/5 bg-gray-100 rounded-xl p-4 shadow-md overflow-auto">
-        <h2 className="text-lg font-semibold mb-2">Upcoming Appointments</h2>
-        {Object.entries(groupedAppointments).map(([day, appointments]) => (
-          <div key={day} className="mb-3">
-            <h3 className="font-bold text-blue-700">{day}</h3>
-            <ul className="ml-4 list-disc">
-              {appointments.map(({ hour, appointment }, index) => (
-                <li key={index}>
-                  <strong>{hour}</strong>: {appointment}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <div className="flex gap-8 p-6">
+        <div className="flex items-center justify-center w-3/5">
+          <button
+            onMouseDown={handleStart}
+            onMouseUp={handleStop}
+            onTouchStart={handleStart}
+            onTouchEnd={handleStop}
+            className={`rounded-full w-72 h-72 flex items-center justify-center transition duration-200 shadow-lg ${
+              isRecording ? 'bg-red-600 animate-pulse' : 'bg-blue-600'
+            }`}
+          >
+            <Mic size={92} color="white" />
+          </button>
+        </div>
+
+        <div className="w-2/5 bg-gray-100 dark:bg-gray-800 rounded-xl p-4 shadow-md overflow-auto">
+          <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+            Upcoming Appointments
+          </h2>
+          {Object.entries(groupedAppointments).map(([day, appointments]) => (
+            <div key={day} className="mb-3">
+              <h3 className="font-bold text-blue-700 dark:text-blue-300">{day}</h3>
+              <ul className="ml-4 list-disc">
+                {appointments.map(({ hour, appointment }, index) => (
+                  <li key={index}>
+                    <strong>{hour}</strong>: {appointment}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
