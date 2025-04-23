@@ -5,7 +5,7 @@ import Icon from "@/components/Icon";
 import ChatHeader from "../../components/ChatHeader";
 import axios from "axios";
 
-export default function FileChatApp() {
+export default function DocAnalyzerDemo() {
   const [files, setFiles] = useState<File[]>([]);
   const [query, setQuery] = useState("");
   const [chatHistory, setChatHistory] = useState<{ sender: string; message: string }[]>([]);

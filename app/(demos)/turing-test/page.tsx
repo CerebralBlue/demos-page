@@ -86,7 +86,7 @@ const TuringDemo: React.FC = () => {
 
     const agent = selectedLLM;
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const urlMaistro = `${baseUrl}/maistro`;
+    const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
     const maistroCallBody = {
       url_name: "staging-turing",

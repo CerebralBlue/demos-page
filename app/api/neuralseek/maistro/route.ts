@@ -40,7 +40,12 @@ const urls = [
     name: "staging-exentec-demo",
     url: "https://stagingapi.neuralseek.com/v1/exentec-demo/maistro",
     api_key: "cd25eca8-ac1a97c9-ded59613-045c4f90"
-  }
+  },
+  {
+    name: "staging-doc-analyzer-demo",
+    url: "https://stagingapi.neuralseek.com/v1/doc-analyzer/maistro",
+    api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
+  },
 ]
 
 export async function POST(req: NextRequest) {

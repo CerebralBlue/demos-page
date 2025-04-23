@@ -38,7 +38,7 @@ const BlogPostsGeneratorDemo: React.FC = () => {
   const handleWriteWithAI = async () => {
     setAiLoading(true);
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const urlMaistro = `${baseUrl}/maistro`;
+    const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
     try {
       const maistroCallBody = {
@@ -75,7 +75,7 @@ const BlogPostsGeneratorDemo: React.FC = () => {
   const handleWriteWithAI10 = async () => {
     setAiMultipleLoading(true);
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const urlMaistro = `${baseUrl}/maistro`;
+    const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
     try {
       const maistroCallBody = {

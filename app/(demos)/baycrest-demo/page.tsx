@@ -25,7 +25,7 @@ const BayCrestDemo = () => {
     const handleChat = async (message?: string) => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlMaistro = `${baseUrl}/maistro`;
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         const queryToUse = message ?? query;
         if (!queryToUse.trim()) return;
