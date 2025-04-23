@@ -1,6 +1,5 @@
 import { Readable, PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
-ffmpeg.setFfmpegPath('/usr/bin/ffmpeg'); // o la ruta que necesites
 
 export function convertWebmToPcm(buffer: Buffer): Promise<Buffer> {
   return new Promise((resolve, reject) => {
