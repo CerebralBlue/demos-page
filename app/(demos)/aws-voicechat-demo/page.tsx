@@ -73,8 +73,14 @@ export default function VoiceChat() {
   }, {} as Record<string, { hour: string; appointment: string }[]>);
 
   return (
+    
     <div className="flex gap-8 p-6">
+      <div className="flex items-center justify-center mb-6">
+        <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-12 h-12 mr-3" />
+        <h1 className="text-3xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">AWS</h1>
+      </div>
       <div className="flex items-center justify-center w-3/5">
+      
         <button
           onMouseDown={handleStart}
           onMouseUp={handleStop}
