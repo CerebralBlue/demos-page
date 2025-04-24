@@ -138,6 +138,11 @@ export default function VoiceChat() {
               <option value="es-US">es-US</option>
             </select>
           </div>
+          <div className='flex'>
+            <span className='m-auto'>
+              {command !== "" ? "Received audio: " + command : ""}
+            </span>
+          </div>
         </div>
       </div>
     </div>
