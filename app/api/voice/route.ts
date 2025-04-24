@@ -94,7 +94,6 @@ export async function POST(req: NextRequest) {
   const jsonResponse = JSON.parse(respuesta);
   let answer = jsonResponse.answer;
   console.log(answer);
-  let cleanedAnswer = answer.trim();
   let textToSpeak = '';
   let updatedJson = null;
   
@@ -162,7 +161,7 @@ const responsePayload = new NextResponse(audioBufferResponse, {
 if (updatedJson) {
   responsePayload.headers.set('x-updated-json', JSON.stringify(updatedJson));
 }
-
+responsePayload.headers.set('x-text-to-speak', transcriptText);
 return responsePayload;
 
 }
