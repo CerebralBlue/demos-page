@@ -136,7 +136,7 @@ export default function VoiceChat() {
           <div className='flex'>
             <span className='m-auto'>
                 {command != "" ? 
-                ("Resived audio: " + command)
+                ("Received audio: " + command)
                 :
                 ("")}
             </span>
