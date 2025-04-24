@@ -1,6 +1,6 @@
 import { Readable, PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
-ffmpeg.setFfmpegPath('H:/Descargas/ffmpeg-7.1.1-full_build/ffmpeg-7.1.1-full_build/bin/ffmpeg.exe');
+// ffmpeg.setFfmpegPath('H:/Descargas/ffmpeg-7.1.1-full_build/ffmpeg-7.1.1-full_build/bin/ffmpeg.exe');
 
 export function convertWebmToPcm(buffer: Buffer): Promise<Buffer> {
   return new Promise((resolve, reject) => {
