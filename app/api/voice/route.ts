@@ -75,9 +75,9 @@ export async function POST(req: NextRequest) {
   }
   console.log(transcriptText)
 
-  const apiResponse = await fetch('https://stagingapi.neuralseek.com/v1/NS-ES-V2/maistro/', {
+  const apiResponse = await fetch('https://stagingapi.neuralseek.com/v1/aws-voice/maistro/', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': 'e907252c-a14c702d-a0ae2b3b-490872cd' },
+    headers: { 'Content-Type': 'application/json', 'apikey': '0b6d2abc-6fbc5da8-68e497c5-101d6df9' },
     body: JSON.stringify(
       {
         agent: "bookingHours", 
