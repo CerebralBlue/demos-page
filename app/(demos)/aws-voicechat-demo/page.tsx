@@ -57,7 +57,7 @@ export default function VoiceChat() {
 
         const audioData = await res.blob();
         const updatedJson = res.headers.get('x-updated-json');
-        setCommand(res.headers.get('x-text-to-speak') ?? "");
+        setCommand("");
         if (updatedJson) {
           const parsedJson = JSON.parse(updatedJson);
           setAppointmentsData(parsedJson);
