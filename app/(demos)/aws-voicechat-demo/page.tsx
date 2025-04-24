@@ -8,6 +8,7 @@ export default function VoiceChat() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [guideText, setGuideText] = useState("Hold the button for speaking");
   const [command, setCommand] = useState("");
+  const [language, setLanguage] = useState("en-US"); // Nuevo estado
   const [appointmentsData, setAppointmentsData] = useState([
     { day: 'May 1st', hour: '4:00PM', appointment: 'Book' },
     { day: 'May 1st', hour: '5:00PM', appointment: 'Book' },
@@ -47,6 +48,7 @@ export default function VoiceChat() {
         const formData = new FormData();
         formData.append('file', audioBlob);
         formData.append('jsonData', JSON.stringify(appointmentsData));
+        formData.append('language', language); // Enviar lenguaje
         setGuideText("Processing...");
         const res = await fetch(urlC, {
           method: 'POST',
@@ -92,14 +94,11 @@ export default function VoiceChat() {
       </div>
 
       <div className="flex gap-8 p-6">
-
-
         <div className="w-2/5 m-auto bg-gray-100 dark:bg-gray-800 rounded-xl p-4 shadow-md overflow-auto">
           <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
             Upcoming Appointments
           </h2>
           <div>
-
             {Object.entries(groupedAppointments).map(([day, appointments]) => (
               <div key={day} className="mb-3">
                 <h3 className="font-bold text-blue-700 dark:text-blue-300">{day}</h3>
@@ -113,7 +112,7 @@ export default function VoiceChat() {
               </div>
             ))}
           </div>
-          <div className="flex w-full rounded-full bg-blue-100 p-1 dark:bg-gray-900">
+          <div className="flex w-full items-center justify-between rounded-full bg-blue-100 p-1 dark:bg-gray-900">
             <button
               onMouseDown={!isProcessing ? handleStart : undefined}
               onMouseUp={!isProcessing ? handleStop : undefined}
@@ -129,16 +128,19 @@ export default function VoiceChat() {
             >
               <Mic size={22} color="white" />
             </button>
-            <span className='m-auto'>
-              {guideText}
-            </span>
+            <span className="mx-4">{guideText}</span>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="rounded-full p-1 me-2 text-sm bg-white dark:bg-gray-700 dark:text-white border dark:border-gray-600"
+            >
+              <option value="en-US">en-US</option>
+              <option value="es-US">es-US</option>
+            </select>
           </div>
           <div className='flex'>
             <span className='m-auto'>
-                {command != "" ? 
-                ("Received audio: " + command)
-                :
-                ("")}
+              {command !== "" ? "Received audio: " + command : ""}
             </span>
           </div>
         </div>

@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
   console.log(formData)
   const file = formData.get('file') as Blob | null;
   const jsonData = formData.get('jsonData') as string | null;
+  const language = formData.get('language') as string | null;
+  if (!language) {
+    throw new Error("Missing language parameter");
+  }
     const webmBuffer = Buffer.from(await file!.arrayBuffer());
     const pcmBuffer = await convertWebmToPcm(webmBuffer);
     const chunks = splitBuffer(pcmBuffer);
     const command = new StartStreamTranscriptionCommand({
-    LanguageCode: 'es-US',
+      LanguageCode: language as "en-US" | "es-US", 
     MediaEncoding: 'pcm',
     MediaSampleRateHertz: 16000,
     AudioStream: async function* () {

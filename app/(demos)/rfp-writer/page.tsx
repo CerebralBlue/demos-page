@@ -202,6 +202,7 @@ const RFPWriterDemo: React.FC = () => {
     }
     const handleFileUpload = async (filename: string, file: File) => {
         setFileName(filename);
+        console.log(filename)
         const file_uploaded_div = document.getElementById('file_name');
         const file_metadata_div = document.getElementById('file_meta');
 
@@ -382,126 +383,126 @@ const RFPWriterDemo: React.FC = () => {
     };
 
     return (
-        // <div className=" text-black flex flex-col items-center justify-center mt-5 m-auto">
-        //     <div className="grid grid-cols-1 gap-8 max-w-6xl w-full items-center justify-center">
-        //         <div className="flex items-center space-x-3 w-full justify-center">
-        //             <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
-        //             <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">RFP Writer</h1>
-        //         </div>
-        //         <div id="upload_section" style={{ display: fileName ? 'none' : 'block' }}>
-
-
-        //             <section className="mt-12">
-        //                 <h2 className="text-2xl font-semibold mb-4">How to use this demo</h2>
-        //                 <p>
-        //                     First, upload a document having a tabular structure for the work. Valid file types are *.csv. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
-        //                 </p>
-        //             </section>
-        //             <br />
-        //             <div
-        //                 className="border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
-        //                 onDrop={handleDrop}
-        //                 onDragOver={handleDragOver}
-        //                 onClick={() => fileInputRef.current?.click()}
-        //                 onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
-        //                 onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
-        //             >
-        //                 {fileName ? (
-        //                     <span className="text-lg">Selected File: {fileName}</span>
-        //                 ) : (
-        //                     <span className="text-lg">Drag & drop your CSV file here or click to upload</span>
-        //                 )}
-        //                 <input
-        //                     ref={fileInputRef}
-        //                     type="file"
-        //                     className="hidden"
-        //                     onChange={handleFileChange}
-        //                     accept=".csv"
-        //                 />
-        //             </div>
-        //         </div>
-        //         <div>
-        //             <div id="file_name" style={{ display: 'none' }}></div>
-        //             <div id="file_meta">
-        //             {tableComponent}
-        //             {tableComponent && (
-        //                 <button
-        //                     className='button'
-        //                     style={{ padding: '8px', width: '100%', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' }}
-        //                     onClick={downloadTableContent}>
-        //                     Download Content
-        //                 </button>
-        //             )}
-        //             </div>
-        //             <div id="file_data" style={{ display: 'none' }}></div>
-        //         </div>
-
-        //     </div>
-
-        // </div>
-
-        <div className="flex flex-col items-center justify-center mt-5 mx-auto text-black dark:text-white">
+        <div className=" text-black flex flex-col items-center justify-center mt-5 m-auto">
             <div className="grid grid-cols-1 gap-8 max-w-6xl w-full items-center justify-center">
                 <div className="flex items-center space-x-3 w-full justify-center">
                     <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
                     <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">RFP Writer</h1>
                 </div>
+                <div id="upload_section" style={{ display: fileName ? 'none' : 'block' }}>
 
-                {!fileName && (
-                    <section id="upload_section" className="mt-12">
+
+                    <section className="mt-12">
                         <h2 className="text-2xl font-semibold mb-4">How to use this demo</h2>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            First, upload a document having a tabular structure for the work. Valid file types are <strong>.csv</strong>. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
+                        <p>
+                            First, upload a document having a tabular structure for the work. Valid file types are *.csv. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
                         </p>
-
-                        {/* Drag & Drop Container */}
-                        <div className="relative mt-6">
-                            {isDragging && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm pointer-events-none z-10">
-                                    <div className="flex flex-col items-center text-blue-700 dark:text-blue-300">
-                                        <span className="w-10 h-10 mb-2">📤</span>
-                                        <p className="text-lg font-semibold">Drop files anywhere in this section</p>
-                                    </div>
-                                </div>
-                            )}
-                            <div
-                                className="border-dashed border-gray-500 dark:border-gray-400 p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-50 dark:hover:bg-blue-800"
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                                onClick={() => fileInputRef.current?.click()}
-                                onDragEnter={() => setIsDragging(true)}
-                                onDragLeave={() => setIsDragging(false)}
-                            >
-                                {fileName ? (
-                                    <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">Selected File: {fileName}</span>
-                                ) : (
-                                    <span className="text-lg text-gray-600 dark:text-gray-300 pointer-events-none">Drag & drop your CSV file here or click to upload</span>
-                                )}
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    className="hidden"
-                                    onChange={handleFileChange}
-                                    accept=".csv"
-                                />
-                            </div>
-                        </div>
                     </section>
-                )}
-
-                {tableComponent && (
-                    <div id="file_meta" className="mt-6 w-full">
-                        {tableComponent}
+                    <br />
+                    <div
+                        className="border-dashed border-black p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm"
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragEnter={(e) => e.currentTarget.classList.add('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
+                        onDragLeave={(e) => e.currentTarget.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'border', 'border-blue-500', 'opacity-80', 'backdrop-blur-sm', 'pointer-events-none')}
+                    >
+                        {fileName ? (
+                            <span className="text-lg">Selected File: {fileName}</span>
+                        ) : (
+                            <span className="text-lg">Drag & drop your CSV file here or click to upload</span>
+                        )}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            className="hidden"
+                            onChange={handleFileChange}
+                            accept=".csv"
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div id="file_name" style={{ display: 'none' }}></div>
+                    <div id="file_meta">
+                    {tableComponent}
+                    {tableComponent && (
                         <button
-                            className="w-full py-2 mt-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
-                            onClick={downloadTableContent}
-                        >
+                            className='button'
+                            style={{ padding: '8px', width: '100%', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' }}
+                            onClick={downloadTableContent}>
                             Download Content
                         </button>
+                    )}
                     </div>
-                )}
+                    <div id="file_data" style={{ display: 'none' }}></div>
+                </div>
+
             </div>
+
         </div>
+
+        // <div className="flex flex-col items-center justify-center mt-5 mx-auto text-black dark:text-white">
+        //     <div className="grid grid-cols-1 gap-8 max-w-6xl w-full items-center justify-center">
+        //         <div className="flex items-center space-x-3 w-full justify-center">
+        //             <img src="/demos-page/neuralseek_logo.png" alt="NeuralSeek Logo" className="w-16 h-16" />
+        //             <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">RFP Writer</h1>
+        //         </div>
+
+        //         {!fileName && (
+        //             <section id="upload_section" className="mt-12">
+        //                 <h2 className="text-2xl font-semibold mb-4">How to use this demo</h2>
+        //                 <p className="text-gray-700 dark:text-gray-300">
+        //                     First, upload a document having a tabular structure for the work. Valid file types are <strong>.csv</strong>. When a valid document is uploaded, NeuralSeek will help you perform the required RFP work by generating answers.
+        //                 </p>
+
+        //                 {/* Drag & Drop Container */}
+        //                 <div className="relative mt-6">
+        //                     {isDragging && (
+        //                         <div className="absolute inset-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm pointer-events-none z-10">
+        //                             <div className="flex flex-col items-center text-blue-700 dark:text-blue-300">
+        //                                 <span className="w-10 h-10 mb-2">📤</span>
+        //                                 <p className="text-lg font-semibold">Drop files anywhere in this section</p>
+        //                             </div>
+        //                         </div>
+        //                     )}
+        //                     <div
+        //                         className="border-dashed border-gray-500 dark:border-gray-400 p-12 rounded-lg cursor-pointer flex items-center justify-center hover:bg-blue-50 dark:hover:bg-blue-800"
+        //                         onDrop={handleDrop}
+        //                         onDragOver={handleDragOver}
+        //                         onClick={() => fileInputRef.current?.click()}
+        //                         onDragEnter={() => setIsDragging(true)}
+        //                         onDragLeave={() => setIsDragging(false)}
+        //                     >
+        //                         {fileName ? (
+        //                             <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">Selected File: {fileName}</span>
+        //                         ) : (
+        //                             <span className="text-lg text-gray-600 dark:text-gray-300 pointer-events-none">Drag & drop your CSV file here or click to upload</span>
+        //                         )}
+        //                         <input
+        //                             ref={fileInputRef}
+        //                             type="file"
+        //                             className="hidden"
+        //                             onChange={handleFileChange}
+        //                             accept=".csv"
+        //                         />
+        //                     </div>
+        //                 </div>
+        //             </section>
+        //         )}
+
+        //         {tableComponent && (
+        //             <div id="file_meta" className="mt-6 w-full">
+        //                 {tableComponent}
+        //                 <button
+        //                     className="w-full py-2 mt-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+        //                     onClick={downloadTableContent}
+        //                 >
+        //                     Download Content
+        //                 </button>
+        //             </div>
+        //         )}
+        //     </div>
+        // </div>
 
     );
 };
