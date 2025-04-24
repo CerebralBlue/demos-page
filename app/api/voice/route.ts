@@ -128,13 +128,37 @@ export async function POST(req: NextRequest) {
         'hour' in parsed[0] &&
         'appointment' in parsed[0]
       ) {
-        textToSpeak = `Your schedule has been updated.`;
         updatedJson = parsed;
+    
+        let previousSchedule: any[] = [];
+        try {
+          if (jsonData) {
+            previousSchedule = JSON.parse(jsonData);
+          }
+        } catch (e) {
+          console.error("Error parsing previous JSON:", e);
+        }
+    
+        if (updatedJson.length >= previousSchedule.length) {
+          const newItems = updatedJson.filter(
+            (item) =>
+              !previousSchedule.some(
+                (prev) => prev.day === item.day && prev.hour === item.hour
+              )
+          );
+    
+          if (newItems.length > 0) {
+            const additions = newItems.map((item) => `${item.day} at ${item.hour}`);
+            textToSpeak = `Your schedule has been updated. New appointments are available on ${additions.join(', ')}.`;
+          } else {
+            textToSpeak = `Your schedule has been updated.`;
+          }
+        } else {
+          textToSpeak = `Your schedule has been updated.`;
+        }
       } else {
         textToSpeak = answer || 'There was no response.';
       }
-    } else {
-      textToSpeak = answer || 'There was no response.';
     }
   } catch {
     textToSpeak = answer || 'There was no response.';
