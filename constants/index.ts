@@ -31,16 +31,16 @@ export const sidebarLinks = [
       },
     ],
   },
-  {
-    category: "D-ID Use Cases",
-    links: [
-      {
-        imgURL: "users",
-        route: "/d-id",
-        label: "D-ID Demo",
-      },
-    ],
-  },
+  // {
+  //   category: "D-ID Use Cases",
+  //   links: [
+  //     {
+  //       imgURL: "users",
+  //       route: "/d-id",
+  //       label: "D-ID Demo",
+  //     },
+  //   ],
+  // },
   {
     category: "Translation Use Cases",
     links: [
@@ -139,11 +139,11 @@ export const sidebarLinks = [
   {
     category: "Customers Use Cases",
     links: [
-      {
-        imgURL: "users",
-        route: "/brou-demo",
-        label: "BROU Demo",
-      },
+      // {
+      //   imgURL: "users",
+      //   route: "/brou-demo",
+      //   label: "BROU Demo",
+      // },
       {
         imgURL: "users",
         route: "/baycrest-demo",
