@@ -8,27 +8,8 @@ import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
 const DocAnalyzerDemo = () => {
     const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
-    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
     const [ingestions, setIngestions] = useState<{ key: string, doc_count: number }[]>([]);
-
-    const allFileNames = ingestions?.map(file => file.key) || [];
-    const allSelected = selectedFiles.length === allFileNames.length;
-
-    const toggleAll = () => {
-        if (allSelected) {
-            setSelectedFiles([]);
-        } else {
-            setSelectedFiles(allFileNames);
-        }
-    };
-
-    const toggleFile = (fileName: string) => {
-        setSelectedFiles(prev =>
-            prev.includes(fileName)
-                ? prev.filter(name => name !== fileName)
-                : [...prev, fileName]
-        );
-    };
 
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,13 +52,14 @@ const DocAnalyzerDemo = () => {
 
             // Refetch after deletion
             await fetchIngestions();
+            // Clear selected file when cleaning
+            setSelectedFile(null);
         } catch (err) {
             console.error("Error deleting ingestions:", err);
         } finally {
             setIsLoading(false);
         }
     };
-
 
     const fetchIngestions = async () => {
         try {
@@ -98,7 +80,6 @@ const DocAnalyzerDemo = () => {
                 },
             });
             const uniqueFiles = JSON.parse(uniqueESFiles.data.answer).aggregations.unique_names.buckets;
-            // console.log("Trigger Ingestion", uniqueESFiles.data.answer);
             setIngestions(uniqueFiles);
 
         } catch (err) {
@@ -115,20 +96,14 @@ const DocAnalyzerDemo = () => {
         setIsDragging(false);
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const newFiles = Array.from(e.dataTransfer.files);
-            setFiles(prev => [...prev, ...newFiles]);
-
-            setIsLoading(true); // Start loading spinner globally
-
-            for (let i = 0; i < newFiles.length; i++) {
-                const file = newFiles[i];
-                const isLast = i === newFiles.length - 1;
-                await ingestFile(file, isLast);
-            }
+            // Just take the first file
+            const newFile = e.dataTransfer.files[0];
+            setFiles([newFile]);
+            await ingestFile(newFile);
         }
     };
 
-    const ingestFile = async (file: File, isLastFile: boolean = false) => {
+    const ingestFile = async (file: File) => {
         setIsIngesting(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -212,10 +187,7 @@ const DocAnalyzerDemo = () => {
                 ]);
                 scrollToBottom();
 
-                if (isLastFile) {
-                    await fetchIngestions();
-                }
-
+                await fetchIngestions();
             } else {
                 setChatHistory((prev) => [
                     ...prev,
@@ -238,23 +210,26 @@ const DocAnalyzerDemo = () => {
                 return newProgress;
             });
 
-            // Only reset loading flag if this is the last file
-            if (isLastFile) {
-                setIsIngesting(false);
-                setIsLoading(false);
-                // Don't clear files here — do that externally after batch is done
-            }
+            setIsIngesting(false);
+            setIsLoading(false);
         }
     };
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            const newFiles = Array.from(e.target.files);
-            setFiles(prev => [...prev, ...newFiles]);
+            // Just take the first file
+            const newFile = e.target.files[0];
+            setFiles([newFile]);
+            await ingestFile(newFile);
+        }
+    };
 
-            for (const file of newFiles) {
-                await ingestFile(file);
-            }
+    const selectFile = (fileName: string) => {
+        // If already selected, deselect it
+        if (selectedFile === fileName) {
+            setSelectedFile(null);
+        } else {
+            setSelectedFile(fileName);
         }
     };
 
@@ -265,7 +240,6 @@ const DocAnalyzerDemo = () => {
     };
 
     const handleChat = async (message?: string) => {
-
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const urlSeek = `${baseUrl}/neuralseek/seek`;
 
@@ -283,8 +257,10 @@ const DocAnalyzerDemo = () => {
         // Seek call
         const seekCallBody = {
             url_name: "staging-doc-analyzer-demo",
-            question: queryToUse
+            question: queryToUse,
+            filter: selectedFile
         };
+
         const seekResponse = await axios.post(urlSeek, seekCallBody, {
             headers: {
                 'Content-Type': 'application/json',
@@ -305,10 +281,8 @@ const DocAnalyzerDemo = () => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleChat();
-        } else if (e.key === "/") {
         }
     };
-
 
     return (
         <section className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white">
@@ -336,37 +310,26 @@ const DocAnalyzerDemo = () => {
                                     <Icon name="trash" className="w-5 h-5" />
                                 )}
                             </button>
-
                         </div>
+
                         {ingestions && ingestions.length > 0 ? (
                             <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
-                                {/* Select All Checkbox */}
-                                <div className="flex items-center space-x-2 mb-1 px-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={allSelected}
-                                        onChange={toggleAll}
-                                        className="form-checkbox rounded border-gray-300 dark:border-gray-600"
-                                    />
-                                    <label className="text-sm font-medium">Select All</label>
-                                </div>
-
                                 {/* Files List */}
                                 {ingestions.map((file, index) => {
-                                    const isSelected = selectedFiles.includes(file.key);
+                                    const isSelected = selectedFile === file.key;
                                     return (
                                         <div
                                             key={index}
-                                            className={`p-2 border rounded flex items-center cursor-pointer transition${isSelected
+                                            className={`p-2 border rounded flex items-center cursor-pointer transition ${isSelected
                                                 ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'} hover:bg-blue-100 dark:hover:bg-blue-800/40`}
-                                            onClick={() => toggleFile(file.key)}
+                                            onClick={() => selectFile(file.key)}
                                         >
                                             <input
-                                                type="checkbox"
+                                                type="radio"
                                                 checked={isSelected}
-                                                onChange={() => toggleFile(file.key)}
+                                                onChange={() => selectFile(file.key)}
                                                 onClick={e => e.stopPropagation()}
-                                                className="form-checkbox mr-2 rounded border-gray-300 dark:border-gray-600"
+                                                className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
                                             />
                                             <div className="flex items-center overflow-hidden">
                                                 <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
@@ -410,10 +373,9 @@ const DocAnalyzerDemo = () => {
                     <div className="p-4 border-t dark:border-gray-700">
                         <label className="block w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 text-center">
                             <Icon name="upload" className="w-5 h-5 mx-auto mb-1" />
-                            <span>Upload Files</span>
+                            <span>Upload File</span>
                             <input
                                 type="file"
-                                multiple
                                 onChange={handleFileSelect}
                                 className="hidden"
                             />
@@ -424,7 +386,7 @@ const DocAnalyzerDemo = () => {
                         <div className="absolute inset-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900 border border-blue-500 opacity-80 backdrop-blur-sm pointer-events-none z-10">
                             <div className="flex flex-col items-center text-blue-700 dark:text-blue-300">
                                 <Icon name="upload" className="w-10 h-10 mb-2" />
-                                <p className="text-lg font-semibold">Drop files here</p>
+                                <p className="text-lg font-semibold">Drop file here</p>
                             </div>
                         </div>
                     )}
@@ -470,15 +432,15 @@ const DocAnalyzerDemo = () => {
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16 text-gray-900 dark:text-gray-100"
-                                placeholder="Message NeuralSeek about the documents..."
+                                placeholder={selectedFile ? `Ask about ${selectedFile}...` : "Message NeuralSeek about the documents..."}
                                 disabled={isIngesting}
                             />
 
                             <div className="absolute bottom-2 right-3 flex items-end p-2">
                                 <button
-                                    onClick={() => handleChat}
-                                    disabled={isLoading && query.trim().length === 0}
-                                    className={`p-2 rounded-lg transition ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"}`}
+                                    onClick={() => handleChat()}
+                                    disabled={isLoading || query.trim().length === 0}
+                                    className={`p-2 rounded-lg transition ${isLoading || query.trim().length === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"}`}
                                     title={isLoading ? "Processing..." : query.trim().length === 0 ? "Enter a message" : "Send"}
                                 >
                                     {isLoading ? (

@@ -10,7 +10,7 @@ const urls = [
 
 export async function POST(req: NextRequest) {
   try {
-    const { url_name, question, options } = await req.json();
+    const { url_name, question, filter } = await req.json();
 
     if (!url_name || !question) {
       return NextResponse.json(
@@ -30,11 +30,12 @@ export async function POST(req: NextRequest) {
 
     const body = {
       question,
-      options: options || {
+      options: {
         includeSourceResults: true,
         includeHighlights: true,
         sourceResultsNumber: 10,
-        sourceResultsSummaryLength: 2000
+        sourceResultsSummaryLength: 2000,
+        ...(filter && { filter })
       }
     };
 
