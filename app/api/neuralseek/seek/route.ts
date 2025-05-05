@@ -6,12 +6,17 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/doc-analyzer/seek",
     api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
   },
+  {
+    name: "customized-troubleshooter",
+    url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
+    api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
+  },
 ]
 
 export async function POST(req: NextRequest) {
   try {
     const { url_name, question, options } = await req.json();
-
+    console.log(url_name)
     if (!url_name || !question) {
       return NextResponse.json(
         { error: "Missing required fields: url_name and question" },
@@ -47,12 +52,12 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify(body)
     });
-
     const contentType = response.headers.get('content-type');
     let data;
 
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
+      console.log(data)
     } else {
       const text = await response.text();
       return NextResponse.json(
