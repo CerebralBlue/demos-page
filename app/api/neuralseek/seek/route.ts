@@ -6,6 +6,11 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/doc-analyzer/seek",
     api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
   },
+  {
+    name: "staging-brou-demo",
+    url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
+    api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
+  },
 ]
 
 export async function POST(req: NextRequest) {
