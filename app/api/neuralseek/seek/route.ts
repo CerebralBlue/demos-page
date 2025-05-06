@@ -10,6 +10,11 @@ const urls = [
     name: "staging-brou-demo",
     url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
     api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
+    },
+    {
+    name: "customized-troubleshooter",
+    url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
+    api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
   },
 ]
 
@@ -53,12 +58,12 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify(body)
     });
-
     const contentType = response.headers.get('content-type');
     let data;
 
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
+      console.log(data)
     } else {
       const text = await response.text();
       return NextResponse.json(
