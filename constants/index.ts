@@ -31,6 +31,16 @@ export const sidebarLinks = [
       },
     ],
   },
+  {
+    category: "Chart Use Cases",
+    links: [
+      {
+        imgURL: "document-chart-bar",
+        route: "/charts-generator",
+        label: "Reportes",
+      },
+    ],
+  },
   // {
   //   category: "D-ID Use Cases",
   //   links: [
@@ -133,6 +143,11 @@ export const sidebarLinks = [
         imgURL: "card",
         route: "/pii-analyzer",
         label: "PII Analyzer Demo"
+      },
+      {
+        imgURL: "card",
+        route: "/pii-analyzer-sftp",
+        label: "PII Analyzer SFTP Demo"
       },
     ],
   },
