@@ -114,15 +114,15 @@ export const sidebarLinks = [
   {
     category: "Docs Analyzer Use Cases",
     links: [
-      {
-        imgURL: "document-text",
-        route: "/doc-analyzer",
-        label: "DOC Analyzer Demo",
-      },
+      // {
+      //   imgURL: "document-text",
+      //   route: "/doc-analyzer",
+      //   label: "DOC Analyzer Demo",
+      // },
       {
         imgURL: "document-text",
         route: "/doc-analyzer-3",
-        label: "DOC Analyzer 3 Demo",
+        label: "DOC Analyzer Demo",
       }
     ],
   },
@@ -146,8 +146,8 @@ export const sidebarLinks = [
       },
       {
         imgURL: "card",
-        route: "/pii-analyzer-sftp",
-        label: "PII Analyzer SFTP Demo"
+        route: "/pii-analyzer-storage",
+        label: "PII Analyzer Demo with Storage"
       },
     ],
   },
