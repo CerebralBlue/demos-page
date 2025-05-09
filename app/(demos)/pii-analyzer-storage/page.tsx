@@ -33,8 +33,8 @@ const PIIAnalyzerDemoStorage = () => {
 
     const [selectedStorage, setSelectedStorage] = useState("sftp");
 
-    const [s3Disabled, setS3Disabled] = useState(true); // Set to true to disable S3 button
-    const [boxDisabled, setBoxDisabled] = useState(true); // Set to true to disable Box button
+    const [s3Disabled, setS3Disabled] = useState(true);
+    const [boxDisabled, setBoxDisabled] = useState(true);
 
     const [originalFiles, setOriginalFiles] = useState<File[]>([]);
     const [piiFiles, setPiiFiles] = useState<File[]>([]);
@@ -43,8 +43,6 @@ const PIIAnalyzerDemoStorage = () => {
     const [pdfURL, setPdfURL] = useState<string | null>(null);
     const fileCache: { [key: string]: Blob } = {};
 
-    // const [files, setFiles] = useState<File[]>([]);
-    // const [files, setFiles] = useState<{ key: string, doc_count: number }[]>([]);
 
     const [piiVariables, setPiiVariables] = useState<MaistroResponse | null>(null);
     const [contentVisible, setContentVisible] = useState(false);
@@ -335,16 +333,6 @@ const PIIAnalyzerDemoStorage = () => {
         }
     };
 
-    // const selectFile = (fileName: string) => {
-    //     // If already selected, deselect it
-    //     if (selectedFile === fileName) {
-    //         setSelectedFile(null);
-    //     } else {
-    //         setSelectedFile(fileName);
-    //     }
-    // };
-
-
     const selectFile = async (fileName: string) => {
         if (selectedFile === fileName) {
             setSelectedFile(null);
@@ -360,7 +348,7 @@ const PIIAnalyzerDemoStorage = () => {
                 setPdfURL(url);
             } else {
                 try {
-                    const blob = await handleDownload(fileName, false); // download without triggering browser download
+                    const blob = await handleDownload(fileName, false);
                     if (blob) {
                         const url = URL.createObjectURL(blob);
                         setPdfURL(url);
@@ -464,7 +452,7 @@ const PIIAnalyzerDemoStorage = () => {
             }
 
             const pdfUrl = window.URL.createObjectURL(blob);
-            setPdfURL(pdfUrl); 
+            setPdfURL(pdfUrl);
             setSelectedFile(fileName);
         } catch (err) {
             console.error('Error viewing file:', err);
@@ -486,7 +474,6 @@ const PIIAnalyzerDemoStorage = () => {
                                     subtext="Browse storage files"
                                 />
                             </header>
-
                             <div className="flex flex-wrap items-center gap-2">
                                 <a
                                     onClick={() => setSelectedStorage("sftp")}
@@ -587,6 +574,7 @@ const PIIAnalyzerDemoStorage = () => {
                                 </a>
                             </div>
                         </div>
+
                         <div className="h-64 flex flex-col">
                             <div className="grid grid-cols-2 gap-4 flex-1">
 
@@ -637,70 +625,85 @@ const PIIAnalyzerDemoStorage = () => {
 
                                 {/* PII Files Column */}
                                 <div className="flex flex-col h-full">
-                                    <h4 className="text-sm font-medium mb-1">Files analyzed for PII</h4>
-                                    {piiFiles.map((file, index) => {
-                                        const isSelected = selectedFile === file?.name;
-                                        return (
-                                            <div
-                                                key={index}
-                                                className={`p-2 border rounded flex items-center justify-between cursor-pointer transition ${isSelected
-                                                    ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40'
-                                                    : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'
-                                                    } hover:bg-blue-100 dark:hover:bg-blue-800/40`}
-                                                onClick={() => selectFile(file.name)}
-                                            >
-                                                <div className="flex items-center overflow-hidden">
-                                                    <input
-                                                        type="radio"
-                                                        checked={isSelected}
-                                                        onChange={() => selectFile(file.name)}
-                                                        onClick={e => e.stopPropagation()}
-                                                        className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
-                                                    />
-                                                    <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
-                                                    <span className="truncate text-sm text-gray-800 dark:text-gray-100">
-                                                        {file.name}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDownload(file.name);
-                                                        }}
-                                                        className="text-blue-600 dark:text-blue-400 hover:underline text-xs"
-                                                        title="Download"
-                                                    >
-                                                        Download
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleViewPdf(file.name);
-                                                        }}
-                                                        className="text-green-600 dark:text-green-400 hover:underline text-xs"
-                                                        title="View"
-                                                    >
-                                                        View
-                                                    </button>
-                                                </div>
+                                    <h4 className="text-sm font-medium mb-1">PII Analyzed Files</h4>
+                                    {piiFiles && piiFiles.length > 0 ? (
+                                        <div className="overflow-y-auto border rounded bg-white dark:bg-gray-900 h-64">
+                                            <div className="grid grid-cols-1 gap-2 p-2">
+                                                {piiFiles.map((file, index) => {
+                                                    const isSelected = selectedFile === file?.name;
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`p-2 border rounded flex items-center justify-between cursor-pointer transition ${isSelected
+                                                                ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40'
+                                                                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'
+                                                                } hover:bg-blue-100 dark:hover:bg-blue-800/40`}
+                                                            onClick={() => selectFile(file.name)}
+                                                        >
+                                                            <div className="flex items-center overflow-hidden">
+                                                                <input
+                                                                    type="radio"
+                                                                    checked={isSelected}
+                                                                    onChange={() => selectFile(file.name)}
+                                                                    onClick={e => e.stopPropagation()}
+                                                                    className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
+                                                                />
+                                                                <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
+                                                                <span className="truncate text-sm text-gray-800 dark:text-gray-100">
+                                                                    {file.name}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center space-x-2">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDownload(file.name);
+                                                                    }}
+                                                                    className="text-blue-600 dark:text-blue-400 hover:underline text-xs"
+                                                                    title="Download"
+                                                                >
+                                                                    Download
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleViewPdf(file.name);
+                                                                    }}
+                                                                    className="text-green-600 dark:text-green-400 hover:underline text-xs"
+                                                                    title="View"
+                                                                >
+                                                                    View
+                                                                </button>
+                                                            </div>
 
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                        );
-                                    })}
-
+                                        </div>
+                                    ) : (
+                                        <div className="flex-1 flex items-center justify-center text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded border">
+                                            <div>
+                                                <Icon name="inbox" className="w-8 h-8 mx-auto mb-2" />
+                                                <p className="text-sm">No ingested files</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
+
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div className="w-full md:w-1/2 flex flex-col h-full">
                     <div
-                        className={`w-full h-full border-r dark:border-gray-700 relative ${isDragging ? 'border-2 border-dashed border-blue-500' : ''}`}
+                        className={`w-full border-r dark:border-gray-700 relative ${isDragging ? 'border-2 border-dashed border-blue-500' : ''}`}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                     >
-                        <div className="p-3 border-b dark:border-gray-700 h-full flex flex-col justify-center items-center">
+                        <div className="p-3 border-b dark:border-gray-700 h-[80vh] flex flex-col justify-center items-center">
                             {pdfURL ? (
                                 <div style={{ marginTop: '20px', width: '100%', height: '80vh' }}>
                                     <embed
@@ -712,119 +715,14 @@ const PIIAnalyzerDemoStorage = () => {
                                 </div>
                             ) : (
                                 <div className="text-center text-gray-500 dark:text-gray-400">
-                                    <p className="text-lg">No PDF uploaded</p>
-                                    <p className="text-sm">Drag and drop a PDF file here or use the upload button</p>
+                                    <p className="text-lg">No selected PDF</p>
+                                    <p className="text-sm">Drag and drop a PDF file here or view the existing ones</p>
                                 </div>
                             )}
                         </div>
 
                         {pdfURL && (
                             <PDFViewer url={pdfURL} />
-                        )}
-                    </div>
-                </div>
-
-                <div className="w-full md:w-1/2 flex flex-col h-full overflow-y-auto">
-                    <div className="flex flex-col items-center justify-center h-full">
-                        <ChatHeader
-                            title="PII Analyzer Demo"
-                            subtitle="Analyze documents for PII elements"
-                            image=""
-                            handlePrePromptClick={handlePrePromptClick}
-                        />
-                        {isLoading ? (
-                            <div className="flex flex-col items-center justify-center mt-10 text-gray-500 dark:text-gray-400">
-                                <Icon name="loader" className="w-6 h-6 text-blue-500 animate-spin mb-2" />
-                                <p>Analyzing document for PII...</p>
-                            </div>
-                        ) : piiVariables ? (
-                            <div className="w-full max-w-3xl mt-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-                                <div className="flex justify-between items-center mb-3">
-                                    <h2 className="text-lg font-semibold">PII Analysis Summary</h2>
-                                </div>
-                                <p className="text-sm mb-2">
-                                    <span className="font-medium">File:</span> {piiVariables?.variables.fileName ?? "N/A"}
-                                </p>
-                                <p className={`text-sm font-medium ${piiVariables?.variables?.["PII.pii"] ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-                                    {piiVariables?.variables?.["PII.pii"] ? "PII detected" : "No PII detected"}
-                                </p>
-                                {piiVariables?.variables?.["PII.pii"] && (
-                                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                        <div>
-                                            <h3 className="font-medium mb-1 text-gray-700 dark:text-gray-300">Detected PII Elements:</h3>
-                                            <ul className="list-disc list-inside text-xs text-gray-600 dark:text-gray-300">
-                                                {piiVariables?.variables?.["PII.possiblePII"]?.map((pii, index) => (
-                                                    <li key={index} className="mb-0.5">{pii}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-medium mb-1 text-gray-700 dark:text-gray-300">PII Types:</h3>
-                                            <ul className="list-disc list-inside text-xs text-gray-600 dark:text-gray-300">
-                                                {piiVariables?.variables?.["PII.piiTypes"]?.map((type, index) => (
-                                                    <li key={index} className="mb-0.5">{type}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="mt-4">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Processed content:</h3>
-
-                                        <div className="flex items-center space-x-2">
-                                            <button
-                                                onClick={handleDownloadReport}
-                                                disabled={isLoadingDownloadReport}
-                                                className="flex items-center py-1 px-2 text-xs border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-60"
-                                            >
-                                                {isLoadingDownloadReport ? (
-                                                    <Icon name="loader" className="w-4 h-4 text-blue-500 animate-spin mr-2" />
-                                                ) : (
-                                                    <Icon name="document-chart-bar" className="w-4 h-4 text-blue-500 dark:text-blue-300 mr-1" />
-                                                )}
-                                                <span className="font-medium text-gray-500 dark:text-gray-300">Download PII Report</span>
-                                            </button>
-
-                                            <button
-                                                onClick={handleDownloadPdf}
-                                                disabled={isLoadingDownload}
-                                                className="flex items-center py-1 px-2 text-xs border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-60"
-                                            >
-                                                {isLoadingDownload ? (
-                                                    <Icon name="loader" className="w-4 h-4 text-blue-500 animate-spin mr-2" />
-                                                ) : (
-                                                    <Icon name="document-text" className="w-4 h-4 text-blue-500 dark:text-blue-300 mr-1" />
-                                                )}
-                                                <span className="font-medium text-gray-500 dark:text-gray-300">Download Redacted</span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {contentVisible && (
-                                        <div className="pr-1 mt-2 text-xs text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-2">
-                                            <p className="whitespace-pre-line">{answerText}</p>
-                                        </div>
-                                    )}
-
-                                    <button
-                                        onClick={() => setContentVisible((prev) => !prev)}
-                                        className="mt-2 text-blue-500 dark:text-blue-400 flex items-center gap-1 text-xs hover:underline"
-                                    >
-                                        <Icon
-                                            name="chevron-down"
-                                            className={`w-3 h-3 transition-transform ${contentVisible ? "rotate-180" : "rotate-0"}`}
-                                        />
-                                        <span>{contentVisible ? "Hide content" : "Show content"}</span>
-                                    </button>
-                                </div>
-
-                            </div>
-                        ) : (
-                            <div className="text-gray-500 dark:text-gray-400 mt-4">
-                                Upload a file for PII analysis
-                            </div>
                         )}
                     </div>
                 </div>
