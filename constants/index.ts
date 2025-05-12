@@ -405,6 +405,46 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
     ]
   },  
   {
+    demo_url: "/charts-generator",
+    description: "Edit financial or technical reports and generate charts using NeuralSeek AI. Select any section of the text and request a chart type to visualize insights instantly.",
+    howto: [
+      "Select the section of text containing the data you want to visualize.",
+      "Choose the type of chart (e.g., line, bar, pie) from the dropdown.",
+      "Click the 'Generate Chart' button to visualize the data.",
+      "Optionally maximize the chart to fullscreen and download it."
+    ],
+    industries: [
+      "Financial Services",
+      "Business Intelligence",
+      "Compliance Reporting",
+      "Consulting"
+    ],
+    use_cases: [
+      "Convert written report data into interactive charts.",
+      "Edit and refine financial or analytical documents with AI.",
+      "Generate executive summaries with embedded visualizations.",
+      "Enhance internal and client-facing reporting with real-time AI insights."
+    ],
+    details: [
+      {
+        "title": "Smart Chart Generation",
+        "content": "Allows users to select report sections and generate visualizations like line, bar, pie, and scatter charts via NeuralSeek’s AI."
+      },
+      {
+        "title": "Inline Editing and Draft History",
+        "content": "Enables users to replace content with AI-modified text and track versioned edits with a built-in draft viewer."
+      },
+      {
+        "title": "Dynamic Chart Rendering",
+        "content": "Charts are rendered inline for instant preview and can be maximized for full-screen analysis or downloaded as images."
+      },
+      {
+        "title": "Flexible Prompt-Driven Analysis",
+        "content": "Supports prompt-based modifications and analysis modes, giving users control over either editing or visualization tasks."
+      }
+    ]
+  },  
+  {
     demo_url: "/rfp-writer",
     description: "Generate intelligent answers to RFP questions from tabular files using NeuralSeek. Upload your document, select the question column, and auto-fill the responses.",
     howto: [

@@ -25,10 +25,10 @@ const ChartsGenerator: React.FC = () => {
                 if (response.data.success) {
                     setReports(response.data.data);
                 } else {
-                    setError("Failed to fetch reports");
+                    setError("No se pudieron obtener los reportes");
                 }
             } catch (err) {
-                setError("Error fetching reports");
+                setError("Error al obtener los reportes");
             } finally {
                 setLoading(false);
             }
@@ -44,7 +44,7 @@ const ChartsGenerator: React.FC = () => {
                     <HeaderBox
                         type="greeting"
                         title="Reportes"
-                        subtext="Navega por tus reportes generados y edítalos con AI."
+                        subtext="Navega por tus reportes generados y edítalos con IA."
                     />
                 </header>
 
@@ -59,7 +59,7 @@ const ChartsGenerator: React.FC = () => {
                     <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-300">
                         <Icon name="document-missing" className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                         <p className="text-lg font-semibold mt-2">No hay reportes disponibles</p>
-                        <p className="text-sm">Crea un reporte para verlo ac</p>
+                        <p className="text-sm">Crea un reporte para verlo aquí</p>
                     </div>
                 ) : (
                     <div className="relative md:h-[80vh] lg:h-[67vh] pr-4">
@@ -81,13 +81,13 @@ const ChartsGenerator: React.FC = () => {
                                                 {report.file_name.length > 23 ? `${report.file_name.slice(0, 23)}...` : report.file_name}
                                             </h3>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                <span className="font-medium">Updated:</span> {new Date(report.createdAt).toLocaleDateString()}
+                                                <span className="font-medium">Actualizado:</span> {new Date(report.createdAt).toLocaleDateString()}
                                             </p>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                Version: {report?.versions?.length || 1}
+                                                Versión: {report?.versions?.length || 1}
                                             </p>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                Characters: {report.content.length}
+                                                Caracteres: {report.content.length}
                                             </p>
                                         </div>
                                     </div>
@@ -95,17 +95,16 @@ const ChartsGenerator: React.FC = () => {
                                     <div className="flex justify-end gap-2">
                                         <div
                                             className="flex items-center py-1 px-3 border border-gray-400 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-                                            onClick={() => router.push(`/reports/${report._id}`)}
+                                            onClick={() => router.push(`/charts-generator/${report._id}`)}
                                         >
                                             <Icon name="edit" className="w-5 h-5 text-blue-500 dark:text-blue-300 mr-2" />
-                                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">Edit with AI</p>
+                                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">Editar con IA</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-
                 )}
             </div>
             <ReportDetail
@@ -117,4 +116,3 @@ const ChartsGenerator: React.FC = () => {
 };
 
 export default ChartsGenerator;
-

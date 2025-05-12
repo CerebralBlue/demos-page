@@ -52,6 +52,11 @@ const urls = [
     api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
   },
   {
+    name: "chart_gen",
+    url: "https://stagingapi.neuralseek.com/v1/chart_gen/maistro",
+    api_key: "0095ac12-497e787e-49d533b3-7ba5c689"
+  },
+  {
     name: "staging-sftp-pii-demo",
     url: "https://stagingapi.neuralseek.com/v1/sftp-pii/maistro",
     api_key: "	1e971fcb-13812f6b-f1b3b9e5-1c093699"

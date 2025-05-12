@@ -77,5 +77,12 @@ const demoLinkCards = [
     icon: "document-chart-bar",
     description: "Generate 10K-style reports using existing data sources.",
     demoCount: 1,
+  },
+  {
+    label: "Reports",
+    route: "/reports",
+    icon: "document-chart-bar",
+    description: "Generate charts base on existing data sources.",
+    demoCount: 1,
   }
 ];
