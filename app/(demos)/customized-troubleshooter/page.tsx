@@ -1,5 +1,5 @@
 "use client";
-
+import { marked } from "marked";
 import React, { useState } from "react";
 import Icon from "@/components/Icon";
 import ChatHeader from "../../components/ChatHeader";
@@ -24,6 +24,46 @@ export default function DocAnalyzerDemo() {
     { label: "SHP865ZP5N", image: "3d7b5f55-b31c-4ecd-8510-3a95d3888f19.jpg" },
     { label: "SHP878ZP5N", image: "fc82a6bb-e9c7-4327-b26e-ab327cc63692.jpg" },
   ];
+  const filenameMap: Record<string, string> = {
+  "49ba735c-3d25-4334-9755-84d5688910a9.pdf": "Quick Guide",
+  "e227aeee-3c55-4eb1-ba96-c381bdc80d01.pdf": "Use and Care Guide",
+  "3658e8ce-10ac-48e1-b4b9-8219d082b0bf.pdf": "Extended Height Guide",
+  "a3bfdab8-a6a2-498a-92aa-adc985729fba.pdf": "Sub-Zero Design Guide",
+  "77ab1479-7364-4d29-8981-6635fa70d5b2.pdf": "Classic Installation",
+  "07329bc4-beea-4368-824e-7c14e01eb953.pdf": "Sabbath Mode Guide",
+  "1be18517-7dc3-4ed4-a00d-65dfabb27a26.pdf": "Energy Guide",
+  "d05bef51-f746-42e7-98e1-d9afefcf0aed.pdf": "Specification Sheet",
+  "259142f3-2036-44ce-9314-76aea4a21545.pdf": "Energy Guide",
+  "ef47eaa7-6918-4583-9d80-a76b9e17f8ad.pdf": "Manual",
+  "91a6fb0e-cae0-4c12-937f-74476203902d.pdf": "Manual",
+  "c7f65da7-2318-4b3a-97cf-01da9c10eb0b.pdf": "Specification Sheet",
+  "313e2af7-b3bb-45f5-a7da-4f1d91a0eb70.pdf": "Energy Guide",
+  "33108824-65e3-4a54-af3e-83fb765c5da0.pdf": "User Manual",
+  "31196e90-757f-43a3-817e-f67655c5c508.pdf": "Quick Guide",
+  "2b62d514-bda2-4ad9-8e8e-cfb316b02047.pdf": "Installation Instructions",
+  "b9759457-02d6-4255-9991-49f92f799876.pdf": "Specification Sheet",
+  "643e247e-8179-4517-9e00-a2a9a6aa8073.pdf": "Energy Guide",
+  "32c86a84-fdee-4bf6-b0c0-dd0ef0b3e0a6.pdf": "Energy Guide",
+  "2455697b-008d-46ec-a522-f70cd9479299.pdf": "Manual",
+  "70ad1d8e-7d28-4669-854f-9a0e16061a3b.pdf": "Installation",
+  "f7d47aff-07b5-4bbb-8584-a37937e022a1.pdf": "Specification Sheet",
+  "624dfafa-6be5-44a1-861f-7af69648867d.pdf": "Owner's Manual",
+  "4bbc6696-410b-4341-87af-dbf93e834f8d.pdf": "Quick Installation Guide",
+  "59b2df83-7cdb-4244-8e91-71e7efdeef45.pdf": "Specification Sheet",
+  "6c13b0f6-3bf8-4d4e-8a27-f1d91c50fb85.pdf": "Energy Guide",
+  "ce1d2e9e-a3a7-4546-968b-9f731aa125bf.pdf": "Owner's Manual",
+  "230ac599-7012-44ba-b684-680717ed7124.pdf": "Quick Installation Guide",
+  "85e9081a-38ff-4f6c-bb0c-c5b0759793e7.pdf": "Specification Sheet",
+  "45fa1e91-daa2-462c-8311-7294712decb2.pdf": "Energy Guide",
+  "61fca4ca-757f-4ddc-9ca0-845ce0f797bf.pdf": "Owner's Manual",
+  "14a18edd-ad02-48e6-b0f3-045c31e9c5c2.pdf": "Quick Installation Guide",
+  "9399ee11-36a1-41b6-afd8-7f92bff986e6.pdf": "Specification Sheet",
+  "dca92de9-9803-42fa-9c17-b9eb5737d98c.pdf": "Energy Guide",
+  "9d4fa961-ccf8-4a65-9b43-56dd1f8edafe.pdf": "Installation Instructions",
+  "836c1f64-6e32-4324-8633-f558f3d57bcd.pdf": "Use and Care Guide",
+  "790f62a3-ebfb-44d8-87c0-4f5a31f91fb4.pdf": "Specification Sheet",
+  "48b042ae-f8c4-437b-8f31-2230898c1341.pdf": "Energy Guide",
+};
 
   const selectedModelObj = models.find((m) => m.label === selectedModel);
   const imageUrl = selectedModelObj ? `https://linqcdn.avbportal.com/images/${selectedModelObj.image}` : null;
@@ -72,7 +112,7 @@ export default function DocAnalyzerDemo() {
     if (!selectedModel || !query) return;
     setLoading(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const urlMaistro = `${baseUrl}/neuralseek/seek`;
 
       const formattedQuery = `\"${selectedModel}\": ${query}`;
@@ -87,12 +127,14 @@ export default function DocAnalyzerDemo() {
       });
 
       const data = await response.data;
+ 
       setChatHistory((prev) => [
         ...prev,
         { sender: "user", message: formattedQuery },
         {
           sender: "bot",
-          message: data.answer || "No response",
+          message: marked.parse(data.answer || "No response") as string,
+          // message: data.answer || "No response",
           document: data.document,
           modalData: {
             directAnswer: convertTextToList(data.ufa),
@@ -103,8 +145,11 @@ export default function DocAnalyzerDemo() {
           },
         },
       ]);
+      data.passages.forEach((el:any)=>{
+        const displayName = filenameMap[el.document!] || el.document;
+        el.document = displayName;
+      })
       setModalData({ directAnswer: convertTextToList(data.ufa), passages: data.passages });
-      console.log(data)
     } catch (error) {
       console.error("Error:", error);
     }
@@ -145,7 +190,10 @@ export default function DocAnalyzerDemo() {
                       : "bg-gray-200 text-black dark:bg-gray-700 dark:text-white"
                   }`}
                 >
-                  <p>{msg.message}</p>
+                  <div
+                      className="prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: msg.message }}
+                    />
                   {msg.document && (
                     <div
                     className="flex items-center gap-1 text-sm text-gray-500 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
@@ -202,6 +250,9 @@ export default function DocAnalyzerDemo() {
             placeholder="Describe the issue"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") performSearch();
+            }}
             className="flex-1 p-3 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
           />
 
