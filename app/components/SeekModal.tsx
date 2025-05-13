@@ -39,7 +39,13 @@ const SeekModal: React.FC<SeekModalProps> = ({ isOpen, onClose, directAnswer, pa
                     <ul className="space-y-4">
                         {passages.map((passage, index) => (
                             <li key={index} className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
-                                <div className="mb-2">
+                                {passage.document.includes(".txt")?(
+                                    <div className="mb-2">
+
+                                        {/* {passage.document} */}
+                                </div>
+                                ):(
+                                    <div className="mb-2">
                                     <a
                                         href={passage.url}
                                         target="_blank"
@@ -49,6 +55,12 @@ const SeekModal: React.FC<SeekModalProps> = ({ isOpen, onClose, directAnswer, pa
                                         {passage.document}
                                     </a>
                                 </div>
+                                )
+                                
+                                }
+                                
+                                
+                                
                                 <div
                                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(passage.passage) }}
                                     className="text-sm"
