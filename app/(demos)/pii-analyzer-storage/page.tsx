@@ -2,7 +2,6 @@
 import React, { DragEvent, useEffect, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
-import ChatHeader from '../../components/ChatHeader';
 import dynamic from 'next/dynamic';
 import HeaderBox from '@/components/HeaderBox';
 
@@ -10,24 +9,6 @@ const PDFViewer = dynamic(
     () => import('../../components/PDFViewer'),
     { ssr: false }
 );
-
-type PiiTypeMatch = {
-    pii: string[];
-    type: string;
-};
-
-type PiiVariables = {
-    fileName: string;
-    "PII.pii": boolean;
-    "PII.possiblePII": string[];
-    "PII.piiTypes": string[];
-    "PII.piiTypeMatches": PiiTypeMatch[];
-};
-
-type MaistroResponse = {
-    answer: string;
-    variables: PiiVariables;
-};
 
 const PIIAnalyzerDemoStorage = () => {
 
@@ -43,20 +24,11 @@ const PIIAnalyzerDemoStorage = () => {
     const [pdfURL, setPdfURL] = useState<string | null>(null);
     const fileCache: { [key: string]: Blob } = {};
 
-
-    const [piiVariables, setPiiVariables] = useState<MaistroResponse | null>(null);
-    const [contentVisible, setContentVisible] = useState(false);
-    const answerText = piiVariables?.answer ?? "";
-
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingDownload, setIsLoadingDownload] = useState(false);
-    const [isLoadingDownloadReport, setIsLoadingDownloadReport] = useState(false);
+    const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
 
-    const handlePrePromptClick = (message: string) => {
-        // setQuery(message);
-        // handleChat(message);
-    };
+    const [loadingFile, setLoadingFile] = useState<string | null>(null);
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -70,6 +42,7 @@ const PIIAnalyzerDemoStorage = () => {
     const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         setIsDragging(false);
+        setIsLoading(true);
 
         const droppedFiles = e.dataTransfer.files;
         if (!droppedFiles || droppedFiles.length === 0) return;
@@ -95,6 +68,8 @@ const PIIAnalyzerDemoStorage = () => {
                 console.error(`Failed to upload ${file.name}`, error);
             }
         }
+        setIsLoading(false);
+
     };
 
     const uploadAndProcessFile = async (file: File) => {
@@ -134,10 +109,12 @@ const PIIAnalyzerDemoStorage = () => {
                         'Content-Type': 'application/json',
                     },
                 });
+                writeSftp.data.answer;
+
                 // const piiData = piiResponse.data;
                 // setPiiVariables(piiData);
-                const uploadReponse = writeSftp.data.answer;
-                console.log("Upload response:", uploadReponse);
+                // const uploadReponse = writeSftp.data.answer;
+                // console.log("Upload response:", uploadReponse);
 
                 // Re fetch
                 fetchFilesByPath("/files/original-files");
@@ -147,119 +124,6 @@ const PIIAnalyzerDemoStorage = () => {
             console.error(`Error processing file ${file.name}:`, error);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleDownloadPdf = async () => {
-        setIsLoadingDownload(true);
-
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlCreatePdf = `${baseUrl}/create-pdf`;
-        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-
-        const maistroCallBody = {
-            url_name: "staging-sftp-pii-demo",
-            agent: "create-pdf",
-            params: [
-                { name: "content", value: answerText },
-            ],
-            options: {
-                returnVariables: false,
-                returnVariablesExpanded: false
-            }
-        };
-
-        try {
-            // Maistro request
-            const piiResponse = await axios.post(urlMaistro, maistroCallBody, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            const htmlContent = piiResponse.data.answer;
-
-            // PDF generation request with axios
-            const pdfResponse = await axios.post(urlCreatePdf, { html: htmlContent }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                responseType: 'blob',
-            });
-
-            // Trigger file download
-            const blob = new Blob([pdfResponse.data], { type: 'application/pdf' });
-            const urlFile = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = urlFile;
-            a.download = 'redacted_document.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(urlFile);
-
-        } catch (error) {
-            console.error('Error downloading PDF:', error);
-        } finally {
-            setIsLoadingDownload(false);
-        }
-    };
-
-    const handleDownloadReport = async () => {
-        setIsLoadingDownloadReport(true);
-
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlCreatePdf = `${baseUrl}/create-pdf`;
-        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-
-        const piiPayload = {
-            "PII.pii": piiVariables?.variables["PII.pii"],
-            "PII.possiblePII": piiVariables?.variables["PII.possiblePII"],
-            "PII.piiTypes": piiVariables?.variables["PII.piiTypes"],
-            "PII.piiTypeMatches": piiVariables?.variables["PII.piiTypeMatches"],
-            "fileName": piiVariables?.variables.fileName
-        };
-
-        const maistroCallBody = {
-            url_name: "staging-sftp-pii-demo",
-            agent: "create-pii-report",
-            params: [
-                { name: "content", value: JSON.stringify(piiPayload) },
-            ],
-            options: {
-                returnVariables: false,
-                returnVariablesExpanded: false
-            }
-        };
-
-        try {
-            // Get HTML content
-            const responseHTML = await axios.post(urlMaistro, maistroCallBody, {
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            const htmlContent = responseHTML.data.answer;
-
-            // Generate PDF
-            const pdfResponse = await axios.post(urlCreatePdf, { html: htmlContent }, {
-                headers: { 'Content-Type': 'application/json' },
-                responseType: 'blob', // This is how you tell axios to expect a binary file
-            });
-
-            // Download PDF
-            const url = window.URL.createObjectURL(new Blob([pdfResponse.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'pii_report.pdf');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-        } catch (error) {
-            console.error('Error downloading PDF:', error);
-        } finally {
-            setIsLoadingDownloadReport(false);
         }
     };
 
@@ -303,36 +167,6 @@ const PIIAnalyzerDemoStorage = () => {
         fetchFilesByPath("/files/pii-files");
     }, []);
 
-    const handleClean = async () => {
-        try {
-            setIsLoading(true);
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-            const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
-                agent: "delete_index",
-                params: [],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
-                }
-            };
-            await axios.post(urlMaistro, maistroCallBody, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            // Refetch after deletion
-            await fetchFilesByPath("/files/original-files");
-            await fetchFilesByPath("/files/pii-files");
-            // Clear selected file when cleaning
-            setSelectedFile(null);
-        } catch (err) {
-            console.error("Error deleting files:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const selectFile = async (fileName: string) => {
         if (selectedFile === fileName) {
             setSelectedFile(null);
@@ -361,6 +195,7 @@ const PIIAnalyzerDemoStorage = () => {
     };
 
     const handleAnalysis = async () => {
+        setIsLoadingAnalysis(true);
         try {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
@@ -373,14 +208,17 @@ const PIIAnalyzerDemoStorage = () => {
                     returnVariablesExpanded: false
                 }
             };
-            const sftpFiles = await axios.post(urlMaistro, maistroCallBody, {
+            await axios.post(urlMaistro, maistroCallBody, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            const files = JSON.parse(sftpFiles.data.answer);
+            await fetchFilesByPath("/files/pii-files");
+            setIsLoadingAnalysis(false);
+
         } catch (err) {
             console.error("Error fetching files:", err);
+            setIsLoadingAnalysis(false);
         }
     };
 
@@ -429,14 +267,14 @@ const PIIAnalyzerDemoStorage = () => {
         link.remove();
     };
 
-    const handleViewPdf = async (fileName: string) => {
+    const handleViewOriginalPdf = async (fileName: string) => {
         try {
             const safeFileName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
 
             let blob = fileCache[safeFileName];
 
             if (!blob) {
-                const fileUrl = `https://stagingconsoleapi.neuralseek.com/sftp-pii/maistro/octet-stream/${safeFileName}`;
+                const fileUrl = `https://stagingconsoleapi.neuralseek.com/sftp-pii/maistro/octet-stream/${fileName}`;
 
                 const response = await axios.get(fileUrl, {
                     responseType: 'blob',
@@ -459,12 +297,87 @@ const PIIAnalyzerDemoStorage = () => {
         }
     };
 
+    const handleViewPdf = async (fileName: string) => {
+        setLoadingFile(fileName);
+
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const urlCreatePdf = `${baseUrl}/create-pdf`;
+            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+            let maistroAgentName;
+            if (fileName.includes("-redacted.pdf")) {
+                maistroAgentName = "create_pii_redacted_html";
+            } else if (fileName.includes("-pii.pdf")) {
+                maistroAgentName = "create_pii_report_html";
+            }
+
+            const maistroCallBody = {
+                url_name: "staging-sftp-pii-demo",
+                agent: maistroAgentName,
+                params: [
+                    { name: "fileName", value: fileName }
+                ],
+                options: {
+                    returnVariables: false,
+                    returnVariablesExpanded: false
+                }
+            };
+
+            try {
+                const piiResponse = await axios.post(urlMaistro, maistroCallBody, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const htmlContent = piiResponse.data.answer;
+
+                const pdfResponse = await axios.post(urlCreatePdf, { html: htmlContent }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    responseType: 'blob',
+                });
+
+                //Create blob URL
+                const blob = new Blob([pdfResponse.data], { type: 'application/pdf' });
+                const urlFile = window.URL.createObjectURL(blob);
+
+                //Set the state and open the viewer
+                setPdfURL(urlFile);
+
+                // OR open in new tab
+                // window.open(urlFile, '_blank');
+
+                // Optional: trigger download
+                // const a = document.createElement('a');
+                // a.href = urlFile;
+                // a.download = 'redacted_document.pdf';
+                // document.body.appendChild(a);
+                // a.click();
+                // a.remove();
+                // window.URL.revokeObjectURL(urlFile); // Don't revoke if still viewing
+
+            } catch (error: any) {
+                if (error.response) {
+                    console.error('Maistro Error Response:', error.response.data);
+                } else {
+                    console.error('Unknown Maistro Error:', error);
+                }
+            } finally {
+                setLoadingFile(null);
+            }
+        } catch (err) {
+            console.error('Error viewing file:', err);
+            setLoadingFile(null);
+        }
+    };
 
     return (
-        <section className="flex flex-col h-full w-full dark:bg-gray-900 dark:text-white">
-            <div className="flex flex-col md:flex-row h-full w-full gap-4">
-
-                <div className="w-full md:w-1/2 flex flex-col h-full">
+        <section className="flex flex-col w-full dark:bg-gray-900 dark:text-white">
+            <div className="flex flex-col md:flex-row w-full gap-4">
+                <div className="w-full md:w-1/2 flex flex-col">
                     <div className="border-b dark:border-gray-700 p-3">
                         <div className="mb-3 flex flex-col space-y-4">
                             <header className='home-header'>
@@ -553,8 +466,17 @@ const PIIAnalyzerDemoStorage = () => {
                                 </a>
 
                                 <a
-                                    onClick={() => { handleAnalysis(); console.log(`Analyzing ${selectedStorage} files`) }}
-                                    className={`flex items-center py-1 px-3 border rounded-full transition cursor-pointer bg-green-600 hover:bg-green-700 text-white border-green-600`}
+                                    onClick={() => {
+                                        if (!isLoadingAnalysis && piiFiles.length === 0) {
+                                            handleAnalysis();
+                                            console.log(`Analyzing ${selectedStorage} files`);
+                                        }
+                                    }}
+                                    className={`flex items-center py-1 px-3 border rounded-full transition cursor-pointer 
+    ${(piiFiles.length > 0 || originalFiles.length == 0 || isLoadingAnalysis)
+                                            ? 'bg-gray-400 border-gray-400 pointer-events-none opacity-50'
+                                            : 'bg-green-600 hover:bg-green-700 text-white border-green-600'}
+  `}
                                 >
                                     <svg
                                         className="w-5 h-5 text-white mr-2"
@@ -568,18 +490,42 @@ const PIIAnalyzerDemoStorage = () => {
                                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                                     </svg>
                                     <p className="text-sm font-semibold text-white">
-                                        {/* Run PII Analysis {selectedStorage.toUpperCase()} Files */}
                                         Run PII Analysis
                                     </p>
                                 </a>
+
+
+                                {isLoading || isLoadingAnalysis && (
+                                    <svg
+                                        className="animate-spin ml-1 h-4 w-4 text-green-600 dark:text-green-400"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                        ></path>
+                                    </svg>
+                                )}
                             </div>
+
                         </div>
 
                         <div className="h-64 flex flex-col">
                             <div className="grid grid-cols-2 gap-4 flex-1">
 
                                 {/* Original Files Column */}
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col">
                                     <h4 className="text-sm font-medium mb-1">Original Files</h4>
                                     {originalFiles && originalFiles.length > 0 ? (
                                         <div className="overflow-y-auto border rounded bg-white dark:bg-gray-900 h-64">
@@ -589,19 +535,12 @@ const PIIAnalyzerDemoStorage = () => {
                                                     return (
                                                         <div
                                                             key={index}
-                                                            className={`p-2 border rounded flex items-center cursor-pointer transition ${isSelected
+                                                            className={`p-2 border rounded flex center justify-between cursor-pointer transition ${isSelected
                                                                 ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40'
                                                                 : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'
                                                                 } hover:bg-blue-100 dark:hover:bg-blue-800/40`}
                                                             onClick={() => selectFile(file.name)}
                                                         >
-                                                            <input
-                                                                type="radio"
-                                                                checked={isSelected}
-                                                                onChange={() => selectFile(file.name)}
-                                                                onClick={e => e.stopPropagation()}
-                                                                className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
-                                                            />
                                                             <div className="flex items-center overflow-hidden">
                                                                 <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
                                                                 <span className="truncate text-sm text-gray-800 dark:text-gray-100">
@@ -617,20 +556,21 @@ const PIIAnalyzerDemoStorage = () => {
                                         <div className="flex-1 flex items-center justify-center text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded border">
                                             <div>
                                                 <Icon name="inbox" className="w-8 h-8 mx-auto mb-2" />
-                                                <p className="text-sm">No ingested files</p>
+                                                <p className="text-sm">No original files uploaded</p>
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
                                 {/* PII Files Column */}
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col">
                                     <h4 className="text-sm font-medium mb-1">PII Analyzed Files</h4>
                                     {piiFiles && piiFiles.length > 0 ? (
                                         <div className="overflow-y-auto border rounded bg-white dark:bg-gray-900 h-64">
                                             <div className="grid grid-cols-1 gap-2 p-2">
                                                 {piiFiles.map((file, index) => {
                                                     const isSelected = selectedFile === file?.name;
+                                                    const isThisLoading = loadingFile === file.name;
                                                     return (
                                                         <div
                                                             key={index}
@@ -641,41 +581,47 @@ const PIIAnalyzerDemoStorage = () => {
                                                             onClick={() => selectFile(file.name)}
                                                         >
                                                             <div className="flex items-center overflow-hidden">
-                                                                <input
-                                                                    type="radio"
-                                                                    checked={isSelected}
-                                                                    onChange={() => selectFile(file.name)}
-                                                                    onClick={e => e.stopPropagation()}
-                                                                    className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
-                                                                />
                                                                 <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
                                                                 <span className="truncate text-sm text-gray-800 dark:text-gray-100">
                                                                     {file.name}
                                                                 </span>
                                                             </div>
+
                                                             <div className="flex items-center space-x-2">
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleDownload(file.name);
-                                                                    }}
-                                                                    className="text-blue-600 dark:text-blue-400 hover:underline text-xs"
-                                                                    title="Download"
-                                                                >
-                                                                    Download
-                                                                </button>
                                                                 <button
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         handleViewPdf(file.name);
                                                                     }}
-                                                                    className="text-green-600 dark:text-green-400 hover:underline text-xs"
+                                                                    className="text-green-600 dark:text-green-400 hover:underline text-xs flex items-center"
                                                                     title="View"
+                                                                    disabled={isThisLoading}
                                                                 >
                                                                     View
+                                                                    {isThisLoading && (
+                                                                        <svg
+                                                                            className="animate-spin ml-1 h-4 w-4 text-green-600 dark:text-green-400"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                        >
+                                                                            <circle
+                                                                                className="opacity-25"
+                                                                                cx="12"
+                                                                                cy="12"
+                                                                                r="10"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="4"
+                                                                            ></circle>
+                                                                            <path
+                                                                                className="opacity-75"
+                                                                                fill="currentColor"
+                                                                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                                                            ></path>
+                                                                        </svg>
+                                                                    )}
                                                                 </button>
                                                             </div>
-
                                                         </div>
                                                     );
                                                 })}
@@ -685,7 +631,8 @@ const PIIAnalyzerDemoStorage = () => {
                                         <div className="flex-1 flex items-center justify-center text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded border">
                                             <div>
                                                 <Icon name="inbox" className="w-8 h-8 mx-auto mb-2" />
-                                                <p className="text-sm">No ingested files</p>
+                                                <p className="text-sm">No files processed</p>
+
                                             </div>
                                         </div>
                                     )}
@@ -696,7 +643,7 @@ const PIIAnalyzerDemoStorage = () => {
                     </div>
                 </div>
 
-                <div className="w-full md:w-1/2 flex flex-col h-full">
+                <div className="w-full md:w-1/2 flex flex-col">
                     <div
                         className={`w-full border-r dark:border-gray-700 relative ${isDragging ? 'border-2 border-dashed border-blue-500' : ''}`}
                         onDragOver={handleDragOver}
