@@ -57,6 +57,11 @@ const urls = [
     api_key: "0095ac12-497e787e-49d533b3-7ba5c689"
   },
   {
+    name: "customized-troubleshooter",
+    url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/maistro",
+    api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
+  },
+  {
     name: "staging-sftp-pii-demo",
     url: "https://stagingapi.neuralseek.com/v1/sftp-pii/maistro",
     api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699"
