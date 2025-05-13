@@ -112,27 +112,22 @@ export default function DocAnalyzerDemo() {
     if (!selectedModel || !query) return;
     setLoading(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlMaistro = `${baseUrl}/neuralseek/seek`;
 
-      const formattedQuery = `${selectedModel} ${query}`;
+      const formattedQuery = `\"${selectedModel}\": ${query}`;
 
       const maistroCallBody = {
         url_name: "customized-troubleshooter",
-        agent: "troubleshooting",
-        options: {
-                    returnVariables: true,
-                    returnVariablesExpanded: false
-                },
-        params: [
-            { name: "prompt", value: formattedQuery },
-        ],
+        question: formattedQuery,
       };
 
       const response = await axios.post(urlMaistro, maistroCallBody, {
         headers: { "Content-Type": "application/json" },
       });
-      const data = await JSON.parse(response.data.answer);
+
+      const data = await response.data;
+ 
       setChatHistory((prev) => [
         ...prev,
         { sender: "user", message: formattedQuery },
@@ -195,7 +190,10 @@ export default function DocAnalyzerDemo() {
                       : "bg-gray-200 text-black dark:bg-gray-700 dark:text-white"
                   }`}
                 >
-                  <div dangerouslySetInnerHTML={{ __html: msg.message }} />
+                  <div
+                      className="prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: msg.message }}
+                    />
                   {msg.document && (
                     <div
                     className="flex items-center gap-1 text-sm text-gray-500 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
@@ -252,6 +250,9 @@ export default function DocAnalyzerDemo() {
             placeholder="Describe the issue"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") performSearch();
+            }}
             className="flex-1 p-3 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
           />
 
