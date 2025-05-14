@@ -1,5 +1,5 @@
-import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon, ChevronDoubleDownIcon, ChevronUpIcon} from '@heroicons/react/24/outline';
-import { ChevronDownIcon, ComputerIcon, IdCardIcon, SearchIcon } from 'lucide-react';
+import { XCircleIcon, HomeIcon, LinkIcon, ChartBarIcon, UsersIcon, DocumentChartBarIcon, DocumentArrowUpIcon, CommandLineIcon, TableCellsIcon, DocumentIcon, PaperAirplaneIcon, PencilSquareIcon, ArrowPathIcon, PencilIcon, ArrowDownTrayIcon, ArrowTrendingUpIcon, EyeIcon, DocumentTextIcon, ChatBubbleBottomCenterIcon, TrashIcon, PaperClipIcon, MicrophoneIcon, MoonIcon, SunIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlayIcon, Bars3Icon, ArrowsRightLeftIcon, InformationCircleIcon, ChevronDoubleDownIcon, ChevronUpIcon, DocumentMagnifyingGlassIcon, LanguageIcon} from '@heroicons/react/24/outline';
+import { BriefcaseIcon, CalculatorIcon, ChevronDownIcon, ComputerIcon, GlobeIcon, HeartIcon, IdCardIcon, ImageIcon, SearchIcon, TrainIcon } from 'lucide-react';
 
 const Icon = ({ name, className }: { name: string; className?: string }) => {
   switch (name) {
@@ -79,6 +79,22 @@ const Icon = ({ name, className }: { name: string; className?: string }) => {
       return <ComputerIcon className={className} />;
     case 'search':
       return <SearchIcon className={className} />;
+    case 'image':
+      return <ImageIcon className={className} />;
+    case 'calculator':
+      return <CalculatorIcon className={className} />;
+    case 'briefcase':
+      return <BriefcaseIcon className={className} />;
+    case 'globe':
+      return <GlobeIcon className={className} />;
+    case 'heart':
+      return <HeartIcon className={className} />;
+    case 'train':
+      return <TrainIcon className={className} />;
+    case 'document-magnifying-glass':
+      return <DocumentMagnifyingGlassIcon className={className} />;
+    case 'language':
+      return <LanguageIcon className={className} />;
     default:
       return null;
   }

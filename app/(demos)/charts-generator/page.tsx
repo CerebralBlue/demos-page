@@ -19,7 +19,7 @@ const ChartsGenerator: React.FC = () => {
         const fetchReports = async () => {
             try {
                 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const url = `${baseUrl}/reports`;
+                const url = `${baseUrl}/reports?database=charts_demo`;
 
                 const response = await axios.get<{ success: boolean; data: Report[] }>(url);
                 if (response.data.success) {

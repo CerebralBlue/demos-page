@@ -37,7 +37,7 @@ export const sidebarLinks = [
       {
         imgURL: "document-chart-bar",
         route: "/charts-generator",
-        label: "Reportes",
+        label: "Creador de gráficos",
       },
     ],
   },
