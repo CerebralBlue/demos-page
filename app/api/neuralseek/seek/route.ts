@@ -16,6 +16,16 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
     api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
   },
+  {
+    name: "staging-brou-demo",
+    url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
+    api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
+    },
+  {
+    name: "partsPicker",
+    url: "https://stagingapi.neuralseek.com/v1/partsPicker/seek",
+    api_key: "97d7631c-d2f23b94-8ac5c65d-02c92419"
+  },
 ]
 
 export async function POST(req: NextRequest) {
@@ -63,7 +73,6 @@ export async function POST(req: NextRequest) {
 
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
-      console.log(data)
     } else {
       const text = await response.text();
       return NextResponse.json(
