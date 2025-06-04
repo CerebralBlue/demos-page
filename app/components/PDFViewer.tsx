@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 // Configure the PDF.js worker
@@ -10,12 +10,29 @@ interface PDFViewerProps {
 }
 
 const PDFViewer: React.FC<PDFViewerProps> = ({ url }) => {
+
+  useEffect(() => {
+    // Remove the error message if it appears
+    const interval = setInterval(() => {
+      const errorElement = document.querySelector('.react-pdf__message--error');
+      if (errorElement) {
+        errorElement.remove();
+      }
+    }, 500);
+
+    // Clear interval after some time to prevent infinite loop
+    setTimeout(() => clearInterval(interval), 5000);
+  }, []);
+
   return (
-    <div className="w-2/3 h-1/2">
-      <Document file={url}>
-        <Page pageNumber={1} />
-      </Document>
-    </div>
+    <Document
+      file={url}
+      onLoadError={(error) => console.error('Load error:', error)}
+      onSourceError={(error) => console.error('Source error:', error)}
+    >
+      <Page pageNumber={1} />
+    </Document>
+
   );
 };
 

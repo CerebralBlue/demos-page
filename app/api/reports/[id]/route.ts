@@ -4,8 +4,10 @@ import { ObjectId } from 'mongodb';
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     try {
         const { id } = params;
+        const url = new URL(req.url);
+        const databaseName = url.searchParams.get('database');
 
-        // Validate the ID format
+        // Validate inputs
         if (!id || typeof id !== 'string' || !ObjectId.isValid(id)) {
             return new Response(JSON.stringify({
                 success: false,
@@ -16,11 +18,20 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             });
         }
 
+        if (!databaseName || typeof databaseName !== 'string') {
+            return new Response(JSON.stringify({
+                success: false,
+                message: 'Missing or invalid database parameter'
+            }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
         const client = await clientPromise;
-        const db = client.db('sec_demo');
+        const db = client.db(databaseName);
         const collection = db.collection('reports');
 
-        // Fetch the full report based on the ID
         const report = await collection.findOne({ _id: new ObjectId(id) });
 
         if (!report) {
@@ -33,15 +44,16 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             });
         }
 
-        // If no versions exist, return only the base report
-        if (!Array.isArray(report.versions) || report.versions.length === 0) {
+        const versions = Array.isArray(report.versions) ? report.versions : [];
+
+        if (versions.length === 0) {
             return new Response(JSON.stringify({
                 success: true,
                 data: {
                     _id: report._id,
                     title: report.title,
                     content: report.content,
-                    versions: report.versions
+                    versions: []
                 }
             }), {
                 status: 200,
@@ -49,8 +61,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             });
         }
 
-        // Sort versions by version number in descending order
-        const sortedVersions = report.versions.sort((a: any, b: any) => (b.version || 0) - (a.version || 0));
+        const sortedVersions = versions.sort((a: any, b: any) => (b.version || 0) - (a.version || 0));
 
         return new Response(JSON.stringify({
             success: true,
@@ -58,7 +69,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 _id: report._id,
                 title: report.title,
                 content: sortedVersions[0].content,
-                versions: sortedVersions,
+                versions: sortedVersions
             }
         }), {
             status: 200,

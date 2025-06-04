@@ -12,8 +12,6 @@ import { pdf, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer
 import { marked } from "marked";
 import { EmailModal } from "../../../components/EmailModal";
 import DynamicChart from "../../../components/dynamicaChart";
-import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
 
 const styles = StyleSheet.create({
     page: { padding: 20 },
@@ -46,7 +44,7 @@ const ReportEditionPage = () => {
     const fetchReportById = async (id: string) => {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const response = await axios.get(`${baseUrl}/reports/${id}`);
+            const response = await axios.get(`${baseUrl}/reports/${id}?database=charts_demo`);
             setWholeText(response.data?.data?.content || "Sin contenido disponible.");
             setDrafts(response.data?.data?.versions || []);
         } catch (error) {

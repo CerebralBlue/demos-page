@@ -50,7 +50,7 @@ const ReportEditionPage = () => {
     const fetchReportById = async (id: string) => {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-            const urlReports = `${baseUrl}/reports/${id}`;
+            const urlReports = `${baseUrl}/reports/${id}?database=sec_demo`;
             const response = await axios.get(urlReports);
             setWholeText(response.data?.data?.content || "No content available.");
             setDrafts(response.data?.data?.versions || []);
