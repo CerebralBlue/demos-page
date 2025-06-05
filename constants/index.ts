@@ -175,6 +175,16 @@ export const sidebarLinks = [
         label: "Exentec Demo",
       }
     ],
+  },
+  {
+    category: "Agent Runner",
+    links: [
+      {
+        imgURL: "users",
+        route: "/agent-runner",
+        label: "Agent Runner Demo",
+      }
+    ]
   }
 ];
 
