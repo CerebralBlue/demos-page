@@ -5,7 +5,7 @@ import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
 
-const DocAnalyzerDemo = () => {
+const AgentRunnerDemo = () => {
     const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -14,16 +14,11 @@ const DocAnalyzerDemo = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isIngesting, setIsIngesting] = useState(false);
+    const [agentsLoading, setAgentsLoading] = useState(true);
     const [agents, setAgents] = useState<any[]>([]);
     const [selectedAgentId, setSelectedAgentId] = useState<number | null>(0);
     const [ingestProgress, setIngestProgress] = useState<{ [key: string]: number }>({});
-    const [chatHistory, setChatHistory] = useState<{ message: string, type: "agent" | "user", seek_data?: any }[]>([]);
     const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-    const handlePrePromptClick = (message: string) => {
-        setQuery(message);
-        handleChat(message);
-    };
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -122,10 +117,6 @@ const DocAnalyzerDemo = () => {
 
             const fileName = file.name;
 
-            setChatHistory((prev) => [
-                ...prev,
-                { message: fileName, type: "user", isFile: true, fileName }
-            ]);
             scrollToBottom();
 
             const formData = new FormData();
@@ -184,28 +175,15 @@ const DocAnalyzerDemo = () => {
                     [file.name]: 100
                 }));
 
-                setChatHistory((prev) => [
-                    ...prev,
-                    { message: "Ingested file successful!", type: "agent" }
-                ]);
                 scrollToBottom();
 
                 await fetchIngestions();
             } else {
-                setChatHistory((prev) => [
-                    ...prev,
-                    { message: "File upload failed. Please try again.", type: "agent" }
-                ]);
+
             }
 
         } catch (error) {
-            setChatHistory(prev => [
-                ...prev,
-                {
-                    message: `There was an error processing the file "${file.name}". Please try again.`,
-                    type: "agent"
-                }
-            ]);
+
         } finally {
             setIngestProgress(prev => {
                 const newProgress = { ...prev };
@@ -242,50 +220,6 @@ const DocAnalyzerDemo = () => {
         }, 100);
     };
 
-    const handleChat = async (message?: string) => {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const urlSeek = `${baseUrl}/neuralseek/seek`;
-
-        setIsLoading(true);
-        setQuery("");
-
-        const originalQuery = message ?? query;
-        let queryToUse = message ?? query;
-        if (!queryToUse.trim()) return;
-
-        // Update chat history with the modified query
-        setChatHistory((prev) => [...prev, { message: originalQuery, type: "user" }]);
-        scrollToBottom();
-
-        // Seek call
-        const seekCallBody = {
-            url_name: "staging-doc-analyzer-demo",
-            question: queryToUse,
-            filter: selectedFile
-        };
-
-        const seekResponse = await axios.post(urlSeek, seekCallBody, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        // Update chat history with the result
-        setChatHistory((prev) => [...prev, { message: seekResponse.data.answer, type: "agent", seek_data: seekResponse.data }]);
-        scrollToBottom();
-
-        setIsLoading(false);
-    };
-
-    // Autocomplete text area with /
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleChat();
-        }
-    };
 
     const fetchAgents = async () => {
         const res = await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", {
@@ -303,6 +237,7 @@ const DocAnalyzerDemo = () => {
         console.info(JSON.parse(res.data.answer));
 
         setAgents(JSON.parse(res.data.answer).rows);
+        setAgentsLoading(false);
     }
 
 
@@ -433,8 +368,8 @@ const DocAnalyzerDemo = () => {
                     <div className="`w-full flex flex-col h-2/5 border-r border-t dark:border-gray-700 relative p-3">
                         <div className="flex items-center justify-between">
                             <h4 className="text-sm font-medium">Agent Selector</h4>
-                            <div className="cursor-pointer" onClick={() => {fetchAgents(); setSelectedAgentId(0);}}>
-                                <Icon  name="loader" className="w-5 h-5" />
+                            <div className="cursor-pointer" onClick={() => {setAgentsLoading(true); fetchAgents(); setSelectedAgentId(0);}}>
+                                <Icon  name="loader" className={`w-5 h-5 ${agentsLoading ? "animate-spin" : ""}`} />
                             </div>
                 
                         </div>
@@ -465,32 +400,12 @@ const DocAnalyzerDemo = () => {
                     
                 </div>
 
-                {/* Right Column - Chat */}
+                {/* Right Column - Document output */}
                 <div className="w-full md:w-2/3 flex flex-col h-full">
-                    {chatHistory.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full">
-                            <ChatHeader
-                                title="Agent Runner"
-                                subtitle="Run an agent on Documents"
-                                image=""
-                                handlePrePromptClick={handlePrePromptClick}
-                            />
-                        </div>
-                    ) : (
-                        <div className="flex-grow w-full overflow-y-auto h-[500px]">
-                            <ChatHistoryDocAnalyzer
-                                messages={chatHistory}
-                                setChatHistory={setChatHistory}
-                                chatEndRef={chatEndRef}
-                            />
-                        </div>
-                    )}
-
-                    
                 </div>
             </div>
         </section>
     );
 };
 
-export default DocAnalyzerDemo;
+export default AgentRunnerDemo;
