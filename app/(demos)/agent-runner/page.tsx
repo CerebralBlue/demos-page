@@ -486,36 +486,7 @@ const DocAnalyzerDemo = () => {
                         </div>
                     )}
 
-                    <div className="mt-auto p-4">
-                        <div className="relative w-full">
-                            <textarea
-                                ref={textareaRef}
-                                id="query"
-                                rows={4}
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-3xl focus:ring-0 focus:outline-none resize-none pr-16 text-gray-900 dark:text-gray-100"
-                                placeholder={selectedFile ? `Ask about ${selectedFile}...` : "Message NeuralSeek about the documents..."}
-                                disabled={isIngesting}
-                            />
-
-                            <div className="absolute bottom-2 right-3 flex items-end p-2">
-                                <button
-                                    onClick={() => handleChat()}
-                                    disabled={isLoading || query.trim().length === 0}
-                                    className={`p-2 rounded-lg transition ${isLoading || query.trim().length === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"}`}
-                                    title={isLoading ? "Processing..." : query.trim().length === 0 ? "Enter a message" : "Send"}
-                                >
-                                    {isLoading ? (
-                                        <Icon name="loader" className="w-5 h-5 animate-spin" />
-                                    ) : (
-                                        <Icon name="paper-plane" className="w-5 h-5" />
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </section>
