@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
+import Markdown from 'react-markdown';
 
 const AgentRunnerDemo = () => {
     const [query, setQuery] = useState("");
@@ -20,6 +21,9 @@ const AgentRunnerDemo = () => {
     const [ingestProgress, setIngestProgress] = useState<{ [key: string]: number }>({});
     const chatEndRef = useRef<HTMLDivElement | null>(null);
 
+    const [agentOutput, setAgentOutput] = useState<string | null>(null);
+    const [agentOutputLoading, setAgentOutputLoading] = useState(false);
+
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         setIsDragging(true);
@@ -32,7 +36,7 @@ const AgentRunnerDemo = () => {
     const handleClean = async () => {
         try {
             setIsLoading(true);
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
                 url_name: "staging-doc-analyzer-demo",
@@ -60,7 +64,7 @@ const AgentRunnerDemo = () => {
 
     const fetchIngestions = async () => {
         try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
                 url_name: "staging-doc-analyzer-demo",
@@ -104,7 +108,8 @@ const AgentRunnerDemo = () => {
     const ingestFile = async (file: File) => {
         setIsIngesting(true);
 
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+
         const urlUpload = `${baseUrl}/neuralseek/upload-file`;
         const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
@@ -136,6 +141,7 @@ const AgentRunnerDemo = () => {
                 });
             }, 300);
 
+            debugger;
             const uploadResponse = await axios.post(urlUpload, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -222,6 +228,10 @@ const AgentRunnerDemo = () => {
 
 
     const fetchAgents = async () => {
+        /**
+         * TODO: Issue is that the VouchCookie in the mAIstro is broken. The request body needs to keep being changed inside the agent defintion itslef
+         * in order to keep working. There needs to be a way to permanently authenticate the agent on the exploreTemplates route.
+         */
         const res = await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", {
             "agent": "list-agents"
         }, {
@@ -232,12 +242,46 @@ const AgentRunnerDemo = () => {
 
         if (res.status !== 200) {
             throw new Error("Fetch agents failed with status code " + res.status);
-            return;
         }
+        if (res.data.answer == " ") {
+            throw new Error("Agent failed to call REST endpoint; check the agent vouch cookie definition");
+        }
+        console.info(res.data);
         console.info(JSON.parse(res.data.answer));
 
         setAgents(JSON.parse(res.data.answer).rows);
+        setSelectedAgentId(0);
         setAgentsLoading(false);
+    }
+
+    const runAgent = async () => {
+        setAgentOutputLoading(true);
+        setAgentOutput(null);
+        if (selectedAgentId == null) {
+            throw new Error("No agent selected");
+        }
+        const agentName = agents[selectedAgentId].name;
+
+        const body = {
+            agent: agentName,
+        }
+
+        const res= await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", body, {
+            headers: {
+                "apikey": "a1546de3-7c9de1d1-199b588e-c989f680"
+            }
+        });
+
+        if (res.status !== 200) {
+            throw new Error("Agent running called. Called agent: " + agentName + " and got status code: " + res.status);
+        }
+
+        console.info(res.data.answer);
+        if (res.data.answer) {
+            setAgentOutput(res.data.answer);
+        }
+        setAgentOutputLoading(false);
+        
     }
 
 
@@ -390,8 +434,8 @@ const AgentRunnerDemo = () => {
                             </p>}
                         </>}
 
-                        <div className="flex items-center justify-center">
-                            <button className="w-fit p-2 bg-blue-500 text-white rounded-lg">
+                        <div className="mt-2 flex items-center justify-center">
+                            <button className="w-fit p-2 bg-blue-500 text-white rounded-lg" onClick={runAgent}>
                                 Run {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"} agent
                             </button>
                         </div>
@@ -401,7 +445,23 @@ const AgentRunnerDemo = () => {
                 </div>
 
                 {/* Right Column - Document output */}
-                <div className="w-full md:w-2/3 flex flex-col h-full">
+                <div className="w-full md:w-2/3 p-5 flex flex-col h-full overflow-y-auto overflow-x-hidden">
+                                {agentOutput? <>
+
+                                    <Markdown>
+                                        {agentOutput}
+                                    </Markdown>
+                                </> : 
+                    <div className="flex flex-col items-center justify-center h-full">
+                            <ChatHeader
+                                title="Agent Runner"
+                                subtitle="What agent would you like to run?"
+                                image=""
+                                handlePrePromptClick={() => {}}
+                            />
+                            {agentOutputLoading && <span className="flex items-center justify-center gap-2"><Icon name="loader" className="w-8 h-8 animate-spin" /> Running {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"}...</span>}
+                        </div>
+                        }
                 </div>
             </div>
         </section>
