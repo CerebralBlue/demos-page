@@ -65,7 +65,12 @@ const urls = [
     name: "staging-sftp-pii-demo",
     url: "https://stagingapi.neuralseek.com/v1/sftp-pii/maistro",
     api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699"
-  }
+  },
+  {
+    name: "staging-agreement-analyzer",
+    url: "https://stagingapi.neuralseek.com/v1/amalgamated-bank/maistro",
+    api_key: "fee077c0-ffe0bb77-6cb03c92-cdb6688a"
+  },
 ]
 
 export async function POST(req: NextRequest) {

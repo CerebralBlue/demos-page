@@ -47,6 +47,7 @@
     "multiparty": "^4.2.3",
     "next": "14.2.15",
     "papaparse": "^5.5.2",
+    "pdfjs-dist": "^5.2.133",
     "puppeteer": "^24.4.0",
     "puppeteer-core": "^24.4.0",
     "query-string": "^9.1.0",

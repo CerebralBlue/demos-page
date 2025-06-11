@@ -96,10 +96,11 @@ const DocAnalyzerDemo = () => {
         setIsDragging(false);
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            // Just take the first file
-            const newFile = e.dataTransfer.files[0];
-            setFiles([newFile]);
-            await ingestFile(newFile);
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            setFiles(droppedFiles);
+            for (const file of droppedFiles) {
+                await ingestFile(file);
+            }
         }
     };
 
