@@ -71,6 +71,11 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/amalgamated-bank/maistro",
     api_key: "fee077c0-ffe0bb77-6cb03c92-cdb6688a"
   },
+  {
+    name: "staging-bcbst-demo",
+    url: "https://stagingapi.neuralseek.com/v1/bcbst-demo/maistro",
+    api_key: "06615dda-2c297083-ccc263b9-c2a2ffaf"
+  }
 ]
 
 export async function POST(req: NextRequest) {

@@ -31,6 +31,11 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/partsPicker/seek",
     api_key: "97d7631c-d2f23b94-8ac5c65d-02c92419"
   },
+  {
+    name: "staging-bcbst-demo",
+    url: "https://stagingapi.neuralseek.com/v1/bcbst-demo/seek",
+    api_key: "06615dda-2c297083-ccc263b9-c2a2ffaf"
+  }
 ]
 
 export async function POST(req: NextRequest) {

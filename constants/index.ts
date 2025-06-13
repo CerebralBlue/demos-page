@@ -178,6 +178,11 @@ export const sidebarLinks = [
         imgURL: "users",
         route: "/exentec-demo",
         label: "Exentec Demo",
+      },
+      {
+        imgURL: "users",
+        route: "/bcbst-demo",
+        label: "BCBS Tennessee Demo",
       }
     ],
   }
