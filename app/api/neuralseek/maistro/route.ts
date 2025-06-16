@@ -66,6 +66,16 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/sftp-pii/maistro",
     api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699"
   },
+  {
+    name: "doc-query",
+    url: "https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro",
+    api_key: "a1546de3-7c9de1d1-199b588e-c989f680"
+  },
+  {
+    name: "staging-agent-runner",
+    url: "https://stagingapi.neuralseek.com/v1/agent-runner/maistro",
+    api_key: "26a38846-f24dbfce-ea622343-25dad915"
+  },
 ]
 
 export async function POST(req: NextRequest) {

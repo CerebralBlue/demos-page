@@ -3,11 +3,9 @@ import React, { DragEvent, useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
-import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
 import Markdown from 'react-markdown';
 
 const AgentRunnerDemo = () => {
-    const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
     const [ingestions, setIngestions] = useState<{ key: string, doc_count: number }[]>([]);
@@ -16,13 +14,23 @@ const AgentRunnerDemo = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isIngesting, setIsIngesting] = useState(false);
     const [agentsLoading, setAgentsLoading] = useState(true);
-    const [agents, setAgents] = useState<any[]>([]);
-    const [selectedAgentId, setSelectedAgentId] = useState<number | null>(0);
+    const [agents, setAgents] = useState<Array<{ id: number; name: string; desc: string }>>([]);
+
+    const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
     const [ingestProgress, setIngestProgress] = useState<{ [key: string]: number }>({});
     const chatEndRef = useRef<HTMLDivElement | null>(null);
 
     const [agentOutput, setAgentOutput] = useState<string | null>(null);
     const [agentOutputLoading, setAgentOutputLoading] = useState(false);
+    const [variableVals, setVariableVals] = useState<Record<string, string>>({});
+
+    const variables = {
+        "Summarizer": [],
+        "email_agent": ["recipient_name", "recipient_email"],
+        "slack-agent": []
+    } as Record<string, never[] | string[]>
+
+    const acceptedAgents = ["Summarizer", "email_agent", "slack-agent"];
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -39,8 +47,8 @@ const AgentRunnerDemo = () => {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
-                agent: "delete_index",
+                url_name: "staging-agent-runner",
+                agent: "delete-index",
                 params: [],
                 options: {
                     returnVariables: false,
@@ -51,14 +59,17 @@ const AgentRunnerDemo = () => {
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            // Refetch after deletion
-            await fetchIngestions();
+            // Refetch after deletion (wait 1500 for neuralseek's side)
+            setTimeout(async () => await fetchIngestions(), 1000);
             // Clear selected file when cleaning
             setSelectedFile(null);
         } catch (err) {
             console.error("Error deleting ingestions:", err);
         } finally {
             setIsLoading(false);
+            setTimeout(async () => await fetchIngestions(), 1000);
+            setSelectedFile(null);
+
         }
     };
 
@@ -67,8 +78,8 @@ const AgentRunnerDemo = () => {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
-                agent: "query_aggregated_docs",
+                url_name: "staging-agent-runner",
+                agent: "query-aggregated-docs",
                 params: [],
                 options: {
                     returnVariables: false,
@@ -126,7 +137,7 @@ const AgentRunnerDemo = () => {
 
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("url_name", "staging-doc-analyzer-demo");
+            formData.append("url_name", "staging-agent-runner");
 
             const progressInterval = setInterval(() => {
                 setIngestProgress(prev => {
@@ -141,7 +152,6 @@ const AgentRunnerDemo = () => {
                 });
             }, 300);
 
-            debugger;
             const uploadResponse = await axios.post(urlUpload, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -166,8 +176,8 @@ const AgentRunnerDemo = () => {
 
             if (uploadedFileName) {
                 const maistroCallBody = {
-                    url_name: "staging-doc-analyzer-demo",
-                    agent: "ingest_document",
+                    url_name: "staging-agent-runner",
+                    agent: "ingest-document",
                     params: [{ name: "name", value: uploadedFileName }],
                     options: { returnVariables: false, returnVariablesExpanded: false }
                 };
@@ -183,7 +193,10 @@ const AgentRunnerDemo = () => {
 
                 scrollToBottom();
 
-                await fetchIngestions();
+                setTimeout(async () => await fetchIngestions(), 1000);
+                // await fetchIngestions();
+                setFiles([]);
+                setSelectedFile(uploadedFileName);
             } else {
 
             }
@@ -199,6 +212,7 @@ const AgentRunnerDemo = () => {
 
             setIsIngesting(false);
             setIsLoading(false);
+
         }
     };
 
@@ -226,18 +240,25 @@ const AgentRunnerDemo = () => {
         }, 100);
     };
 
+    const getAgentById = (id: number) => {
+        return agents.find((agent) => agent.id === id);
+    }
+
 
     const fetchAgents = async () => {
         /**
          * TODO: Issue is that the VouchCookie in the mAIstro is broken. The request body needs to keep being changed inside the agent defintion itslef
          * in order to keep working. There needs to be a way to permanently authenticate the agent on the exploreTemplates route.
          */
-        const res = await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", {
-            "agent": "list-agents"
-        }, {
-            headers: {
-                "apikey": "a1546de3-7c9de1d1-199b588e-c989f680"
-            }
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+        const maistroCallBody = {
+            url_name: "staging-agent-runner",
+            agent: "list-agents",
+            params: [],
+        };
+        const res = await axios.post(urlMaistro, maistroCallBody, {
+            headers: { 'Content-Type': 'application/json' },
         });
 
         if (res.status !== 200) {
@@ -246,39 +267,75 @@ const AgentRunnerDemo = () => {
         if (res.data.answer == " ") {
             throw new Error("Agent failed to call REST endpoint; check the agent vouch cookie definition");
         }
-        console.info(res.data);
-        console.info(JSON.parse(res.data.answer));
 
-        setAgents(JSON.parse(res.data.answer).rows);
-        setSelectedAgentId(0);
+        const filteredAgents = JSON.parse(res.data.answer).rows.filter((agent: { name: string }) => acceptedAgents.includes(agent.name));
+        setAgents(filteredAgents);
+        setSelectedAgentId(filteredAgents[0].id);
         setAgentsLoading(false);
     }
 
     const runAgent = async () => {
         setAgentOutputLoading(true);
         setAgentOutput(null);
+
         if (selectedAgentId == null) {
             throw new Error("No agent selected");
-        }
-        const agentName = agents[selectedAgentId].name;
-
-        const body = {
-            agent: agentName,
+        } 
+        if (selectedFile == null) {
+            throw new Error("No file selected");
         }
 
-        const res= await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", body, {
-            headers: {
-                "apikey": "a1546de3-7c9de1d1-199b588e-c989f680"
-            }
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+
+        const callBody1 = {
+            url_name: "staging-agent-runner",
+            agent: "query-doc-by-name",
+            params: [{name: "fileName", value: selectedFile}],
+        };
+
+        // first query the document by the name to get its text
+        const res1 = await axios.post(urlMaistro, callBody1, {
+            headers: { 'Content-Type': 'application/json' },
         });
 
-        if (res.status !== 200) {
-            throw new Error("Agent running called. Called agent: " + agentName + " and got status code: " + res.status);
+        if (res1.status !== 200 || !res1.data.answer) {
+            throw new Error("Failed to query document by name. Status code: " + res1.status);
+        
+        }
+        const answer = JSON.parse(res1.data.answer);
+
+
+        const docText = answer.hits.hits[0]._source.text;
+
+        // now we use docText to summarize the document
+        const agentName = getAgentById(selectedAgentId)!.name;
+
+        const callBody2 = { 
+            url_name: "staging-agent-runner",
+            agent: agentName,
+            params: [{name: "docText", value: docText}, ...(variables[agentName] as string[]).map((variable) => ({name: variable, value: variableVals[variable]}))],
         }
 
-        console.info(res.data.answer);
-        if (res.data.answer) {
-            setAgentOutput(res.data.answer);
+        const res2 = await axios.post(urlMaistro, callBody2, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+
+        if (res2.status !== 200) {
+            throw new Error("Agent running called. Called agent: " + agentName + " and got status code: " + res2.status);
+        }
+
+        if (res2.data.answer) {
+            if (agentName == "slack-agent") {
+                setAgentOutput(JSON.parse(res2.data.answer).message.text);
+            } else if (agentName == "email_agent") {
+                setAgentOutput("Email send attempted. Please check your email for the summary.");
+            }  
+            else {
+                setAgentOutput(res2.data.answer);
+            }
         }
         setAgentOutputLoading(false);
         
@@ -409,7 +466,7 @@ const AgentRunnerDemo = () => {
                     </div>
 
                     {/* agent selector panel */}
-                    <div className="`w-full flex flex-col h-2/5 border-r border-t dark:border-gray-700 relative p-3">
+                    <div className="`w-full flex flex-col h-full border-r border-t dark:border-gray-700 relative p-3">
                         <div className="flex items-center justify-between">
                             <h4 className="text-sm font-medium">Agent Selector</h4>
                             <div className="cursor-pointer" onClick={() => {setAgentsLoading(true); fetchAgents(); setSelectedAgentId(0);}}>
@@ -430,15 +487,33 @@ const AgentRunnerDemo = () => {
                             </select>
                             <h5 className="text-xs my-2">Agent Description</h5>
                             {selectedAgentId != null && <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {agents[selectedAgentId]?.desc.trim().length > 0 ? agents[selectedAgentId]?.desc : "No description available"}
+                                {(() => {
+                                    const agent = agents.find((agent) => agent.id === selectedAgentId);
+                                    return agent && agent.desc && agent.desc.trim().length > 0 ? agent.desc : "No description available";
+                                })()}
                             </p>}
                         </>}
+                        {
+                            agents && selectedAgentId != null && variables[getAgentById(selectedAgentId)!.name] && variables[getAgentById(selectedAgentId)!.name].length > 0 && <>
+                                <h5 className="text-xs my-2">Variables</h5>
+                                {variables[getAgentById(selectedAgentId)!.name].map((variable) => (
+                                    <div key={variable} className="flex items-center mb-2 gap-2">
+                                        <span className="text-xs ">
+                                            {variable}
+                                        </span>
+                                        <input type="text" placeholder={variable} onChange={(e) => {setVariableVals({...variableVals, [variable]: e.target.value})}} className="w-full p-2 text-xs outline-none border rounded text-gray-500 dark:text-white dark:bg-gray-800 dark:border-gray-700" />
+                                    </div>
+                                ))}
+                            </>
+                        }
 
-                        <div className="mt-2 flex items-center justify-center">
-                            <button className="w-fit p-2 bg-blue-500 text-white rounded-lg" onClick={runAgent}>
-                                Run {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"} agent
+                        <div className="mt-2 flex flex-col items-center justify-center">
+                            <button disabled={selectedFile == null} className={`w-fit p-2 ${selectedFile == null ? "bg-gray-500" : "bg-blue-500"} text-white rounded-lg ${selectedFile == null ? "opacity-50 cursor-not-allowed" : ""}`} onClick={runAgent}>
+                                Run {selectedAgentId != null ? getAgentById(selectedAgentId)?.name : "Agent"} agent
                             </button>
+                            {selectedFile == null && <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">select a file to run the agent</span>}
                         </div>
+
                         
                     </div>
                     
@@ -459,7 +534,7 @@ const AgentRunnerDemo = () => {
                                 image=""
                                 handlePrePromptClick={() => {}}
                             />
-                            {agentOutputLoading && <span className="flex items-center justify-center gap-2"><Icon name="loader" className="w-8 h-8 animate-spin" /> Running {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"}...</span>}
+                            {agentOutputLoading && <span className="flex items-center justify-center gap-2"><Icon name="loader" className="w-8 h-8 animate-spin" /> Running {selectedAgentId != null ? getAgentById(selectedAgentId)?.name : "Agent"}...</span>}
                         </div>
                         }
                 </div>

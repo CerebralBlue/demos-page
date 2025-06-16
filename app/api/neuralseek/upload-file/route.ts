@@ -30,11 +30,18 @@ const urls = [
         name: "staging-sftp-pii-demo",
         url: "https://stagingconsoleapi.neuralseek.com/sftp-pii/exploreUpload",
         api_key: "	1e971fcb-13812f6b-f1b3b9e5-1c093699"
-    }
+    },
+    {
+        name: "staging-agent-runner",
+        url: "https://stagingconsoleapi.neuralseek.com/agent-runner/exploreUpload",
+        api_key: "26a38846-f24dbfce-ea622343-25dad915"
+    },
 ];
 
 export async function POST(req: NextRequest) {
     try {
+    
+
         const incomingFormData = await req.formData();
         const url_name = incomingFormData.get('url_name') as string;
         const file = incomingFormData.get('file') as File;
@@ -48,7 +55,7 @@ export async function POST(req: NextRequest) {
         }
 
         const config = urls.find(url => url.name === url_name);
-
+        console.info(config);
         if (!config) {
             return NextResponse.json({ error: `No configuration found for ${url_name}` }, { status: 400 });
         }
