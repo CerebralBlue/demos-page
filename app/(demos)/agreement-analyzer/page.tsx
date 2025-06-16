@@ -272,7 +272,7 @@ const AgreementAnalyzerDemo = () => {
         const seekCallBody = {
             url_name: "staging-agreement-analyzer",
             question: rule.rule,
-            filter: selectedFile
+            // filter: selectedFile
         };
 
         const seekResponse = await axios.post(urlSeek, seekCallBody, {

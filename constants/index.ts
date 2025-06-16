@@ -1098,23 +1098,192 @@ export const CONTRACT_RULES: { id: number; rule: string }[] = [
   { "id": 8, "rule": "Responsibilities of the participating ODFI and Originator with respect to remaking Rejected Entries or Files.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
   { "id": 9, "rule": "The deadline for Reversals, corrections, or changes by the Originator of Entries or Files, Entry information furnished to the ODFI.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
   { "id": 10, "rule": "Responsibilities of the participating ODFI and Originator with respect to Reclamation Entries.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 11, "rule": "The ODFI’s responsibility for delay by the ACH Operator or RDFI in processing any credit or debit the DFI Transmits to the ACH Operator, or failure to process or credit or debit any such Entry or other acts of omission of a third party.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 12, "rule": "Whether the Origination Agreement covers credit or debit Entries or both.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 13, "rule": "The time when funds may be available to the Originator.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 14, "rule": "The time when the Originator must provide funds to the ODFI.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 15, "rule": "The charges or fees by the ODFI for providing services to the Originator\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 16, "rule": "Exposure limits for the Originator.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 17, "rule": "Responsibilities of the ODFI and Originator with respect to handling Originations, Returns, Notifications of Change, dishonored Returns, refused Notifications of Change, and Return Fee Entries.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 18, "rule": "The conditions under which a Third-Party Sender may be utilized.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 19, "rule": "Procedures for terminating the Origination Agreement and time frames under which the processing of Entries under that Origination Agreement will cease.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 20, "rule": "The Originator’s obligation regarding Prenotifications, if Prenotification process is used\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 21, "rule": "The Originator’s obligation with respect to consumer alleged errors, including with respect to the ODFI’s Regulation E investigation requirements.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this doesn't apply." },
-  // { "id": 22, "rule": "Record retention requirements.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this applies.." },
-  // { "id": 23, "rule": "The use of appropriate encryption standards for ACH Entries involving banking information that is Transmitted or exchanged via an Unsecured Electronic Network.\nIn consumer for debit this applies.\nIn consumer for credit this doesn't apply.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 24, "rule": "Responsibilities of the ODFI and Originator with respect to handling Acknowledgment Entries, if such transactions are desired by the Originator.\nIn consumer for debit this doesn't apply.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 25, "rule": "The Originator’s responsibility for matters warranted or agreed by the ODFI in the Rules pertaining to Entries exchanged through the ACH Network, which may vary depending on the Entry Type.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 26, "rule": "For International ACH Transactions, (IAT entries), • The terms and conditions for the allocation of differences and the assumption of risk for foreign exchange conversion. \n• The rights and responsibilities of the ODFI in the event of an Erroneous Entry.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." }, { "id": 27, "rule": "The Originator must authorize the Nested Third-Party Sender, Third-Party Sender, and ODFI (as applicable) to \noriginate Entries on behalf of the Originator to Receivers’ accounts\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." }, { "id": 28, "rule": "The Originator must agree to be bound by the Nacha Rules\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 29, "rule": "The Originator must agree not to originate Entries that violate the laws of the United States\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
-  // { "id": 30, "rule": "Include any restrictions on the types of Entries that may be originated\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this doesn't apply." }, { "id": 31, "rule": "Include the right of the ODFI, Third-Party Sender, and Nested Third-Party Sender (as applicable) to terminate or \nsuspend the agreement for breach of the Nacha Rules in a manner that permits such party to comply with the Nacha \nRules\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this doesn't apply." },
-  // { "id": 32, "rule": "Include the right of the ODFI, Third-Party Sender, and Nested Third-Party Sender (as applicable) to terminate or suspend the agreement for breach of the Nacha Rules in a manner that permits such party to comply with the Nacha Rules\nIn consumer for debit this applies.\nIn consumer for credit this doesn't apply.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this doesn't apply." }
+
+
+
+  { "id": 11, "rule": "The ODFI’s responsibility for delay by the ACH Operator or RDFI in processing any credit or debit the DFI Transmits to the ACH Operator, or failure to process or credit or debit any such Entry or other acts of omission of a third party.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 12, "rule": "Whether the Origination Agreement covers credit or debit Entries or both.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 13, "rule": "The time when funds may be available to the Originator.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 14, "rule": "The time when the Originator must provide funds to the ODFI.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 15, "rule": "The charges or fees by the ODFI for providing services to the Originator\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 16, "rule": "Exposure limits for the Originator.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 17, "rule": "Responsibilities of the ODFI and Originator with respect to handling Originations, Returns, Notifications of Change, dishonored Returns, refused Notifications of Change, and Return Fee Entries.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 18, "rule": "The conditions under which a Third-Party Sender may be utilized.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 19, "rule": "Procedures for terminating the Origination Agreement and time frames under which the processing of Entries under that Origination Agreement will cease.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 20, "rule": "The Originator’s obligation regarding Prenotifications, if Prenotification process is used\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 21, "rule": "The Originator’s obligation with respect to consumer alleged errors, including with respect to the ODFI’s Regulation E investigation requirements.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this doesn't apply." },
+  { "id": 22, "rule": "Record retention requirements.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this applies.." },
+  { "id": 23, "rule": "The use of appropriate encryption standards for ACH Entries involving banking information that is Transmitted or exchanged via an Unsecured Electronic Network.\nIn consumer for debit this applies.\nIn consumer for credit this doesn't apply.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 24, "rule": "Responsibilities of the ODFI and Originator with respect to handling Acknowledgment Entries, if such transactions are desired by the Originator.\nIn consumer for debit this doesn't apply.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 25, "rule": "The Originator’s responsibility for matters warranted or agreed by the ODFI in the Rules pertaining to Entries exchanged through the ACH Network, which may vary depending on the Entry Type.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 26, "rule": "For International ACH Transactions, (IAT entries), • The terms and conditions for the allocation of differences and the assumption of risk for foreign exchange conversion. \n• The rights and responsibilities of the ODFI in the event of an Erroneous Entry.\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." }, { "id": 27, "rule": "The Originator must authorize the Nested Third-Party Sender, Third-Party Sender, and ODFI (as applicable) to \noriginate Entries on behalf of the Originator to Receivers’ accounts\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." }, { "id": 28, "rule": "The Originator must agree to be bound by the Nacha Rules\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 29, "rule": "The Originator must agree not to originate Entries that violate the laws of the United States\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this applies.." },
+  { "id": 30, "rule": "Include any restrictions on the types of Entries that may be originated\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this applies.\nIn corporate for credit this doesn't apply." }, { "id": 31, "rule": "Include the right of the ODFI, Third-Party Sender, and Nested Third-Party Sender (as applicable) to terminate or \nsuspend the agreement for breach of the Nacha Rules in a manner that permits such party to comply with the Nacha \nRules\nIn consumer for debit this applies.\nIn consumer for credit this applies.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this doesn't apply." },
+  { "id": 32, "rule": "Include the right of the ODFI, Third-Party Sender, and Nested Third-Party Sender (as applicable) to terminate or suspend the agreement for breach of the Nacha Rules in a manner that permits such party to comply with the Nacha Rules\nIn consumer for debit this applies.\nIn consumer for credit this doesn't apply.\nIn corporate for debit this doesn't apply.\nIn corporate for credit this doesn't apply." }
 ];
+
+export const RULES: any = [
+  [
+    {
+      "key": "entryFormat",
+      "description": "Define the nature, type, and format of Entries or Entry information to be furnished by the Originator.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "entryTiming",
+      "description": "Define the place and time Entries or Entry information is to be furnished by the Originator.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "authorizationRequired",
+      "description": "Define the Originator’s obligation to obtain valid authorization of Entries from Receivers.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "authorizationMethod",
+      "description": "Define use of proper authorization methods, authorization forms, and ACH formats.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "regulationE",
+      "description": "Define the Originator’s obligation to obtain, retain, and provide copies of authorizations, particularly with regard to consumer authorizations under Regulation E.",
+      "appliesTo": ["ConsumerDR"]
+    },
+    {
+      "key": "transmissionSecurity",
+      "description": "Define the level of security to be established for delivering the payment data from the Originator to the ODFI.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "dataSecurity",
+      "description": "Define data security and data breach provisions.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "rejectedHandling",
+      "description": "Define responsibilities of ODFI and Originator with respect to remaking Rejected Entries or Files.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "reversalDeadline",
+      "description": "Define deadline for Reversals, corrections, or changes by the Originator.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "reclamationResponsibility",
+      "description": "Define responsibilities of ODFI and Originator with respect to Reclamation Entries.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "odfiDelayResponsibility",
+      "description": "Define ODFI’s responsibility for delays or omissions by the ACH Operator or RDFI.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "entryTypeCovered",
+      "description": "Specify whether the Origination Agreement covers credit, debit, or both.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "fundsAvailability",
+      "description": "Define when funds may be available to the Originator.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR"]
+    },
+    {
+      "key": "fundsProvision",
+      "description": "Define when the Originator must provide funds to the ODFI.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR"]
+    },
+    {
+      "key": "odfiFees",
+      "description": "Define charges or fees by the ODFI for services provided.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "exposureLimits",
+      "description": "Define exposure limits for the Originator.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "returnsAndNOCs",
+      "description": "Define responsibilities for handling Originations, Returns, Notifications of Change, dishonored Returns, refused NOCs, and Return Fee Entries.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "thirdPartySender",
+      "description": "Define the conditions under which a Third-Party Sender may be utilized.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "termination",
+      "description": "Define procedures and timeframes for terminating the Origination Agreement.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "prenotificationObligation",
+      "description": "Define the Originator’s obligation regarding Prenotifications, if used.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "consumerErrorHandling",
+      "description": "Define obligations regarding consumer alleged errors and Regulation E investigation requirements.",
+      "appliesTo": ["ConsumerDR"]
+    },
+    {
+      "key": "recordRetention",
+      "description": "Define record retention requirements.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "encryptionStandards",
+      "description": "Define encryption standards for Entries involving unsecured electronic networks.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "acknowledgmentEntries",
+      "description": "Define responsibilities related to Acknowledgment Entries, if used.",
+      "appliesTo": ["ConsumerDR"]
+    },
+    {
+      "key": "odfiWarranties",
+      "description": "Define responsibilities for matters warranted or agreed by the ODFI in the Rules.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "iatTerms",
+      "description": "Define terms for IATs, including FX conversion risk and erroneous entries.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "originatorAuthorization",
+      "description": "Originator must authorize ODFI or Third-Party Sender to originate Entries.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "agreeToNachaRules",
+      "description": "Originator must agree to be bound by Nacha Rules.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "usLawCompliance",
+      "description": "Originator must not originate Entries that violate U.S. laws.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "entryRestrictions",
+      "description": "Include any restrictions on types of Entries that may be originated.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "terminationRights",
+      "description": "ODFI and others may terminate/suspend agreement for breach of Nacha Rules.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    },
+    {
+      "key": "auditRights",
+      "description": "ODFI and others may audit Originator’s compliance with agreement and Nacha Rules.",
+      "appliesTo": ["ConsumerDR", "ConsumerCR", "CorporateDR", "CorporateCR"]
+    }
+  ]
+
+]
