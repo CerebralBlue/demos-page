@@ -298,7 +298,7 @@ const BCBSTDemo = () => {
                     <div className="p-3 border-b dark:border-gray-700">
 
                         <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-sm font-medium">BCBS Health Support Docs</h4>
+                            <h4 className="text-sm font-medium">BCBMS Health Support Docs</h4>
                             {/* <button
                                 onClick={handleClean}
                                 title="Clean ingested files"
@@ -406,17 +406,19 @@ const BCBSTDemo = () => {
                     {chatHistory.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full">
                             <ChatHeader
-                                // title="BCBST Doc Analyzer"
                                 title=""
-                                subtitle="Let't talk through the documents!"
-                                image="BCBST_logo.svg"
+                                subtitle="Let's talk through the documents!"
+                                image="BCBSMS_logo.png"
+                                width={450}
+                                height={200}
                                 handlePrePromptClick={handlePrePromptClick}
                                 prePrompts={[
-                                    { iconName: "document-text", label: "Non-covered services", prompt: "What are the non-covered services mentioned on BlueCross BlueShield of Tennessee Provider Administration Manual?" },
+                                    { iconName: "document-text", label: "Non-covered services", prompt: "What are the non-covered services mentioned on BlueCross BlueShield of Mississippi Provider Administration Manual?" },
                                     { iconName: "document-text", label: "OTC abbreviation", prompt: "Can you explain to me the OTC abbreviation?" },
                                     { iconName: "document-text", label: "Drug Tier 5", prompt: "What is the Drug Tier 5 ?" },
                                 ]}
                             />
+
                         </div>
                     ) : (
                         <div className="flex-grow w-full overflow-y-auto h-[500px]">
