@@ -182,7 +182,7 @@ export const sidebarLinks = [
       {
         imgURL: "users",
         route: "/bcbst-demo",
-        label: "BCBS Tennessee Demo",
+        label: "BCBS Mississippi Demo",
       }
     ],
   }
