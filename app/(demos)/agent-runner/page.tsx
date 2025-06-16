@@ -23,14 +23,10 @@ const AgentRunnerDemo = () => {
     const [agentOutput, setAgentOutput] = useState<string | null>(null);
     const [agentOutputLoading, setAgentOutputLoading] = useState(false);
     const [variableVals, setVariableVals] = useState<Record<string, string>>({});
+    const [variables, setVariables] = useState<Record<string, never[] | string[]>>({});
 
-    const variables = {
-        "Summarizer": [],
-        "email_agent": ["recipient_name", "recipient_email"],
-        "slack-agent": []
-    } as Record<string, never[] | string[]>
 
-    const acceptedAgents = ["Summarizer", "email_agent", "slack-agent"];
+    const unacceptedAgents = ["list-agents", "query-doc-by-name", "query-aggregated-docs", "ingest-document", "delete-index"];
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -268,7 +264,47 @@ const AgentRunnerDemo = () => {
             throw new Error("Agent failed to call REST endpoint; check the agent vouch cookie definition");
         }
 
-        const filteredAgents = JSON.parse(res.data.answer).rows.filter((agent: { name: string }) => acceptedAgents.includes(agent.name));
+        const filteredAgents = JSON.parse(res.data.answer).rows.filter((agent: { name: string }) => !unacceptedAgents.includes(agent.name));
+        const agentVariables = {};
+        // populate variables for each
+        filteredAgents.forEach(agent => {
+            const ntl = agent.ntl;
+
+            // regex for << >>
+            const regex = /<<([^>]*)>>/g;
+            const captures = [...ntl.matchAll(regex)].map(match => match[1]);
+            
+
+            const f = captures.map(capture => {
+                let c = capture.trim();
+                let parts = c.split(",");
+                let o = {}
+                parts.forEach(part => {
+                    let [key, val]: string[] = part.split(":");
+                    key = key.trim();
+                    val = val.trim();
+                    if (key === "prompt") {
+                        o[key] = val === "true" ? true : false;
+                    } else {
+                        o[key] = val;
+                    }
+                });
+
+                return o;
+            }).filter((v: {prompt: boolean}) => v.prompt === true) // only variables that require prompting
+
+            const uniqueVariablesMap = new Map();
+            f.forEach((v: {name: string}) => {
+                if (!uniqueVariablesMap.has(v.name)) {
+                    uniqueVariablesMap.set(v.name, v);
+                }
+            });
+            const uniqueVariables = Array.from(uniqueVariablesMap.values());
+            agentVariables[agent.name] = uniqueVariables.map(v => v.name);
+        });
+
+        setVariables(agentVariables);
+
         setAgents(filteredAgents);
         setSelectedAgentId(filteredAgents[0].id);
         setAgentsLoading(false);
