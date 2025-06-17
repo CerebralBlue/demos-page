@@ -8,7 +8,7 @@ import Markdown from 'react-markdown';
 const AgentRunnerDemo = () => {
     const [files, setFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
-    const [ingestions, setIngestions] = useState<{ key: string, doc_count: number }[]>([]);
+    const [ingestions, setIngestions] = useState<string[]>([]);
 
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -40,19 +40,28 @@ const AgentRunnerDemo = () => {
     const handleClean = async () => {
         try {
             setIsLoading(true);
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-            const maistroCallBody = {
-                url_name: "staging-agent-runner",
-                agent: "delete-index",
-                params: [],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
+
+            // send req for each file 
+            ingestions.forEach(async fileName => {
+
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+
+                const urlDelete = `${baseUrl}/neuralseek/delete-file`;
+
+                const body = {
+                    url_name: "staging-agent-runner",
+                    fileName,
                 }
-            };
-            await axios.post(urlMaistro, maistroCallBody, {
-                headers: { 'Content-Type': 'application/json' },
+                const res = await axios.post(urlDelete, body, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                })
+
+                if (res.status !== 200) {
+                    throw new Error(`Error deleting file ${fileName} status: ${res.status}`);
+                }
             });
 
             // Refetch after deletion (wait 1500 for neuralseek's side)
@@ -71,23 +80,22 @@ const AgentRunnerDemo = () => {
 
     const fetchIngestions = async () => {
         try {
+
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-            const maistroCallBody = {
-                url_name: "staging-agent-runner",
-                agent: "query-aggregated-docs",
-                params: [],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
-                }
-            };
-            const uniqueESFiles = await axios.post(urlMaistro, maistroCallBody, {
-                headers: {
-                    'Content-Type': 'application/json',
+            const urlExplore = `${baseUrl}/neuralseek/explore-files`;
+
+            const res = await axios.post(urlExplore, 
+                {
+                    url_name: "staging-agent-runner"
                 },
-            });
-            const uniqueFiles = JSON.parse(uniqueESFiles.data.answer).aggregations.unique_names.buckets;
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                }
+            );
+            const uniqueFiles = res.data;
             setIngestions(uniqueFiles);
 
         } catch (err) {
@@ -116,9 +124,7 @@ const AgentRunnerDemo = () => {
         setIsIngesting(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-
         const urlUpload = `${baseUrl}/neuralseek/upload-file`;
-        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         try {
             // Initialize progress
@@ -126,8 +132,6 @@ const AgentRunnerDemo = () => {
                 ...prev,
                 [file.name]: 0
             }));
-
-            const fileName = file.name;
 
             scrollToBottom();
 
@@ -170,17 +174,10 @@ const AgentRunnerDemo = () => {
 
             const uploadedFileName = uploadResponse.data.fn;
 
+            /**
+             * We avoid ingestion and stop as soon as the file was successfully uploaded
+             */
             if (uploadedFileName) {
-                const maistroCallBody = {
-                    url_name: "staging-agent-runner",
-                    agent: "ingest-document",
-                    params: [{ name: "name", value: uploadedFileName }],
-                    options: { returnVariables: false, returnVariablesExpanded: false }
-                };
-
-                await axios.post(urlMaistro, maistroCallBody, {
-                    headers: { 'Content-Type': 'application/json' },
-                });
 
                 setIngestProgress(prev => ({
                     ...prev,
@@ -190,11 +187,9 @@ const AgentRunnerDemo = () => {
                 scrollToBottom();
 
                 setTimeout(async () => await fetchIngestions(), 1000);
-                // await fetchIngestions();
+
                 setFiles([]);
                 setSelectedFile(uploadedFileName);
-            } else {
-
             }
 
         } catch (error) {
@@ -208,7 +203,6 @@ const AgentRunnerDemo = () => {
 
             setIsIngesting(false);
             setIsLoading(false);
-
         }
     };
 
@@ -240,12 +234,8 @@ const AgentRunnerDemo = () => {
         return agents.find((agent) => agent.id === id);
     }
 
-
     const fetchAgents = async () => {
-        /**
-         * TODO: Issue is that the VouchCookie in the mAIstro is broken. The request body needs to keep being changed inside the agent defintion itslef
-         * in order to keep working. There needs to be a way to permanently authenticate the agent on the exploreTemplates route.
-         */
+
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
         const urlMaistro = `${baseUrl}/neuralseek/maistro`;
         const maistroCallBody = {
@@ -265,41 +255,42 @@ const AgentRunnerDemo = () => {
         }
 
         const filteredAgents = JSON.parse(res.data.answer).rows.filter((agent: { name: string }) => !unacceptedAgents.includes(agent.name));
-        const agentVariables = {};
+        const agentVariables: Record<string, string[]> = {};
         // populate variables for each
-        filteredAgents.forEach(agent => {
+        filteredAgents.forEach((agent: { name: string; ntl: string }) => {
             const ntl = agent.ntl;
 
             // regex for << >>
             const regex = /<<([^>]*)>>/g;
             const captures = [...ntl.matchAll(regex)].map(match => match[1]);
-            
 
             const f = captures.map(capture => {
                 let c = capture.trim();
                 let parts = c.split(",");
-                let o = {}
-                parts.forEach(part => {
+                let o: Record<any, any> = {}
+                parts.forEach((part : string) => {
                     let [key, val]: string[] = part.split(":");
                     key = key.trim();
                     val = val.trim();
                     if (key === "prompt") {
-                        o[key] = val === "true" ? true : false;
+                        o["prompt"] = val === "true" ? true : false;
                     } else {
+
                         o[key] = val;
                     }
                 });
 
                 return o;
-            }).filter((v: {prompt: boolean}) => v.prompt === true) // only variables that require prompting
+            }).filter((v: Record<string, any>) => v.prompt === true) // only variables that require prompting
 
             const uniqueVariablesMap = new Map();
-            f.forEach((v: {name: string}) => {
+            f.forEach((v: Record<string, any>) => {
                 if (!uniqueVariablesMap.has(v.name)) {
                     uniqueVariablesMap.set(v.name, v);
                 }
             });
-            const uniqueVariables = Array.from(uniqueVariablesMap.values());
+            const uniqueVariables = Array.from(uniqueVariablesMap.values()).filter(v => v.name !== "docName");
+            console.info(uniqueVariables);
             agentVariables[agent.name] = uniqueVariables.map(v => v.name);
         });
 
@@ -324,34 +315,13 @@ const AgentRunnerDemo = () => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
         const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
-
-        const callBody1 = {
-            url_name: "staging-agent-runner",
-            agent: "query-doc-by-name",
-            params: [{name: "fileName", value: selectedFile}],
-        };
-
-        // first query the document by the name to get its text
-        const res1 = await axios.post(urlMaistro, callBody1, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (res1.status !== 200 || !res1.data.answer) {
-            throw new Error("Failed to query document by name. Status code: " + res1.status);
-        
-        }
-        const answer = JSON.parse(res1.data.answer);
-
-
-        const docText = answer.hits.hits[0]._source.text;
-
-        // now we use docText to summarize the document
+        // we use docName to summarize the document
         const agentName = getAgentById(selectedAgentId)!.name;
 
         const callBody2 = { 
             url_name: "staging-agent-runner",
             agent: agentName,
-            params: [{name: "docText", value: docText}, ...(variables[agentName] as string[]).map((variable) => ({name: variable, value: variableVals[variable]}))],
+            params: [{name: "docName", value: selectedFile}, ...(variables[agentName] as string[]).map((variable) => ({name: variable, value: variableVals[variable]}))],
         }
 
         const res2 = await axios.post(urlMaistro, callBody2, {
@@ -414,25 +384,25 @@ const AgentRunnerDemo = () => {
                                 <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
                                     {/* Files List */}
                                     {ingestions.map((file, index) => {
-                                        const isSelected = selectedFile === file.key;
+                                        const isSelected = selectedFile === file;
                                         return (
                                             <div
                                                 key={index}
                                                 className={`p-2 border rounded flex items-center cursor-pointer transition ${isSelected
                                                     ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'} hover:bg-blue-100 dark:hover:bg-blue-800/40`}
-                                                onClick={() => selectFile(file.key)}
+                                                onClick={() => selectFile(file)}
                                             >
                                                 <input
                                                     type="radio"
                                                     checked={isSelected}
-                                                    onChange={() => selectFile(file.key)}
+                                                    onChange={() => selectFile(file)}
                                                     onClick={e => e.stopPropagation()}
                                                     className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
                                                 />
                                                 <div className="flex items-center overflow-hidden">
                                                     <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
                                                     <span className="truncate text-sm text-gray-800 dark:text-gray-100">
-                                                        {file.key}
+                                                        {file}
                                                     </span>
                                                 </div>
                                             </div>
@@ -558,10 +528,17 @@ const AgentRunnerDemo = () => {
                 {/* Right Column - Document output */}
                 <div className="w-full md:w-2/3 p-5 flex flex-col h-full overflow-y-auto overflow-x-hidden">
                                 {agentOutput? <>
+                                    {
+                                        agentOutput.includes("<!DOCTYPE") ? 
+                                        <iframe className="h-full" srcDoc={agentOutput.slice(7, -3)}>
 
+                                        </iframe>
+                                        :
                                     <Markdown>
                                         {agentOutput}
                                     </Markdown>
+
+                                    }
                                 </> : 
                     <div className="flex flex-col items-center justify-center h-full">
                             <ChatHeader
