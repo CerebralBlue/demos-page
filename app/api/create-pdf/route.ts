@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
     }
 
     const browser = await puppeteer.launch({
-      executablePath: '/usr/bin/google-chrome', // SERVER
-      // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',  // LOCAL
+      // executablePath: '/usr/bin/google-chrome', // SERVER
+      executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',  // LOCAL
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });

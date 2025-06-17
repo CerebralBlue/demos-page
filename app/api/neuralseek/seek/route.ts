@@ -21,6 +21,26 @@ const urls = [
     url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
     api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
   },
+  {
+    name: "staging-agreement-analyzer",
+    url: "https://stagingapi.neuralseek.com/v1/amalgamated-bank/seek",
+    api_key: "fee077c0-ffe0bb77-6cb03c92-cdb6688a"
+  },
+  {
+    name: "staging-brou-demo",
+    url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
+    api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
+  },
+  {
+    name: "partsPicker",
+    url: "https://stagingapi.neuralseek.com/v1/partsPicker/seek",
+    api_key: "97d7631c-d2f23b94-8ac5c65d-02c92419"
+  },
+  {
+    name: "staging-bcbst-demo",
+    url: "https://stagingapi.neuralseek.com/v1/bcbst-demo/seek",
+    api_key: "06615dda-2c297083-ccc263b9-c2a2ffaf"
+  }
 ]
 
 export async function POST(req: NextRequest) {

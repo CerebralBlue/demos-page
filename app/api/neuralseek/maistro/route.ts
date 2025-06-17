@@ -65,6 +65,16 @@ const urls = [
     name: "staging-sftp-pii-demo",
     url: "https://stagingapi.neuralseek.com/v1/sftp-pii/maistro",
     api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699"
+  },
+  {
+    name: "staging-agreement-analyzer",
+    url: "https://stagingapi.neuralseek.com/v1/amalgamated-bank/maistro",
+    api_key: "fee077c0-ffe0bb77-6cb03c92-cdb6688a"
+  },
+  {
+    name: "staging-bcbst-demo",
+    url: "https://stagingapi.neuralseek.com/v1/bcbst-demo/maistro",
+    api_key: "06615dda-2c297083-ccc263b9-c2a2ffaf"
   }
 ]
 

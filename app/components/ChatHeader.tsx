@@ -13,13 +13,27 @@ interface ChatHeaderProps {
     image: string;
     handlePrePromptClick: (prompt: string) => void;
     prePrompts?: PrePromptItem[];
+    width?: number | string;
+    height?: number | string;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ title, subtitle, image, handlePrePromptClick, prePrompts }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({
+    title,
+    subtitle,
+    image,
+    handlePrePromptClick,
+    prePrompts,
+    width = 120,  // default width
+    height = 80,  // default height
+}) => {
     return (
         <header className="flex flex-col items-center space-y-3 mb-2">
             <div className="flex items-center space-x-3">
-                <img src={`/demos-page/${image ? image : "neuralseek_logo.png"}`} alt="NeuralSeek Logo" className="w-30 h-20" />
+                <img
+                    src={`/demos-page/${image || "neuralseek_logo.png"}`}
+                    alt="NeuralSeek Logo"
+                    style={{ width, height }}
+                />
                 <h1 className="text-4xl font-bold text-[#6A67CE] dark:text-[#B3B0FF]">{title}</h1>
             </div>
             <p className="text-center text-lg">{subtitle}</p>
