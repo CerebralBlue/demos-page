@@ -11,6 +11,11 @@ interface NeuralSeekConfig {
 
 export const NEURALSEEK_URL_CONFIGS: NeuralSeekConfig[] = [
     {
+        name: "customer-support-chatbot",
+        api_key: "0c828089-d6359503-aea41b37-6f3d42fa",
+        url_seek: "https://stagingapi.neuralseek.com/v1/customer-support-chatbot/seek"
+    },
+    {
         name: "staging-sftp-pii-demo",
         api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699",
         url_explore_upload: "https://stagingconsoleapi.neuralseek.com/sftp-pii/exploreUpload",

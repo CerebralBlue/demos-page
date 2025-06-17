@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { url_name, question, filter } = await req.json();
+    const { url_name, question, filter } = await req.json();    
 
     if (!url_name || !question) {
       return NextResponse.json(
@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = {
-      question,
+    // Construct the base body with options
+    let body: { options: any; question?: any; } = {
       options: {
         includeSourceResults: true,
         includeHighlights: true,
@@ -32,8 +32,15 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    // Add question to body based on its type
+    if (typeof question === 'object') {
+      body = { ...question, ...body };
+    } else {
+      body = { ...body, question };
+    }
+    
     if (!config.url_seek) {
-      throw new Error('Missing Maistro URL in config');
+      throw new Error('Missing URL in config');
     }
     
     const response = await fetch(config.url_seek, {
