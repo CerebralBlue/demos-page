@@ -3,26 +3,30 @@ import React, { DragEvent, useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
-import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
 import Markdown from 'react-markdown';
 
 const AgentRunnerDemo = () => {
-    const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
-    const [ingestions, setIngestions] = useState<{ key: string, doc_count: number }[]>([]);
+    const [ingestions, setIngestions] = useState<string[]>([]);
 
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isIngesting, setIsIngesting] = useState(false);
     const [agentsLoading, setAgentsLoading] = useState(true);
-    const [agents, setAgents] = useState<any[]>([]);
-    const [selectedAgentId, setSelectedAgentId] = useState<number | null>(0);
+    const [agents, setAgents] = useState<Array<{ id: number; name: string; desc: string }>>([]);
+
+    const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
     const [ingestProgress, setIngestProgress] = useState<{ [key: string]: number }>({});
     const chatEndRef = useRef<HTMLDivElement | null>(null);
 
     const [agentOutput, setAgentOutput] = useState<string | null>(null);
     const [agentOutputLoading, setAgentOutputLoading] = useState(false);
+    const [variableVals, setVariableVals] = useState<Record<string, string>>({});
+    const [variables, setVariables] = useState<Record<string, never[] | string[]>>({});
+
+
+    const unacceptedAgents = ["list-agents", "query-doc-by-name", "query-aggregated-docs", "ingest-document", "delete-index"];
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -36,51 +40,62 @@ const AgentRunnerDemo = () => {
     const handleClean = async () => {
         try {
             setIsLoading(true);
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-            const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
-                agent: "delete_index",
-                params: [],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
+
+            // send req for each file 
+            ingestions.forEach(async fileName => {
+
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+
+                const urlDelete = `${baseUrl}/neuralseek/delete-file`;
+
+                const body = {
+                    url_name: "staging-agent-runner",
+                    fileName,
                 }
-            };
-            await axios.post(urlMaistro, maistroCallBody, {
-                headers: { 'Content-Type': 'application/json' },
+                const res = await axios.post(urlDelete, body, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                })
+
+                if (res.status !== 200) {
+                    throw new Error(`Error deleting file ${fileName} status: ${res.status}`);
+                }
             });
 
-            // Refetch after deletion
-            await fetchIngestions();
+            // Refetch after deletion (wait 1500 for neuralseek's side)
+            setTimeout(async () => await fetchIngestions(), 1000);
             // Clear selected file when cleaning
             setSelectedFile(null);
         } catch (err) {
             console.error("Error deleting ingestions:", err);
         } finally {
             setIsLoading(false);
+            setTimeout(async () => await fetchIngestions(), 1000);
+            setSelectedFile(null);
+
         }
     };
 
     const fetchIngestions = async () => {
         try {
+
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-            const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-            const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
-                agent: "query_aggregated_docs",
-                params: [],
-                options: {
-                    returnVariables: false,
-                    returnVariablesExpanded: false
-                }
-            };
-            const uniqueESFiles = await axios.post(urlMaistro, maistroCallBody, {
-                headers: {
-                    'Content-Type': 'application/json',
+            const urlExplore = `${baseUrl}/neuralseek/explore-files`;
+
+            const res = await axios.post(urlExplore, 
+                {
+                    url_name: "staging-agent-runner"
                 },
-            });
-            const uniqueFiles = JSON.parse(uniqueESFiles.data.answer).aggregations.unique_names.buckets;
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                }
+            );
+            const uniqueFiles = res.data;
             setIngestions(uniqueFiles);
 
         } catch (err) {
@@ -109,9 +124,7 @@ const AgentRunnerDemo = () => {
         setIsIngesting(true);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
-
         const urlUpload = `${baseUrl}/neuralseek/upload-file`;
-        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
 
         try {
             // Initialize progress
@@ -120,13 +133,11 @@ const AgentRunnerDemo = () => {
                 [file.name]: 0
             }));
 
-            const fileName = file.name;
-
             scrollToBottom();
 
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("url_name", "staging-doc-analyzer-demo");
+            formData.append("url_name", "staging-agent-runner");
 
             const progressInterval = setInterval(() => {
                 setIngestProgress(prev => {
@@ -141,7 +152,6 @@ const AgentRunnerDemo = () => {
                 });
             }, 300);
 
-            debugger;
             const uploadResponse = await axios.post(urlUpload, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -164,17 +174,10 @@ const AgentRunnerDemo = () => {
 
             const uploadedFileName = uploadResponse.data.fn;
 
+            /**
+             * We avoid ingestion and stop as soon as the file was successfully uploaded
+             */
             if (uploadedFileName) {
-                const maistroCallBody = {
-                    url_name: "staging-doc-analyzer-demo",
-                    agent: "ingest_document",
-                    params: [{ name: "name", value: uploadedFileName }],
-                    options: { returnVariables: false, returnVariablesExpanded: false }
-                };
-
-                await axios.post(urlMaistro, maistroCallBody, {
-                    headers: { 'Content-Type': 'application/json' },
-                });
 
                 setIngestProgress(prev => ({
                     ...prev,
@@ -183,9 +186,10 @@ const AgentRunnerDemo = () => {
 
                 scrollToBottom();
 
-                await fetchIngestions();
-            } else {
+                setTimeout(async () => await fetchIngestions(), 1000);
 
+                setFiles([]);
+                setSelectedFile(uploadedFileName);
             }
 
         } catch (error) {
@@ -226,18 +230,21 @@ const AgentRunnerDemo = () => {
         }, 100);
     };
 
+    const getAgentById = (id: number) => {
+        return agents.find((agent) => agent.id === id);
+    }
 
     const fetchAgents = async () => {
-        /**
-         * TODO: Issue is that the VouchCookie in the mAIstro is broken. The request body needs to keep being changed inside the agent defintion itslef
-         * in order to keep working. There needs to be a way to permanently authenticate the agent on the exploreTemplates route.
-         */
-        const res = await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", {
-            "agent": "list-agents"
-        }, {
-            headers: {
-                "apikey": "a1546de3-7c9de1d1-199b588e-c989f680"
-            }
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+        const maistroCallBody = {
+            url_name: "staging-agent-runner",
+            agent: "list-agents",
+            params: [],
+        };
+        const res = await axios.post(urlMaistro, maistroCallBody, {
+            headers: { 'Content-Type': 'application/json' },
         });
 
         if (res.status !== 200) {
@@ -246,39 +253,89 @@ const AgentRunnerDemo = () => {
         if (res.data.answer == " ") {
             throw new Error("Agent failed to call REST endpoint; check the agent vouch cookie definition");
         }
-        console.info(res.data);
-        console.info(JSON.parse(res.data.answer));
 
-        setAgents(JSON.parse(res.data.answer).rows);
-        setSelectedAgentId(0);
+        const filteredAgents = JSON.parse(res.data.answer).rows.filter((agent: { name: string }) => !unacceptedAgents.includes(agent.name));
+        const agentVariables: Record<string, string[]> = {};
+        // populate variables for each
+        filteredAgents.forEach((agent: { name: string; ntl: string }) => {
+            const ntl = agent.ntl;
+
+            // regex for << >>
+            const regex = /<<([^>]*)>>/g;
+            const captures = [...ntl.matchAll(regex)].map(match => match[1]);
+
+            const f = captures.map(capture => {
+                let c = capture.trim();
+                let parts = c.split(",");
+                let o: Record<any, any> = {}
+                parts.forEach((part : string) => {
+                    let [key, val]: string[] = part.split(":");
+                    key = key.trim();
+                    val = val.trim();
+                    if (key === "prompt") {
+                        o["prompt"] = val === "true" ? true : false;
+                    } else {
+
+                        o[key] = val;
+                    }
+                });
+
+                return o;
+            }).filter((v: Record<string, any>) => v.prompt === true) // only variables that require prompting
+
+            const uniqueVariablesMap = new Map();
+            f.forEach((v: Record<string, any>) => {
+                if (!uniqueVariablesMap.has(v.name)) {
+                    uniqueVariablesMap.set(v.name, v);
+                }
+            });
+            const uniqueVariables = Array.from(uniqueVariablesMap.values()).filter(v => v.name !== "docName");
+            console.info(uniqueVariables);
+            agentVariables[agent.name] = uniqueVariables.map(v => v.name);
+        });
+
+        setVariables(agentVariables);
+
+        setAgents(filteredAgents);
+        setSelectedAgentId(filteredAgents[0].id);
         setAgentsLoading(false);
     }
 
     const runAgent = async () => {
         setAgentOutputLoading(true);
         setAgentOutput(null);
+
         if (selectedAgentId == null) {
             throw new Error("No agent selected");
+        } 
+        if (selectedFile == null) {
+            throw new Error("No file selected");
         }
-        const agentName = agents[selectedAgentId].name;
 
-        const body = {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+        const urlMaistro = `${baseUrl}/neuralseek/maistro`;
+
+        // we use docName to summarize the document
+        const agentName = getAgentById(selectedAgentId)!.name;
+
+        const callBody2 = { 
+            url_name: "staging-agent-runner",
             agent: agentName,
+            params: [{name: "docName", value: selectedFile}, ...(variables[agentName] as string[]).map((variable) => ({name: variable, value: variableVals[variable]}))],
         }
 
-        const res= await axios.post("https://stagingapi.neuralseek.com/v1/leon-agent-running/maistro", body, {
-            headers: {
-                "apikey": "a1546de3-7c9de1d1-199b588e-c989f680"
-            }
+        const res2 = await axios.post(urlMaistro, callBody2, {
+            headers: { 'Content-Type': 'application/json' },
         });
 
-        if (res.status !== 200) {
-            throw new Error("Agent running called. Called agent: " + agentName + " and got status code: " + res.status);
+
+        if (res2.status !== 200) {
+            throw new Error("Agent running called. Called agent: " + agentName + " and got status code: " + res2.status);
         }
 
-        console.info(res.data.answer);
-        if (res.data.answer) {
-            setAgentOutput(res.data.answer);
+        if (res2.data.answer) {
+            setAgentOutput(res2.data.answer);
+
         }
         setAgentOutputLoading(false);
         
@@ -321,25 +378,25 @@ const AgentRunnerDemo = () => {
                                 <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
                                     {/* Files List */}
                                     {ingestions.map((file, index) => {
-                                        const isSelected = selectedFile === file.key;
+                                        const isSelected = selectedFile === file;
                                         return (
                                             <div
                                                 key={index}
                                                 className={`p-2 border rounded flex items-center cursor-pointer transition ${isSelected
                                                     ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/40' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'} hover:bg-blue-100 dark:hover:bg-blue-800/40`}
-                                                onClick={() => selectFile(file.key)}
+                                                onClick={() => selectFile(file)}
                                             >
                                                 <input
                                                     type="radio"
                                                     checked={isSelected}
-                                                    onChange={() => selectFile(file.key)}
+                                                    onChange={() => selectFile(file)}
                                                     onClick={e => e.stopPropagation()}
                                                     className="form-radio mr-2 rounded-full border-gray-300 dark:border-gray-600"
                                                 />
                                                 <div className="flex items-center overflow-hidden">
                                                     <Icon name="document-text" className="w-4 h-4 mr-2 flex-shrink-0 text-gray-600 dark:text-gray-300" />
                                                     <span className="truncate text-sm text-gray-800 dark:text-gray-100">
-                                                        {file.key}
+                                                        {file}
                                                     </span>
                                                 </div>
                                             </div>
@@ -409,7 +466,7 @@ const AgentRunnerDemo = () => {
                     </div>
 
                     {/* agent selector panel */}
-                    <div className="`w-full flex flex-col h-2/5 border-r border-t dark:border-gray-700 relative p-3">
+                    <div className="`w-full flex flex-col h-full border-r border-t dark:border-gray-700 relative p-3">
                         <div className="flex items-center justify-between">
                             <h4 className="text-sm font-medium">Agent Selector</h4>
                             <div className="cursor-pointer" onClick={() => {setAgentsLoading(true); fetchAgents(); setSelectedAgentId(0);}}>
@@ -430,15 +487,33 @@ const AgentRunnerDemo = () => {
                             </select>
                             <h5 className="text-xs my-2">Agent Description</h5>
                             {selectedAgentId != null && <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {agents[selectedAgentId]?.desc.trim().length > 0 ? agents[selectedAgentId]?.desc : "No description available"}
+                                {(() => {
+                                    const agent = agents.find((agent) => agent.id === selectedAgentId);
+                                    return agent && agent.desc && agent.desc.trim().length > 0 ? agent.desc : "No description available";
+                                })()}
                             </p>}
                         </>}
+                        {
+                            agents && selectedAgentId != null && variables[getAgentById(selectedAgentId)!.name] && variables[getAgentById(selectedAgentId)!.name].length > 0 && <>
+                                <h5 className="text-xs my-2">Variables</h5>
+                                {variables[getAgentById(selectedAgentId)!.name].map((variable) => (
+                                    <div key={variable} className="flex items-center mb-2 gap-2">
+                                        <span className="text-xs ">
+                                            {variable}
+                                        </span>
+                                        <input type="text" placeholder={variable} onChange={(e) => {setVariableVals({...variableVals, [variable]: e.target.value})}} className="w-full p-2 text-xs outline-none border rounded text-gray-500 dark:text-white dark:bg-gray-800 dark:border-gray-700" />
+                                    </div>
+                                ))}
+                            </>
+                        }
 
-                        <div className="mt-2 flex items-center justify-center">
-                            <button className="w-fit p-2 bg-blue-500 text-white rounded-lg" onClick={runAgent}>
-                                Run {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"} agent
+                        <div className="mt-2 flex flex-col items-center justify-center">
+                            <button disabled={selectedFile == null} className={`w-fit p-2 ${selectedFile == null ? "bg-gray-500" : "bg-blue-500"} text-white rounded-lg ${selectedFile == null ? "opacity-50 cursor-not-allowed" : ""}`} onClick={runAgent}>
+                                Run {selectedAgentId != null ? getAgentById(selectedAgentId)?.name : "Agent"} agent
                             </button>
+                            {selectedFile == null && <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">select a file to run the agent</span>}
                         </div>
+
                         
                     </div>
                     
@@ -447,10 +522,17 @@ const AgentRunnerDemo = () => {
                 {/* Right Column - Document output */}
                 <div className="w-full md:w-2/3 p-5 flex flex-col h-full overflow-y-auto overflow-x-hidden">
                                 {agentOutput? <>
+                                    {
+                                        agentOutput.includes("<!DOCTYPE") ? 
+                                        <iframe className="h-full" srcDoc={agentOutput.slice(7, -3)}>
 
+                                        </iframe>
+                                        :
                                     <Markdown>
                                         {agentOutput}
                                     </Markdown>
+
+                                    }
                                 </> : 
                     <div className="flex flex-col items-center justify-center h-full">
                             <ChatHeader
@@ -459,7 +541,7 @@ const AgentRunnerDemo = () => {
                                 image=""
                                 handlePrePromptClick={() => {}}
                             />
-                            {agentOutputLoading && <span className="flex items-center justify-center gap-2"><Icon name="loader" className="w-8 h-8 animate-spin" /> Running {selectedAgentId != null ? agents[selectedAgentId]?.name : "Agent"}...</span>}
+                            {agentOutputLoading && <span className="flex items-center justify-center gap-2"><Icon name="loader" className="w-8 h-8 animate-spin" /> Running {selectedAgentId != null ? getAgentById(selectedAgentId)?.name : "Agent"}...</span>}
                         </div>
                         }
                 </div>

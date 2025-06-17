@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const urls = [
-    {
-        name: "staging-pii-detection-demo",
-        url: "https://stagingconsoleapi.neuralseek.com/sftp-pii/maistro/octet-stream/${safeFileName}",
-        api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699"
-    }
-];
-
 export async function POST(req: NextRequest) {
     try {
         // const incomingFormData = await req.formData();

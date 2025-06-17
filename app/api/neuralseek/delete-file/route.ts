@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { url_name, question, filter } = await req.json();
+    const { url_name, fileName } = await req.json();
 
-    if (!url_name || !question) {
+    if (!url_name || !fileName) {
       return NextResponse.json(
-        { error: "Missing required fields: url_name and question" },
+        { error: "Missing required fields: url_name, fileName" },
         { status: 400 }
       );
     }
@@ -21,29 +21,23 @@ export async function POST(req: NextRequest) {
     }
 
     const body = {
-      question,
-      options: {
-        includeSourceResults: true,
-        includeHighlights: true,
-        sourceResultsNumber: 10,
-        sourceResultsSummaryLength: 2000,
-        ...(filter && { filter })
-      }
-    };
-
-    if (!config.url_seek) {
-      throw new Error('Missing Maistro URL in config');
+        name: fileName,
     }
-    
-    const response = await fetch(config.url_seek, {
+
+    if (!config.url_del_file) {
+      throw new Error('Missing Delete file URL in config');
+    }
+
+    const response = await fetch(config.url_del_file, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: config.api_key,
+        apikey: config.api_key
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
-    
+
+    // Check for content-type header
     const contentType = response.headers.get('content-type');
     let data;
 
