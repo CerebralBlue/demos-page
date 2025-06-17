@@ -334,14 +334,8 @@ const AgentRunnerDemo = () => {
         }
 
         if (res2.data.answer) {
-            if (agentName == "slack-agent") {
-                setAgentOutput(JSON.parse(res2.data.answer).message.text);
-            } else if (agentName == "email_agent") {
-                setAgentOutput("Email send attempted. Please check your email for the summary.");
-            }  
-            else {
-                setAgentOutput(res2.data.answer);
-            }
+            setAgentOutput(res2.data.answer);
+
         }
         setAgentOutputLoading(false);
         
