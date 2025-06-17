@@ -2,20 +2,65 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from "axios";
 import Icon from '@/components/Icon';
-import { ChevronLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from "framer-motion";
 import { nextTick } from 'process';
 import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
+import SeekChatHistory from './components/SeekChatHistory';
+
+
+const SpinerDiv = () => {
+  return (
+    <div className="size-4 animate-spin rounded-full border-2 border-neutral-800/30 border-s-blue-800 border-t-blue-800"></div>
+  )
+}
+
+
+const Step = ({ action, description }: { action: any, description?: any }) => {
+
+  const actions: any = {
+    1: "Query database",
+    2: "Analyze information",
+    3: "Generate graph",
+  }
+
+  const [showContent, setShowContent] = useState(false);
+
+  const handleContent = () => {
+    setShowContent(!showContent);
+  }
+
+  return (
+    <>
+      <div className="flex flex-row items-center my-4">
+        <span className="flex flex-row items-center gap-2 text-sm bg-neutral-700/10 py-1 px-2 rounded-xl cursor-pointer" onClick={handleContent}>
+          {actions[action]}
+          {!description ? <SpinerDiv /> : !showContent ? <ChevronDownIcon className="w-3 h-3" /> : <ChevronUpIcon className="w-3 h-3" /> }
+        </span>
+      </div>
+
+      <p className={`text-sm mb-2 ${showContent ? '' : 'hidden'}`}>{description}</p>
+    </>
+  )
+}
+
 
 const SeekAiDemo = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const spanRef = useRef<HTMLSpanElement>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
+  const [sessionId, setSessionId] = useState(`nsChat_${Math.random().toString()}`);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [chatTitle, setChatTitle] = useState('');
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<{ message: string, type: "agent" | "user" }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [thinkingSteps, setThinkingSteps] = useState<any>([]);
+
+  const handleShowSideBar = () => {
+    setShowSidebar(!showSidebar);
+  }
 
   const handleMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let newMessage = e.target.value;
@@ -31,30 +76,71 @@ const SeekAiDemo = () => {
 
   const handleChat = async () => {
     try {
-      setMessage(spanRef.current?.innerHTML || '');
       setIsLoading(true);
       setChatHistory((prev) => [...prev, { message, type: "user" }]);
       scrollToBottom();
 
-      // const data = {
-      //   options: {
-      //     includeHighlights: true,
-      //     includeSourceResults: true,
-      //     lastTurn: [],
-      //     returnVariables: true,
-      //     returnVariablesExpanded: true,
-      //   },
-      //   question: message,
-      //   user_session: {
-      //     metdata: { user_id: "" },
-      //     system: {
-      //       session_id: sessionId
-      //     }
-      //   }
-      // }
+      const data = {
+        options: {
+          stream: true,
+          includeHighlights: true,
+          includeSourceResults: true,
+          lastTurn: [],
+          returnVariables: true,
+          returnVariablesExpanded: true,
+        },
+        question: message,
+        user_session: {
+          metdata: { user_id: "" },
+          system: {
+            session_id: sessionId
+          }
+        },
+        stream: true
+      }
 
       setMessage('');
-      // const response = await axios.post('/demos-page/api/customer-support-chatbot', data, { headers: { 'Content-Type': 'application/json' } });
+      const response = await fetch('/demos-page/api/seek-ai', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      while (true) {
+        if (!reader) break;
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        // Do and description
+        if (chunk && !(chunk.includes('partRender')) && chunk.includes('doAndDescription')) {
+          let [action, _] = JSON.parse(chunk)['doAndDescription'].split('_');
+          let tempThinkingSteps = [...thinkingSteps];
+          let temp = <Step action={action} />
+          tempThinkingSteps.push(temp);
+          setThinkingSteps(tempThinkingSteps);
+        }
+
+        if (chunk && !(chunk.includes('partRender')) && chunk.includes('jsonResults')) {
+          let jsonResults = JSON.parse(chunk)['jsonResults'];
+
+          console.log({ jsonResults })
+
+          // let test = JSON.parse(jsonResults['jsonResults']);
+
+          // console.log({ jsonResults })
+
+          // console.log('LLEGO AQUI JSON RESULTS: ');
+          // console.log({ chunk });
+        }
+
+        // console.log("Chunk data contiene do ", 'do' in chunkData);
+
+        // if ('do' in chunkData) {
+        //   console.log('LLEGA ACA Q P2');
+        //   console.log({ chunkData })
+        // }
+      }
+
       // setChatHistory((prev) => [...prev, { message: response.data.answer, type: "agent", seek_data: response.data }]);
     } catch (err) {
       console.log(err);
@@ -65,15 +151,7 @@ const SeekAiDemo = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (spanRef.current?.innerHTML === '') {
-      nextTick(() => {
-        if (spanRef.current && spanRef.current.innerHTML === '<br>') {
-          spanRef.current.innerHTML = '';
-        }
-      })
-      setMessage('');
-      return;
-    };
+    if (!message) { setMessage(''); return; };
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleChat();
@@ -81,9 +159,9 @@ const SeekAiDemo = () => {
   };
 
   return (
-    <section className="flex flex-row items-center justify-center h-full w-full dark:bg-gray-900 dark:text-white">
+    <section className="flex flex-row items-center justify-around h-full w-full dark:bg-gray-900 dark:text-white">
       {/* Welcome Container And Span Input Message */}
-      <div className="w-3/5 mb-40">
+      <div className={chatHistory.length > 0 ? "w-3/5 h-full grid grid-rows-[calc(100%-120px-2rem)_calc(120px+2rem)] max-w-3xl" : "w-3/5 mb-40 max-w-3xl"}>
         {
           chatHistory.length === 0 ? (
             <div>
@@ -94,8 +172,9 @@ const SeekAiDemo = () => {
               </p>
             </div>
           ) : (
-            <div className="flex-grow w-full overflow-y-auto h-[500px]">
-              <ChatHistoryDocAnalyzer
+            <div className="overflow-y-auto">
+              <SeekChatHistory
+                chatTitle={chatTitle}
                 messages={chatHistory}
                 setChatHistory={setChatHistory}
                 chatEndRef={chatEndRef}
@@ -105,11 +184,19 @@ const SeekAiDemo = () => {
         }
 
         {/* Span Input Message */}
-        <div className="relative w-sm flex flex-row items-center">
-          <span ref={spanRef} data-placeholder='Ask Seek a question about your data...' className="w-full p-3 bg-cyan-100/20 dark:bg-gray-800 rounded-3xl focus:ring-0 focus:outline-100 focus:outline-neutral-400/30 resize-none pr-16 text-gray-900 empty:before:content-[attr(data-placeholder)] empty:before:text-indigo-950" role="textbox" contentEditable onChange={handleMessage} onKeyDown={handleKeyDown}></span>
+        <div className="relative flex items-center">
+          <textarea
+            ref={textareaRef}
+            rows={4}
+            value={message}
+            onChange={handleMessage}
+            onKeyDown={handleKeyDown}
+            className="w-full p-3 bg-cyan-100/20 dark:bg-gray-800 rounded-3xl focus:ring-0 border outline-neutral-400/30 resize-none pr-16 text-gray-900"
+            placeholder="Ask Seek a question about your data..."
+          />
 
           {/* Span Buttons */}
-          <div className="absolute right-0 flex items-end gap-x-2 p-2">
+          <div className="flex flex-row gap-2 absolute right-[5px] top-[50%] translate-y-[-50%]">
             {/* Send Message Button */}
             <button
               onClick={handleChat}
@@ -123,14 +210,20 @@ const SeekAiDemo = () => {
                 <Icon name="paper-plane" className="w-5 h-5" />
               )}
             </button>
+
+            {/* Show Reasoning Sidebar */}
+            <button
+              onClick={handleShowSideBar}
+              className={`p-2 rounded-lg transition cursor-pointer text-blue-500`}
+            >
+              <EyeIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
 
-              
-
       {/* Sidebar Deepthinking */}
-      <div className="flex flex-col pt-4 pb-6 h-full w-2/5 px-2">
+      <div className={"flex flex-col pt-4 pb-6 h-full overflow-y-scroll w-2/5 px-2 " + (!showSidebar ? "hidden" : "")}>
         {/* Transaction Refunds */}
         <div className="flex flex-row items-center font-bold pb-5 gap-3">
           <ChevronLeftIcon className="w-3 h-3" />
@@ -142,16 +235,12 @@ const SeekAiDemo = () => {
         </p>
 
         {/* Get Schema For Database */}
-        <div className="flex flex-row items-center my-4">
-          <span className="flex flex-row items-center gap-2 text-sm bg-neutral-700/10 py-1 px-2 rounded-xl">
-            Get schema for database
-            <ChevronDownIcon className="w-3 h-3" />
-          </span>
-        </div>
+        {/* <Step action={1} /> */}
 
-        <p className="text-sm mb-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, ipsum maxime quidem exercitationem aliquid autem voluptatibus odit quo esse nihil omnis ea eveniet molestiae qui et soluta consequatur harum saepe.
-        </p>
+        {
+          thinkingSteps.length > 0 ? thinkingSteps[0] : ''
+        }
+
 
         <p className="text-sm mb-2">
           I want to calculate total counts of transactions, those with refunds, as well as their proceeds.

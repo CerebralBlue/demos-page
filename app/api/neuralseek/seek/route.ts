@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const urls = [
   {
+    name: "customer-support-chatbot",
+    url: "https://stagingapi.neuralseek.com/v1/customer-support-chatbot/seek",
+    api_key: "0c828089-d6359503-aea41b37-6f3d42fa"
+  },
+  {
     name: "staging-doc-analyzer-demo",
     url: "https://stagingapi.neuralseek.com/v1/doc-analyzer/seek",
     api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
@@ -10,8 +15,8 @@ const urls = [
     name: "staging-brou-demo",
     url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
     api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
-    },
-    {
+  },
+  {
     name: "customized-troubleshooter",
     url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
     api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
@@ -20,7 +25,7 @@ const urls = [
 
 export async function POST(req: NextRequest) {
   try {
-    const { url_name, question, filter } = await req.json();
+    const { url_name, question, filter } = await req.json();    
 
     if (!url_name || !question) {
       return NextResponse.json(
@@ -38,8 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = {
-      question,
+    let body: { options: any; question?: any; } = {
       options: {
         includeSourceResults: true,
         includeHighlights: true,
@@ -48,6 +52,12 @@ export async function POST(req: NextRequest) {
         ...(filter && { filter })
       }
     };
+
+    if (typeof question === 'object') {
+      body = { ...question, ...body }
+    } else {
+      body.question = question;
+    }
 
     const response = await fetch(config.url, {
       method: 'POST',
@@ -63,7 +73,6 @@ export async function POST(req: NextRequest) {
 
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
-      console.log(data)
     } else {
       const text = await response.text();
       return NextResponse.json(

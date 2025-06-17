@@ -212,18 +212,14 @@ const CustomerSupportChatbot = () => {
 
   const handleChat = async () => {
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const urlSeek = `${baseUrl}/neuralseek/seek`;
+
       setIsLoading(true);
       setChatHistory((prev) => [...prev, { message, type: "user" }]);
       scrollToBottom();
 
       const data = {
-        options: {
-          includeHighlights: true,
-          includeSourceResults: true,
-          lastTurn: [],
-          returnVariables: true,
-          returnVariablesExpanded: true,
-        },
         question: message,
         user_session: {
           metdata: { user_id: "" },
@@ -234,7 +230,11 @@ const CustomerSupportChatbot = () => {
       }
 
       setMessage('');
-      const response = await axios.post('/demos-page/api/customer-support-chatbot', data, { headers: { 'Content-Type': 'application/json' } });
+      const response = await axios.post('/demos-page/api/neuralseek/seek', { url_name: "customer-support-chatbot", question: data }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       setChatHistory((prev) => [...prev, { message: response.data.answer, type: "agent", seek_data: response.data }]);
     } catch (err) {
       console.log(err);
