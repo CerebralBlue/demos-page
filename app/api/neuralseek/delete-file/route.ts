@@ -1,3 +1,4 @@
+import { NEURALSEEK_URL_CONFIGS } from '@/constants/neuralseek.config';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {

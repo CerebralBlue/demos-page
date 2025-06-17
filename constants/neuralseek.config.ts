@@ -9,7 +9,7 @@ interface NeuralSeekConfig {
     url_explore_download?: string;
 }
 
-const NEURALSEEK_URL_CONFIGS: NeuralSeekConfig[] = [
+export const NEURALSEEK_URL_CONFIGS: NeuralSeekConfig[] = [
     {
         name: "staging-sftp-pii-demo",
         api_key: "1e971fcb-13812f6b-f1b3b9e5-1c093699",

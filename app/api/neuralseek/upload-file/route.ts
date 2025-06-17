@@ -1,3 +1,4 @@
+import { NEURALSEEK_URL_CONFIGS } from '@/constants/neuralseek.config';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
         }
 
         const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === url_name);
-        console.info(config);
+
         if (!config) {
             return NextResponse.json({ error: `No configuration found for ${url_name}` }, { status: 400 });
         }
