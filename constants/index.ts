@@ -141,16 +141,16 @@ export const sidebarLinks = [
       }
     ],
   },
-  // {
-  //   category: "Seek AI Demo",
-  //   links: [
-  //     {
-  //       imgURL: "document-text",
-  //       route: "/seek-ai-demo",
-  //       label: "Seek AI Demo",
-  //     }
-  //   ],
-  // },
+  {
+    category: "Seek AI Demo",
+    links: [
+      {
+        imgURL: "document-text",
+        route: "/seek-ai-demo",
+        label: "Seek AI Demo",
+      }
+    ],
+  },
   {
     category: "Search Engine Use Cases",
     links: [
