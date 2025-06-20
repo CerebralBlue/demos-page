@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { url_name, agent, params, options } = await req.json();
+    const { url_name } = await req.json();
 
-    if (!url_name || !agent || !params || !Array.isArray(params)) {
+
+    if (!url_name) {
       return NextResponse.json(
-        { error: "Missing required fields: url_name, agent and params" },
+        { error: "Missing required fields: url_name, fileName" },
         { status: 400 }
       );
     }
@@ -22,27 +23,21 @@ export async function POST(req: NextRequest) {
     }
 
     const body = {
-      agent,
-      params,
-      options: options || {
-        returnVariables: true,
-        returnVariablesExpanded: true
-      }
-    };
-
-    if (!config.url_maistro) {
-      throw new Error('Missing Maistro URL in config');
+        file: "" // query for all files
     }
 
-    const response = await fetch(config.url_maistro, {
+    if (!config.url_explore_files) {
+      throw new Error('Missing Explore files URL in config');
+    }
+
+    const response = await fetch(config.url_explore_files, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: config.api_key,
+        apikey: config.api_key
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
-
     // Check for content-type header
     const contentType = response.headers.get('content-type');
     let data;

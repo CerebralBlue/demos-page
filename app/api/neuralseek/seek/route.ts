@@ -1,47 +1,5 @@
+import { NEURALSEEK_URL_CONFIGS } from '@/constants/neuralseek.config';
 import { NextRequest, NextResponse } from 'next/server';
-
-const urls = [
-  {
-    name: "customer-support-chatbot",
-    url: "https://stagingapi.neuralseek.com/v1/customer-support-chatbot/seek",
-    api_key: "0c828089-d6359503-aea41b37-6f3d42fa"
-  },
-  {
-    name: "staging-doc-analyzer-demo",
-    url: "https://stagingapi.neuralseek.com/v1/doc-analyzer/seek",
-    api_key: "49ba5f8f-c4d666a5-35081959-624dc6d5"
-  },
-  {
-    name: "staging-brou-demo",
-    url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
-    api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
-  },
-  {
-    name: "customized-troubleshooter",
-    url: "https://stagingapi.neuralseek.com/v1/CustomizedTroubleshooter/seek",
-    api_key: "44979882-b9fced28-66d50eb0-1892e5cb"
-  },
-  {
-    name: "staging-agreement-analyzer",
-    url: "https://stagingapi.neuralseek.com/v1/amalgamated-bank/seek",
-    api_key: "fee077c0-ffe0bb77-6cb03c92-cdb6688a"
-  },
-  {
-    name: "staging-brou-demo",
-    url: "https://stagingapi.neuralseek.com/v1/brou-poc/seek",
-    api_key: "4a6ba3c5-27646d7f-8ec021b9-75f81900"
-  },
-  {
-    name: "partsPicker",
-    url: "https://stagingapi.neuralseek.com/v1/partsPicker/seek",
-    api_key: "97d7631c-d2f23b94-8ac5c65d-02c92419"
-  },
-  {
-    name: "staging-bcbst-demo",
-    url: "https://stagingapi.neuralseek.com/v1/bcbst-demo/seek",
-    api_key: "06615dda-2c297083-ccc263b9-c2a2ffaf"
-  }
-]
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const config = urls.find(url => url.name === url_name);
+    const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === url_name);
 
     if (!config) {
       return NextResponse.json(
@@ -63,6 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Construct the base body with options
     let body: { options: any; question?: any; } = {
       options: {
         includeSourceResults: true,
@@ -73,21 +32,26 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    // Add question to body based on its type
     if (typeof question === 'object') {
-      body = { ...question, ...body }
+      body = { ...question, ...body };
     } else {
-      body.question = question;
+      body = { ...body, question };
     }
-
-    const response = await fetch(config.url, {
+    
+    if (!config.url_seek) {
+      throw new Error('Missing URL in config');
+    }
+    
+    const response = await fetch(config.url_seek, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'accept': 'application/json',
-        'apikey': config.api_key
+        apikey: config.api_key,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
+    
     const contentType = response.headers.get('content-type');
     let data;
 

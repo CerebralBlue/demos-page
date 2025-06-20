@@ -1,5 +1,9 @@
 import { DemoConfig } from "@/types/demo.config";
-
+export const STEPS: { id: number, title: string; description: string }[] = [
+  { id: 1, title: "Choose a company", description: "Search for a company" },
+  { id: 2, title: "Select items", description: "Select the items you want to report" },
+  { id: 3, title: "Report", description: "Display the report" },
+];
 export const sidebarLinks = [
   {
     category: "",
@@ -404,6 +408,7 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
       }
     ]
   },
+  
   {
     demo_url: "/troubleshooter",
     description: "Diagnose and resolve technical issues using NeuralSeek AI. Describe your problem and list attempted solutions to receive personalized troubleshooting guidance.",
@@ -1063,6 +1068,22 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
         content: "Integrate and compare multiple AI models in one interactive demo."
       }
     ]
+  },
+  {
+    demo_url: "/agent-runner",
+    description: "This demo is a generic interface for running any agent against a document, providing variables and displaying dynamic output.",
+    howto: [
+      "Create your document-based agent in the `agent-runner` instance. Since it is a doc-based agent, it should require a variable for the document name, which for this demo is required to be exactly named `docName` set with `prompt: true`",
+      "Use the Use Document node, and open the NTL to include << name: docName, prompt: true >> in the name field of the node.",
+      "To use image data, follow the step above and connect the UseDocument to a Set Variable node like `imageContent`, e.g. to an LLM via its base64 config field.",
+      "All variables that you would like displayed in this interface must have `prompt: true` (including `docName`, which takes its value from the Ingested Files section). All variables in the agent NTL that have `prompt: true` and are not named `docName` will appear in the variables section.",
+      "Drag-and-drop or click Upload file to send a file to mAIstro for upload. All files can be cleaned by hitting the red trash icon.",
+      "Input the values for your variables in the lower-left section.",
+      "This demo will try to render HTML in an iframe if the output at all contains `<!DOCTYPE `. Otherwise it attempts to render in Markdown. It supports Chart.js charts."
+    ],
+    industries: [],
+    use_cases: [],
+    details: []
   },
   {
     demo_url: "/customer-support-chatbot",

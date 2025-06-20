@@ -1,83 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NeuralSeek Demos App
 
-## Getting Started
+Este proyecto es una aplicación desarrollada con React y Next.js que presenta demos interactivas con diferentes propósitos. Cada demo se integra con una API de NeuralSeek. La estructura modular permite añadir fácilmente nuevas demostraciones sin afectar las existentes.
 
-First, run the development server:
+## Estructura del Proyecto
+
+```
+demos-page-app/
+├── app/
+│   └── (demos)/         # Contiene las demos individuales
+├── api/
+│   └── neuralseek/      # Define y organiza todas las rutas de integración con NeuralSeek
+├── public/              # Archivos estáticos
+├── styles/
+│   └── limo.css         # Estilos personalizados
+├── tailwind.config.ts   # Configuración de Tailwind CSS
+├── package.json
+└─ README.md
+```
+
+## Cómo iniciar el proyecto
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/CerebralBlue/demos-page.git
+cd demos-page-app
+```
+
+2. Instala las dependencias:
+
+```bash
+npm install
+```
+
+3. Inicia el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Abre el navegador en:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Cómo crear una nueva demo
 
-## Learn More
+1. Dentro de la carpeta `app/(demos)/`, crea una subcarpeta con el nombre de tu demo.
 
-To learn more about Next.js, take a look at the following resources:
+2. En esa carpeta, crea un archivo `page.tsx` con tu componente de React. Por ejemplo:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+"use client";
+import React, { useState } from "react";
+import axios from "axios";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+export default function MiDemo() {
+  const [respuesta, setRespuesta] = useState("");
 
-## Deploy to LATAM Server
+  const consultarAPI = async () => {
+    const res = await axios.post("/api/neuralseek/mi-endpoint", { prompt: "Hola" });
+    setRespuesta(res.data.output);
+  };
 
-Follow these steps to deploy your application:
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">Demo de NeuralSeek</h1>
+      <button onClick={consultarAPI} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+        Consultar
+      </button>
+      <p className="mt-4">{respuesta}</p>
+    </div>
+  );
+}
+```
 
-1. **Prepare Your Code**  
-   - Merge your local changes and push the updated code to your remote repository.
+3. La demo aparecerá automáticamente como una ruta accesible en tu app.
 
-2. **Access the LATAM Server**  
-   - SSH into the LATAM server:
-     ```bash
-     ssh user@latam-server-address
-     ```
+## Configuración de APIs
 
-3. **Navigate to the Project Directory**  
-   - Change directory to your project:
-     ```bash
-     cd /path/to/your/project
-     ```
+Todas las rutas y claves de acceso a las APIs de NeuralSeek están centralizadas en la carpeta:
 
-4. **Update the Codebase**  
-   - Pull the latest changes:
-     ```bash
-     git pull origin main
-     ```
+```
+/api/neuralseek/
+```
 
-5. **Install Dependencies**  
-   - Install any new dependencies:
-     ```bash
-     npm install
-     ```
+Cada archivo `route.ts` en esta carpeta define un endpoint. Para agregar uno nuevo:
 
-6. **Build the Application**  
-   - Build your project:
-     ```bash
-     npm run build
-     ```
+1. Crea un archivo `nombre.route.ts`.
+2. Implementa la lógica de conexión a NeuralSeek.
+3. Utiliza variables de entorno para API keys si es necesario.
 
-7. **Restart the Application**  
-   - Restart the application using PM2:
-     ```bash
-     pm2 restart 0
-     ```
+Ejemplo de endpoint:
 
-8. **Verify the Deployment**  
-   - Check logs and functionality to ensure a successful deployment.
+```ts
+export async function POST(req: Request) {
+  const { prompt } = await req.json();
+  const response = await fetch("https://neuralseek-api.com", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.NEURALSEEK_KEY || "",
+    },
+    body: JSON.stringify({ prompt }),
+  });
+  const data = await response.json();
+  return Response.json(data);
+}
+```
 
+## Tailwind CSS y estilos
 
-## Deploy on Vercel
+Este proyecto utiliza Tailwind CSS como framework de estilos. Los estilos base están definidos en `tailwind.config.ts`. Además, se incluyen estilos personalizados en `styles/limo.css`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Puedes usarlos importándolos en tus archivos de demo si necesitas formatos especiales para títulos, listas o markdown.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts disponibles
+
+* `npm run dev`: Ejecuta el servidor en modo desarrollo.
+* `npm run build`: Compila el proyecto para producción.
+* `npm run start`: Inicia el servidor en producción.
+* `npm run lint`: Ejecuta el linter.
+
+## Requisitos
+
+* Node.js 18 o superior
+* npm 9 o superior
