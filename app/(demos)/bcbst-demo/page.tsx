@@ -5,7 +5,7 @@ import axios from "axios";
 import ChatHeader from '../../components/ChatHeader';
 import ChatHistoryDocAnalyzer from '@/app/components/ChatHistoryDocAnalyzer';
 
-const DocAnalyzerDemo = () => {
+const BCBSTDemo = () => {
     const [query, setQuery] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -38,7 +38,7 @@ const DocAnalyzerDemo = () => {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
+                url_name: "staging-bcbst-demo",
                 agent: "delete_index",
                 params: [],
                 options: {
@@ -66,7 +66,7 @@ const DocAnalyzerDemo = () => {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             const urlMaistro = `${baseUrl}/neuralseek/maistro`;
             const maistroCallBody = {
-                url_name: "staging-doc-analyzer-demo",
+                url_name: "staging-bcbst-demo",
                 agent: "query_aggregated_docs",
                 params: [],
                 options: {
@@ -128,7 +128,7 @@ const DocAnalyzerDemo = () => {
 
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("url_name", "staging-doc-analyzer-demo");
+            formData.append("url_name", "staging-bcbst-demo");
 
             const progressInterval = setInterval(() => {
                 setIngestProgress(prev => {
@@ -167,7 +167,7 @@ const DocAnalyzerDemo = () => {
 
             if (uploadedFileName) {
                 const maistroCallBody = {
-                    url_name: "staging-doc-analyzer-demo",
+                    url_name: "staging-bcbst-demo",
                     agent: "ingest_document",
                     params: [{ name: "name", value: uploadedFileName }],
                     options: { returnVariables: false, returnVariablesExpanded: false }
@@ -257,7 +257,7 @@ const DocAnalyzerDemo = () => {
 
         // Seek call
         const seekCallBody = {
-            url_name: "staging-doc-analyzer-demo",
+            url_name: "staging-bcbst-demo",
             question: queryToUse,
             filter: selectedFile
         };
@@ -275,7 +275,6 @@ const DocAnalyzerDemo = () => {
         setIsLoading(false);
     };
 
-    // Autocomplete text area with /
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -299,8 +298,8 @@ const DocAnalyzerDemo = () => {
                     <div className="p-3 border-b dark:border-gray-700">
 
                         <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-sm font-medium">Ingested Files</h4>
-                            <button
+                            <h4 className="text-sm font-medium">BCBMS Health Support Docs</h4>
+                            {/* <button
                                 onClick={handleClean}
                                 title="Clean ingested files"
                                 className="text-red-600 hover:text-red-800"
@@ -310,7 +309,7 @@ const DocAnalyzerDemo = () => {
                                 ) : (
                                     <Icon name="trash" className="w-5 h-5" />
                                 )}
-                            </button>
+                            </button> */}
                         </div>
 
                         {ingestions && ingestions.length > 0 ? (
@@ -407,11 +406,19 @@ const DocAnalyzerDemo = () => {
                     {chatHistory.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full">
                             <ChatHeader
-                                title="DOC Analyzer"
-                                subtitle="What analysis would you like to run?"
-                                image=""
+                                title=""
+                                subtitle="Let's talk through the documents!"
+                                image="BCBSMS_logo.png"
+                                width={450}
+                                height={200}
                                 handlePrePromptClick={handlePrePromptClick}
+                                prePrompts={[
+                                    { iconName: "document-text", label: "Non-covered services", prompt: "What are the non-covered services mentioned on BlueCross BlueShield of Mississippi Provider Administration Manual?" },
+                                    { iconName: "document-text", label: "OTC abbreviation", prompt: "Can you explain to me the OTC abbreviation?" },
+                                    { iconName: "document-text", label: "Drug Tier 5", prompt: "What is the Drug Tier 5 ?" },
+                                ]}
                             />
+
                         </div>
                     ) : (
                         <div className="flex-grow w-full overflow-y-auto h-[500px]">
@@ -459,4 +466,4 @@ const DocAnalyzerDemo = () => {
     );
 };
 
-export default DocAnalyzerDemo;
+export default BCBSTDemo;
