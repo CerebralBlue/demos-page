@@ -1,0 +1,104 @@
+company_name,duns,Industry_Description,Adverse_Media_Flag,Sanctions_Flag,Business_Status
+Verizon Communications Inc.,6919484,Communications,FALSE,FALSE,Active
+Avaya Inc.,790472240,Communications,FALSE,FALSE,Active
+The Cigna Group,81161936,Healthcare,FALSE,FALSE,Active
+Brown Inc,494198246,Plumbing Contractors,FALSE,FALSE,Inactive
+Cooper-Watts,200013578,Software Publishing,FALSE,FALSE,Inactive
+Smith-Ford,979922855,Physician Offices,FALSE,FALSE,Inactive
+Parker Group,320571944,Insurance Agencies,FALSE,FALSE,Active
+Lopez PLC,592329163,Software Publishing,FALSE,FALSE,Merged
+"Castaneda, Walker and Woods",387746569,Insurance Agencies,FALSE,FALSE,Inactive
+Ramsey-Thomas,485252686,Plumbing Contractors,FALSE,FALSE,Bankrupt
+James-Torres,615764129,Plumbing Contractors,FALSE,FALSE,Active
+Savage Group,185655666,IT Consulting,FALSE,FALSE,Active
+Fisher-Ferguson,972221710,Medical Equipment Wholesalers,FALSE,FALSE,Inactive
+Jimenez Ltd,628499111,IT Consulting,FALSE,FALSE,Active
+"Macdonald, Hoffman and Rivera",910352740,Insurance Agencies,FALSE,FALSE,Bankrupt
+Estes and Sons,836090159,Insurance Agencies,FALSE,FALSE,Bankrupt
+Ross and Sons,145016588,IT Consulting,FALSE,FALSE,Active
+Park-Hawkins,825416065,Plumbing Contractors,FALSE,FALSE,Bankrupt
+Rogers Ltd,830298171,Insurance Agencies,FALSE,FALSE,Active
+Alexander Inc,646309811,Software Publishing,FALSE,FALSE,Bankrupt
+Smith-Coffey,638360498,Physician Offices,FALSE,FALSE,Bankrupt
+Gonzalez Inc,855157524,Software Publishing,TRUE,FALSE,Inactive
+Ramos Group,519015242,Restaurants,FALSE,FALSE,Inactive
+Rasmussen Group,497551978,Plumbing Contractors,FALSE,FALSE,Merged
+"Short, Kelly and Esparza",601303410,Insurance Agencies,FALSE,FALSE,Inactive
+Miranda-Delacruz,514455836,Plumbing Contractors,FALSE,FALSE,Bankrupt
+"Salazar, Parker and Stewart",647096537,Plumbing Contractors,FALSE,FALSE,Merged
+"Hinton, Holmes and Ruiz",375154874,Insurance Agencies,FALSE,FALSE,Active
+Patterson Group,561926836,Plumbing Contractors,FALSE,FALSE,Inactive
+Anderson Inc,652692361,Plumbing Contractors,TRUE,FALSE,Merged
+"Miller, Malone and Brown",386141295,Software Publishing,TRUE,FALSE,Inactive
+Hughes PLC,544995228,Restaurants,FALSE,FALSE,Active
+Kirk-Jackson,359557413,Insurance Agencies,FALSE,FALSE,Active
+Ramirez Inc,743442196,Restaurants,FALSE,FALSE,Active
+Mann Ltd,131673784,Plumbing Contractors,FALSE,FALSE,Bankrupt
+"Banks, Hughes and Perez",531133686,Medical Equipment Wholesalers,FALSE,FALSE,Active
+Mcbride-Bailey,410609258,IT Consulting,FALSE,FALSE,Merged
+Adkins LLC,456316854,Software Publishing,FALSE,FALSE,Bankrupt
+Morrison-Benson,468759257,Restaurants,FALSE,FALSE,Inactive
+"Fernandez, Holt and Parker",498622289,Software Publishing,FALSE,FALSE,Merged
+"Woods, Smith and Farley",122155373,Plumbing Contractors,FALSE,FALSE,Inactive
+"Waller, Ibarra and Bennett",490107695,Plumbing Contractors,FALSE,FALSE,Inactive
+Gonzalez-Dillon,376777458,Restaurants,FALSE,FALSE,Bankrupt
+Harris-Mullen,874162649,Software Publishing,FALSE,FALSE,Inactive
+"Davis, Brown and Morrison",519448414,IT Consulting,FALSE,FALSE,Active
+Black LLC,995095659,Medical Equipment Wholesalers,FALSE,FALSE,Bankrupt
+Cooper LLC,918279397,Insurance Agencies,FALSE,FALSE,Merged
+"Smith, Palmer and Knapp",532500066,IT Consulting,TRUE,FALSE,Bankrupt
+Ball-Wagner,956267648,Plumbing Contractors,FALSE,TRUE,Bankrupt
+"Davis, Santiago and Bush",441652405,Medical Equipment Wholesalers,TRUE,FALSE,Merged
+"Bentley, Gilbert and Brown",496217781,Physician Offices,FALSE,FALSE,Merged
+Long-Valencia,349322942,IT Consulting,FALSE,FALSE,Merged
+Smith-Brewer,528039850,Plumbing Contractors,FALSE,FALSE,Merged
+Mason-Smith,228041855,Medical Equipment Wholesalers,FALSE,FALSE,Merged
+Mcfarland PLC,302541290,Insurance Agencies,FALSE,FALSE,Bankrupt
+"Ferguson, Hartman and Hart",740189999,Insurance Agencies,FALSE,FALSE,Merged
+"Bridges, Mayer and Johnson",458193433,Restaurants,FALSE,FALSE,Inactive
+Cooper-Gray,735484151,Physician Offices,FALSE,FALSE,Active
+"Boyd, Allen and Smith",571686725,Insurance Agencies,FALSE,FALSE,Bankrupt
+Thomas-Brooks,683436796,IT Consulting,FALSE,FALSE,Active
+Williams-Higgins,147789829,IT Consulting,FALSE,FALSE,Bankrupt
+"Jensen, Harper and Williams",305435366,Restaurants,TRUE,FALSE,Inactive
+Wright-Ho,979480854,Physician Offices,FALSE,TRUE,Bankrupt
+Chambers-Ortiz,448850249,Medical Equipment Wholesalers,FALSE,FALSE,Active
+"Bryan, Walters and Jones",175308916,Restaurants,FALSE,FALSE,Inactive
+Mcdaniel-Reed,121645499,Restaurants,FALSE,FALSE,Merged
+"Morrow, Wilson and Baker",467705916,Medical Equipment Wholesalers,FALSE,FALSE,Active
+Stanley Group,998634891,Restaurants,TRUE,FALSE,Inactive
+"Kramer, Paul and Prince",486738719,IT Consulting,FALSE,FALSE,Inactive
+Mitchell-Bruce,626872688,Plumbing Contractors,FALSE,FALSE,Inactive
+Chang and Sons,511477649,IT Consulting,FALSE,FALSE,Inactive
+"Nelson, Walker and Wells",815711708,IT Consulting,FALSE,FALSE,Inactive
+"Hansen, Ferguson and Cruz",757514337,Insurance Agencies,FALSE,FALSE,Active
+"Davis, Davis and Rodriguez",502470155,Plumbing Contractors,TRUE,FALSE,Active
+"Jones, Lee and Mcpherson",742806932,Medical Equipment Wholesalers,FALSE,FALSE,Bankrupt
+Archer-Gibson,107256493,Plumbing Contractors,FALSE,FALSE,Merged
+"Fox, Smith and Newton",839238958,Medical Equipment Wholesalers,FALSE,FALSE,Bankrupt
+"Santana, Williams and Maynard",954530908,IT Consulting,FALSE,TRUE,Inactive
+"Mcdonald, Hawkins and Ayala",894078799,Insurance Agencies,FALSE,FALSE,Bankrupt
+Cruz PLC,869657808,Restaurants,FALSE,FALSE,Merged
+Johnson-Blackwell,809499306,Insurance Agencies,FALSE,FALSE,Active
+Little-Cooper,229746515,IT Consulting,FALSE,FALSE,Inactive
+"Russell, Roach and Carson",778620928,Medical Equipment Wholesalers,FALSE,FALSE,Inactive
+Tapia-Smith,407712985,Insurance Agencies,FALSE,FALSE,Bankrupt
+"Martin, Carter and Rivera",555697124,Restaurants,FALSE,FALSE,Merged
+"Fields, Santiago and Munoz",153383197,IT Consulting,FALSE,FALSE,Inactive
+Johnson-Rogers,141539563,IT Consulting,FALSE,FALSE,Active
+Gonzales-Rodriguez,727817144,Restaurants,FALSE,FALSE,Bankrupt
+Copeland-Wright,147092363,Restaurants,FALSE,FALSE,Bankrupt
+Williams Inc,494582393,Physician Offices,FALSE,FALSE,Bankrupt
+Singh-Price,227518070,Medical Equipment Wholesalers,FALSE,FALSE,Active
+"Steele, Brown and Brown",276990239,Physician Offices,FALSE,FALSE,Merged
+Wilson-Shields,432002977,Software Publishing,FALSE,FALSE,Inactive
+Stokes PLC,627724196,IT Consulting,FALSE,FALSE,Active
+Martinez Inc,426541138,Plumbing Contractors,FALSE,FALSE,Inactive
+Paul-Simon,996183998,IT Consulting,FALSE,FALSE,Merged
+Baker Group,273222011,Medical Equipment Wholesalers,FALSE,FALSE,Bankrupt
+Smith Group,575767459,Physician Offices,FALSE,FALSE,Bankrupt
+"Mayo, Shaffer and Smith",159264578,IT Consulting,FALSE,FALSE,Active
+Romero-Roberts,288733655,Plumbing Contractors,FALSE,FALSE,Inactive
+Adkins Group,396619534,Physician Offices,FALSE,FALSE,Bankrupt
+Martinez-Patterson,895244597,Restaurants,FALSE,FALSE,Bankrupt
+"Dominguez, Randall and Robinson",333685287,Physician Offices,FALSE,FALSE,Merged
