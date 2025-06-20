@@ -1,5 +1,9 @@
 import { DemoConfig } from "@/types/demo.config";
-
+export const STEPS: { id: number, title: string; description: string }[] = [
+  { id: 1, title: "Choose a company", description: "Search for a company" },
+  { id: 2, title: "Select items", description: "Select the items you want to report" },
+  { id: 3, title: "Report", description: "Display the report" },
+];
 export const sidebarLinks = [
   {
     category: "",
@@ -404,6 +408,7 @@ export const SIDEBAR_CONFIGS: DemoConfig[] = [
       }
     ]
   },
+  
   {
     demo_url: "/troubleshooter",
     description: "Diagnose and resolve technical issues using NeuralSeek AI. Describe your problem and list attempted solutions to receive personalized troubleshooting guidance.",

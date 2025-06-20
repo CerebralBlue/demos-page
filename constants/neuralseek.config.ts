@@ -125,5 +125,10 @@ export const NEURALSEEK_URL_CONFIGS: NeuralSeekConfig[] = [
         name: "partsPicker",
         api_key: "97d7631c-d2f23b94-8ac5c65d-02c92419",
         url_seek: "https://stagingapi.neuralseek.com/v1/partsPicker/seek"
+    },
+    {
+        name: "kyc-demo",
+        url_maistro: "https://stagingapi.neuralseek.com/v1/kyc_demo/maistro",
+        api_key: "5775bc8b-e250ba55-4f7e0453-44c0baa1"
     }
 ]
