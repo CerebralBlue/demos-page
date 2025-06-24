@@ -212,9 +212,6 @@ const CustomerSupportChatbot = () => {
 
   const handleChat = async () => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const urlSeek = `${baseUrl}/neuralseek/seek`;
-
       setIsLoading(true);
       setChatHistory((prev) => [...prev, { message, type: "user" }]);
       scrollToBottom();

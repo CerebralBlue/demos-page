@@ -207,6 +207,11 @@ export const sidebarLinks = [
         imgURL: "users",
         route: "/bcbst-demo",
         label: "BCBS Mississippi Demo",
+      },
+      {
+        imgURL: "users",
+        route: "/goodyear-demo",
+        label: "Goodyear Demo",
       }
     ],
   },

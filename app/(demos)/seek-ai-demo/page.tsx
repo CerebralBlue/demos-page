@@ -149,7 +149,7 @@ const SeekAiDemo = () => {
       return prevThinkingSteps;
     });
     setShowSidebar(true);
-    setChatHistory((prev) => [...prev, { type: "agent", message: { initialResponse: initialParagraph, thinkingButton: initialThinkingButton } }]);
+    setChatHistory((prev) => [...prev, { type: "agent", message: { thinkingButton: initialThinkingButton } }]);
   }
 
   const getSteps = async () => {
