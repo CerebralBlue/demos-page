@@ -195,7 +195,7 @@ const GoodyearDemo = () => {
       {/* Table */}
       <div className="flex flex-col px-4 gap-2 mb-6">
         {/* Columns */}
-        <div className="grid grid-cols-[20%_60%_20%] gap-2">
+        <div className="grid grid-cols-[20%_calc(60%-1rem)_20%] gap-2">
           <div className="p-2 rounded-md bg-[rgb(48,81,165)] text-white text-sm">Document Title</div>
           <div className="p-2 rounded-md bg-[rgb(48,81,165)] text-white text-sm">Page</div>
           <div className="p-2 rounded-md bg-[rgb(48,81,165)] text-white text-sm">Thumbnail</div>
@@ -208,7 +208,7 @@ const GoodyearDemo = () => {
             </div>
             :
             passages.length > 0 ? passages.map((passage: any, i: any) => (
-              <div key={`passage${i}`} className="grid grid-cols-[20%_60%_20%] gap-2 border-b border-b-neutral-800/10 items-center">
+              <div key={`passage${i}`} className="grid grid-cols-[20%_calc(60%-1rem)_20%] gap-2 border-b border-b-neutral-800/10 items-center">
                 <div className="p-2 text-sm break-all max-h-[200px] overflow-y-auto">{passage.document}</div>
                 <div className="p-2 text-sm break-all max-h-[200px] overflow-y-auto cursor-pointer" onClick={() => handleShowModalPassage(i)}>
                   {passage.passage}
