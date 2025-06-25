@@ -2,8 +2,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from 'react';
 import { HomeIcon, MagnifyingGlassIcon, EyeIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import Markdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 /*
   Test input: Recommendation GDI-08146 for classify
@@ -13,7 +13,7 @@ import rehypeRaw from 'rehype-raw'
 
 const SpinerDiv = ({ size }: { size: string }) => {
   return (
-    <div className={`size-[${size}] animate-spin rounded-full border-2 border-neutral-800/30 border-s-blue-800 border-t-blue-800`}></div>
+    <div className={`size-[15px] animate-spin rounded-full border-2 border-neutral-800/30 border-s-blue-800 border-t-blue-800`}></div>
   )
 }
 
@@ -50,7 +50,7 @@ const PassageModal = ({ show, passageData, handleCloseModal }: { show: boolean, 
 
         {/* Content Modal */}
         <div className="bg-white h-full p-6 text-sm overflow-y-auto">
-          <Markdown rehypePlugins={[rehypeRaw]}>{passageData}</Markdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{passageData}</ReactMarkdown>
         </div>
       </div>
     </div>
@@ -187,7 +187,7 @@ const GoodyearDemo = () => {
 
       {/* AI Search Result Message */}
       {answer && !isLoading &&
-        <div className="flex flex-row items-center cursor-pointer px-6">
+        <div className="flex flex-row items-center px-6">
           <p className="mb-4 text-sm">{ answer }</p>
         </div>
       }

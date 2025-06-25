@@ -3,8 +3,8 @@ import React, { useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import SeekChatHistory from './components/SeekChatHistory';
-import Markdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, Title, BarElement, PointElement, LineElement } from 'chart.js';
 import { Bar, Doughnut, Pie, Line, PolarArea, Bubble } from 'react-chartjs-2';
 
@@ -215,7 +215,7 @@ const SeekAiDemo = () => {
     analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
 
     let markdownContainer = <div className="ps-2 text-sm">
-      <Markdown rehypePlugins={[rehypeRaw]}>{analysis}</Markdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
     </div>;
     let newTemp = <Step key={`step${i}`} action={step.do} description={markdownContainer} />
     setThinkingSteps((prev: any) => {
@@ -315,7 +315,7 @@ const SeekAiDemo = () => {
     let analysis = await response.text();
     analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
     let markdownContainer = <div className="ps-2 text-sm">
-      <Markdown rehypePlugins={[rehypeRaw]}>{analysis}</Markdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
     </div>;
     setChatHistory((prev) => {
       let prevChatHistory = [...prev];
