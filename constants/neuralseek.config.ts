@@ -11,6 +11,16 @@ interface NeuralSeekConfig {
 
 export const NEURALSEEK_URL_CONFIGS: NeuralSeekConfig[] = [
     {
+        name: "test-juan",
+        api_key: "5844d67b-235fde7c-e2715c01-5139af4e",
+        url_maistro: "https://stagingapi.neuralseek.com/v1/test-juan/maistro"
+    },
+    {
+        name: "goodyear-search-engine",
+        api_key: "ce57e0c1-11924e98-2a8200aa-7579ff4e",
+        url_seek: "https://stagingapi.neuralseek.com/v1/goodyear-search-engine/seek"
+    },
+    {
         name: "customer-support-chatbot",
         api_key: "0c828089-d6359503-aea41b37-6f3d42fa",
         url_seek: "https://stagingapi.neuralseek.com/v1/customer-support-chatbot/seek"

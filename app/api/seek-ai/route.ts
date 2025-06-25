@@ -1,14 +1,19 @@
+import { NEURALSEEK_URL_CONFIGS } from '@/constants/neuralseek.config';
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_KEY = '5844d67b-235fde7c-e2715c01-5139af4e';
-const URL_MAISTRO = `https://stagingapi.neuralseek.com/v1/test-juan/maistro`;
-
 async function getTitleSubtitle(question: string) {
-  const response = await fetch(URL_MAISTRO, {
+
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
+  }
+
+  const response = await fetch(config.url_seek, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key || ''
     },
     body: JSON.stringify({
       agent: 'title-subtitle',
@@ -33,11 +38,17 @@ async function getTitleSubtitle(question: string) {
 }
 
 async function getSteps(question: string) {
-  const response = await fetch(URL_MAISTRO, {
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
+  }
+
+  const response = await fetch(config.url_seek, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key || ''
     },
     body: JSON.stringify({
       agent: 'deepthinking-steps',
@@ -67,11 +78,20 @@ async function getSteps(question: string) {
 }
 
 async function getQueryDatabase(description: string) {
-  const response = await fetch(URL_MAISTRO, {
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek || !config?.url_maistro) {
+    return NextResponse.json(
+      { error: "Missing NeuralSeek configuration or URL." },
+      { status: 500 }
+    );
+  }
+
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key || ''
     },
     body: JSON.stringify({
       agent: 'query-database',
@@ -95,16 +115,27 @@ async function getQueryDatabase(description: string) {
     }),
   });
 
-  let answer = (await response.json()).answer;
-  return NextResponse.json(answer, { status: response.status });
+  const data = await response.json();
+
+  return NextResponse.json(data.answer, { status: response.status });
 }
 
 async function getResultsAnalysis(description: string, sqlQueryResults: string, question: string) {
-  const response = await fetch(URL_MAISTRO, {
+
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek || !config?.url_maistro) {
+    return NextResponse.json(
+      { error: "Missing NeuralSeek configuration or URL." },
+      { status: 500 }
+    );
+  }
+
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key || ''
     },
     body: JSON.stringify({
       agent: 'analyze-query-results',
@@ -138,11 +169,21 @@ async function getResultsAnalysis(description: string, sqlQueryResults: string, 
 }
 
 async function getGraph(chartType: string, sqlQueryResults: string) {
-  const response = await fetch(URL_MAISTRO, {
+
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek || !config?.url_maistro) {
+    return NextResponse.json(
+      { error: "Missing NeuralSeek configuration or URL." },
+      { status: 500 }
+    );
+  }
+
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key
     },
     body: JSON.stringify({
       agent: 'generate-chart-2',
@@ -171,11 +212,20 @@ async function getGraph(chartType: string, sqlQueryResults: string) {
 }
 
 async function getFinalResponse(question: string, analysisResults: string) {
-  const response = await fetch(URL_MAISTRO, {
+  const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
+
+  if (!config?.url_seek || !config?.url_maistro) {
+    return NextResponse.json(
+      { error: "Missing NeuralSeek configuration or URL." },
+      { status: 500 }
+    );
+  }
+
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': API_KEY
+      'apikey': config.api_key 
     },
     body: JSON.stringify({
       agent: 'final-response',
