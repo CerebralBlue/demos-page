@@ -5,11 +5,11 @@ async function getTitleSubtitle(question: string) {
 
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek) {
+  if (!config?.url_maistro) {
     return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
-  const response = await fetch(config.url_seek, {
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,11 +40,11 @@ async function getTitleSubtitle(question: string) {
 async function getSteps(question: string) {
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek) {
+  if (!config?.url_maistro) {
     return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
-  const response = await fetch(config.url_seek, {
+  const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -80,11 +80,8 @@ async function getSteps(question: string) {
 async function getQueryDatabase(description: string) {
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek || !config?.url_maistro) {
-    return NextResponse.json(
-      { error: "Missing NeuralSeek configuration or URL." },
-      { status: 500 }
-    );
+  if (!config?.url_maistro) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
   const response = await fetch(config.url_maistro, {
@@ -124,11 +121,8 @@ async function getResultsAnalysis(description: string, sqlQueryResults: string, 
 
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek || !config?.url_maistro) {
-    return NextResponse.json(
-      { error: "Missing NeuralSeek configuration or URL." },
-      { status: 500 }
-    );
+  if (!config?.url_maistro) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
   const response = await fetch(config.url_maistro, {
@@ -169,21 +163,17 @@ async function getResultsAnalysis(description: string, sqlQueryResults: string, 
 }
 
 async function getGraph(chartType: string, sqlQueryResults: string) {
-
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek || !config?.url_maistro) {
-    return NextResponse.json(
-      { error: "Missing NeuralSeek configuration or URL." },
-      { status: 500 }
-    );
+  if (!config?.url_maistro) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
   const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': config.api_key
+      'apikey': config.api_key || ''
     },
     body: JSON.stringify({
       agent: 'generate-chart-2',
@@ -214,18 +204,15 @@ async function getGraph(chartType: string, sqlQueryResults: string) {
 async function getFinalResponse(question: string, analysisResults: string) {
   const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === "test-juan");
 
-  if (!config?.url_seek || !config?.url_maistro) {
-    return NextResponse.json(
-      { error: "Missing NeuralSeek configuration or URL." },
-      { status: 500 }
-    );
+  if (!config?.url_maistro) {
+    return NextResponse.json({ error: "Missing NeuralSeek configuration or URL." }, { status: 500 });
   }
 
   const response = await fetch(config.url_maistro, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': config.api_key 
+      'apikey': config.api_key
     },
     body: JSON.stringify({
       agent: 'final-response',
