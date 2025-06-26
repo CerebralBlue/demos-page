@@ -84,7 +84,7 @@ const AgentRunnerDemo = () => {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
             // const baseUrl = "/api";
             const urlExplore = `${baseUrl}/neuralseek/explore-files`;
-            console.log(urlExplore);
+
             const res = await axios.post(urlExplore, 
                 {
                     url_name: "staging-agent-runner"
@@ -245,7 +245,6 @@ const AgentRunnerDemo = () => {
             agent: "list-agents",
             params: [],
         };
-        console.log(urlMaistro);
         const res = await axios.post(urlMaistro, maistroCallBody, {
             headers: { 'Content-Type': 'application/json' },
         });
