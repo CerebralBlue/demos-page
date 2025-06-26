@@ -32,7 +32,6 @@ export async function POST(req: NextRequest) {
         const response = await fetch(config.url_explore_upload, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 apikey: config.api_key,
             },
             body: outboundFormData,

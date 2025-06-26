@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
 
     const config = NEURALSEEK_URL_CONFIGS.find(url => url.name === url_name);
 
+    console.log(config);
     if (!config) {
       return NextResponse.json(
         { error: `No configuration found for ${url_name}` },

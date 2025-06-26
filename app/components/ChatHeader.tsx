@@ -24,7 +24,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     handlePrePromptClick,
     prePrompts,
     width = 120,  // default width
-    height = 80,  // default height
+    height = 120,  // default height
 }) => {
     return (
         <header className="flex flex-col items-center space-y-3 mb-2">
