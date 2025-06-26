@@ -82,8 +82,9 @@ const AgentRunnerDemo = () => {
         try {
 
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+            // const baseUrl = "/api";
             const urlExplore = `${baseUrl}/neuralseek/explore-files`;
-
+            console.log(urlExplore);
             const res = await axios.post(urlExplore, 
                 {
                     url_name: "staging-agent-runner"
@@ -237,15 +238,18 @@ const AgentRunnerDemo = () => {
     const fetchAgents = async () => {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+        // const baseUrl = "/api";
         const urlMaistro = `${baseUrl}/neuralseek/maistro`;
         const maistroCallBody = {
             url_name: "staging-agent-runner",
             agent: "list-agents",
             params: [],
         };
+        console.log(urlMaistro);
         const res = await axios.post(urlMaistro, maistroCallBody, {
             headers: { 'Content-Type': 'application/json' },
         });
+
 
         if (res.status !== 200) {
             throw new Error("Fetch agents failed with status code " + res.status);
