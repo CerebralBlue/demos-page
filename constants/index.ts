@@ -146,16 +146,16 @@ export const sidebarLinks = [
       }
     ],
   },
-  // {
-  //   category: "Seek AI Demo",
-  //   links: [
-  //     {
-  //       imgURL: "document-text",
-  //       route: "/seek-ai-demo",
-  //       label: "Seek AI Demo",
-  //     }
-  //   ],
-  // },
+  {
+    category: "Seek AI Demo",
+    links: [
+      {
+        imgURL: "document-text",
+        route: "/seek-ai-demo",
+        label: "Seek AI Demo",
+      }
+    ],
+  },
   {
     category: "Search Engine Use Cases",
     links: [
@@ -208,6 +208,11 @@ export const sidebarLinks = [
         imgURL: "users",
         route: "/bcbst-demo",
         label: "BCBS Mississippi Demo",
+      },
+      {
+        imgURL: "users",
+        route: "/goodyear-demo",
+        label: "Goodyear Demo",
       }
     ],
   },
