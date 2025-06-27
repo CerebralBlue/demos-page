@@ -251,7 +251,11 @@ const CompanyAssessmentFlow = () => {
   };
   const reportRef = React.useRef<HTMLDivElement | null>(null);
   return (
+    
     <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
+      <div className="w-full flex justify-center mb-6">
+        <img src="logo_kyc.png" alt="Company Logo" className="h-20" />
+      </div>
       <Stepper currentStep={step} onStepChange={setStep} />
 
       {step === 1 && (
@@ -470,6 +474,13 @@ const CompanyAssessmentFlow = () => {
             >
               Download PDF
             </button>
+            <button
+              onClick={handleStepTransition}
+              disabled={selectedItems.length === 0}
+              className="p-2 bg-green-600 text-white rounded-full disabled:opacity-50"
+            >
+              <Icon name="arrow-right" className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -478,7 +489,7 @@ const CompanyAssessmentFlow = () => {
   <div className="space-y-4">
     <h2 className="text-xl font-semibold">Step 4: Push to CRM</h2>
     <p className="text-sm text-gray-600">
-      Aquí puedes revisar el JSON que se enviará a tu CRM y pulsar “Enviar”.
+      
     </p>
 
     <textarea
@@ -500,13 +511,13 @@ const CompanyAssessmentFlow = () => {
         onClick={handleBack}
         className="p-2 bg-gray-500 text-white rounded-full"
       >
-        ← Back
+       <Icon name="arrow-left" className="w-5 h-5" />
       </button>
       <button
         onClick={handleSendToCRM}
         className="p-2 bg-green-600 text-white rounded-full"
       >
-        Enviar a CRM
+        Send a CRM
       </button>
     </div>
   </div>
