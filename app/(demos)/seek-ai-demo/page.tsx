@@ -212,7 +212,7 @@ const SeekAiDemo = () => {
       headers: { 'Content-Type': 'application/json' }
     });
     let analysis: any = await response.text();
-    analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
+    analysis = analysis.substring(1, analysis.length - 1); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
 
     let markdownContainer = <div className="ps-2 text-sm">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
@@ -313,7 +313,7 @@ const SeekAiDemo = () => {
     });
 
     let analysis = await response.text();
-    analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
+    analysis = analysis.substring(1, analysis.length - 1); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
     let markdownContainer = <div className="ps-2 text-sm">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
     </div>;
