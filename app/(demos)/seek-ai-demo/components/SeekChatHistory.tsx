@@ -98,9 +98,9 @@ const SeekChatHistory: React.FC<SeekHistoryProps> = ({ chatTitle, messages, chat
                             {msg.message.initialResponse}
                             {msg.message.finalResponse}
                             {msg.message.thinkingButton}
-                            {msg.message.graphs && msg.message.graphs.map((e: any) => {
+                            {msg.message.graphs && msg.message.graphs.map((e: any, index2: any) => {
                               return (
-                                <div className="ms-2 my-2">
+                                <div key={`graph${index}_${index2}`} className="ms-2 my-2">
                                   {e}
                                 </div>
                               )
