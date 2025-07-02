@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import Stepper from '../../(root)/components/Stepper';
 import axios from "axios";
 import Icon from '@/components/Icon';
-import html2pdf from "html2pdf.js";
 
 interface CompanyData {
   duns: string;
@@ -45,29 +44,29 @@ const CompanyAssessmentFlow = () => {
   const [isStepLoading, setIsStepLoading] = useState(false);
   const [fullCompanyData, setFullCompanyData] = useState<any>(null);
   const handleSendToCRM = async () => {
-  try {
-    const payload = {
-      company: selectedCompany,
-      state: selectedState,
-      summary: companySummary,
-      riskLevel,
-      assessedBy,
-      reportDetails,
-      recommendedActions
-    };
-    // Reemplaza con la URL de tu CRM y la autenticación necesaria
-    await axios.post("https://api.tu-crm.com/assessments", payload, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_CRM_TOKEN}`
-      }
-    });
-    alert("¡Informe enviado al CRM con éxito!");
-  } catch (err) {
-    console.error("Error enviando al CRM:", err);
-    alert("Falló el envío al CRM. Revisa la consola.");
-  }
-};
+    try {
+      const payload = {
+        company: selectedCompany,
+        state: selectedState,
+        summary: companySummary,
+        riskLevel,
+        assessedBy,
+        reportDetails,
+        recommendedActions
+      };
+      // Reemplaza con la URL de tu CRM y la autenticación necesaria
+      await axios.post("https://api.tu-crm.com/assessments", payload, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_CRM_TOKEN}`
+        }
+      });
+      alert("¡Informe enviado al CRM con éxito!");
+    } catch (err) {
+      console.error("Error enviando al CRM:", err);
+      alert("Falló el envío al CRM. Revisa la consola.");
+    }
+  };
   const handleSearch = async () => {
     if (!companyQuery.trim()) return;
     try {
@@ -117,18 +116,23 @@ const CompanyAssessmentFlow = () => {
   };
   const exportToPDF = () => {
     if (reportRef.current) {
-      html2pdf()
-        .set({
-          margin: 0.5,
-          filename: `report_${selectedCompany?.company_name || "company"}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-        })
-        .from(reportRef.current)
-        .save();
+      // @ts-ignore
+      // Refer to issue -> https://github.com/eKoopmans/html2pdf.js/issues/644
+      import('html2pdf.js').then((html2pdf) => {
+        html2pdf.default()
+          .set({
+            margin: 0.5,
+            filename: `report_${selectedCompany?.company_name || "company"}.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+          })
+          .from(reportRef.current)
+          .save();
+      });
     }
-  };
+  }
+
   const resetFlow = () => {
     setStep(1);
     setCompanyQuery("");
@@ -251,7 +255,7 @@ const CompanyAssessmentFlow = () => {
   };
   const reportRef = React.useRef<HTMLDivElement | null>(null);
   return (
-    
+
     <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
       <div className="w-full flex justify-center mb-6">
         <img src="logo_kyc.png" alt="Company Logo" className="h-20" />
@@ -272,7 +276,7 @@ const CompanyAssessmentFlow = () => {
                 placeholder="Enter company name or DUNS"
                 className="w-3/5 px-4 m-auto py-2 pr-10 border rounded-lg dark:bg-gray-800"
               />
-              
+
               <select
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
@@ -486,42 +490,42 @@ const CompanyAssessmentFlow = () => {
 
       )}
       {step === 4 && (
-  <div className="space-y-4">
-    <h2 className="text-xl font-semibold">Step 4: Push to CRM</h2>
-    <p className="text-sm text-gray-600">
-      
-    </p>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Step 4: Push to CRM</h2>
+          <p className="text-sm text-gray-600">
 
-    <textarea
-      value={JSON.stringify({
-        company: selectedCompany,
-        state: selectedState,
-        summary: companySummary,
-        riskLevel,
-        assessedBy,
-        reportDetails,
-        recommendedActions
-      }, null, 2)}
-      readOnly
-      className="w-full h-64 p-2 border rounded-lg font-mono text-sm bg-gray-50"
-    />
+          </p>
 
-    <div className="flex items-center gap-4">
-      <button
-        onClick={handleBack}
-        className="p-2 bg-gray-500 text-white rounded-full"
-      >
-       <Icon name="arrow-left" className="w-5 h-5" />
-      </button>
-      <button
-        onClick={handleSendToCRM}
-        className="p-2 bg-green-600 text-white rounded-full"
-      >
-        Send a CRM
-      </button>
-    </div>
-  </div>
-)}
+          <textarea
+            value={JSON.stringify({
+              company: selectedCompany,
+              state: selectedState,
+              summary: companySummary,
+              riskLevel,
+              assessedBy,
+              reportDetails,
+              recommendedActions
+            }, null, 2)}
+            readOnly
+            className="w-full h-64 p-2 border rounded-lg font-mono text-sm bg-gray-50"
+          />
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleBack}
+              className="p-2 bg-gray-500 text-white rounded-full"
+            >
+              <Icon name="arrow-left" className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleSendToCRM}
+              className="p-2 bg-green-600 text-white rounded-full"
+            >
+              Send a CRM
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
