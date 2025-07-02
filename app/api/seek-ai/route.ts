@@ -113,7 +113,6 @@ async function getQueryDatabase(description: string) {
   });
 
   const data = await response.json();
-
   return NextResponse.json(data.answer, { status: response.status });
 }
 

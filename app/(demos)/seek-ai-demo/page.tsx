@@ -1,14 +1,26 @@
 "use client";
 import React, { useRef, useState } from 'react';
 import Icon from '@/components/Icon';
-import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import SeekChatHistory from './components/SeekChatHistory';
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, Title, BarElement, PointElement, LineElement } from 'chart.js';
 import { Bar, Doughnut, Pie, Line, PolarArea, Bubble } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, Title, BarElement, PointElement, LineElement);
+
+
+const ErrorMessage = ({ message }: { message: string }) => {
+  return (
+    <div>
+      <span className="px-2 py-2 text-sm bg-red-300/20 text-red-500 inline-flex flex-row gap-2 items-center rounded-xl">
+        { message }
+        <ExclamationTriangleIcon className="w-4 h-4" />
+      </span>
+    </div>
+  )
+}
 
 type ChartTypes = 'line' | 'bubble' | 'pie' | 'doughnut' | 'polarArea';
 
@@ -100,7 +112,7 @@ const SeekAiDemo = () => {
     setTimeout(() => {
       chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
-  };
+  };  
 
   const getTitleSubtitle = async () => {
     const response = await fetch('/demos-page/api/seek-ai', {
@@ -212,10 +224,9 @@ const SeekAiDemo = () => {
       headers: { 'Content-Type': 'application/json' }
     });
     let analysis: any = await response.text();
-    analysis = analysis.substring(1, analysis.length - 1); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
-
+    analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
     let markdownContainer = <div className="ps-2 text-sm">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
+      <Markdown rehypePlugins={[rehypeRaw]}>{analysis}</Markdown>
     </div>;
     let newTemp = <Step key={`step${i}`} action={step.do} description={markdownContainer} />
     setThinkingSteps((prev: any) => {
@@ -255,36 +266,65 @@ const SeekAiDemo = () => {
       return prevThinkingSteps;
     });
 
-    const response = await fetch('/demos-page/api/seek-ai', {
-      method: 'POST',
-      body: JSON.stringify({ step: 'get-graph', chartType: step.type, sqlQueryResults }),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    let response = null;
+    try {
+      response = await fetch('/demos-page/api/seek-ai', {
+        method: 'POST',
+        body: JSON.stringify({ step: 'get-graph', chartType: step.type, sqlQueryResults }),
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-    let chartInfo = await response.json();
-    let chartType: ChartTypes = chartInfo.type;
-    let theChart = getChartByChartType(`chart${i}`, chartType, chartInfo.data);
-    let newTemp = <Step key={`step${i}`} action={step.do} description={theChart} />
-    setThinkingSteps((prev: any) => {
-      let prevThinkingSteps = [...prev];
-      let tempThinkingStep = prevThinkingSteps[prevThinkingSteps.length - 1];
-      tempThinkingStep.pop();
-      tempThinkingStep.push(newTemp);
-      prevThinkingSteps[prevThinkingSteps.length - 1] = tempThinkingStep;
-      return prevThinkingSteps;
-    });
-    setChatHistory((prev: any) => {
-      let prevChatHistory = [...prev];
-      const lastMessage = prevChatHistory[prevChatHistory.length - 1]?.message;
-      if (lastMessage && typeof lastMessage === "object") {
-        let tempGraphs: any = lastMessage.graphs || [];
-        tempGraphs.push(theChart);
-        lastMessage.graphs = tempGraphs;
-        prevChatHistory[prevChatHistory.length - 1].message = lastMessage;
-      }
-      return prevChatHistory;
-    });
-    return theChart;
+      if (response.status !== 200) throw new Error('Failed to get graph data');
+
+      let chartInfo = await response.json();
+      let chartType: ChartTypes = chartInfo.type;
+      let theChart = getChartByChartType(`chart${i}`, chartType, chartInfo.data);
+      let newTemp = <Step key={`step${i}`} action={step.do} description={theChart} />
+      setThinkingSteps((prev: any) => {
+        let prevThinkingSteps = [...prev];
+        let tempThinkingStep = prevThinkingSteps[prevThinkingSteps.length - 1];
+        tempThinkingStep.pop();
+        tempThinkingStep.push(newTemp);
+        prevThinkingSteps[prevThinkingSteps.length - 1] = tempThinkingStep;
+        return prevThinkingSteps;
+      });
+
+      setChatHistory((prev: any) => {
+        let prevChatHistory = [...prev];
+        const lastMessage = prevChatHistory[prevChatHistory.length - 1]?.message;
+        if (lastMessage && typeof lastMessage === "object") {
+          let tempGraphs: any = lastMessage.graphs || [];
+          tempGraphs.push(theChart);
+          lastMessage.graphs = tempGraphs;
+          prevChatHistory[prevChatHistory.length - 1].message = lastMessage;
+        }
+        return prevChatHistory;
+      });
+    } catch (err) {
+      let errorMessage = <ErrorMessage message="Failed to generate the graph" />;
+      let newTemp = <Step key={`step${i}`} action={step.do} description={errorMessage} />;
+
+      setThinkingSteps((prev: any) => {
+        let prevThinkingSteps = [...prev];
+        let tempThinkingStep = prevThinkingSteps[prevThinkingSteps.length - 1];
+        tempThinkingStep.pop();
+        tempThinkingStep.push(newTemp);
+        prevThinkingSteps[prevThinkingSteps.length - 1] = tempThinkingStep;
+        return prevThinkingSteps;
+      });
+
+      setChatHistory((prev: any) => {
+        let prevChatHistory = [...prev];
+        const lastMessage = prevChatHistory[prevChatHistory.length - 1]?.message;
+        if (lastMessage && typeof lastMessage === "object") {
+          let tempGraphs: any = lastMessage.graphs || [];
+          tempGraphs.push(errorMessage);
+          lastMessage.graphs = tempGraphs;
+          prevChatHistory[prevChatHistory.length - 1].message = lastMessage;
+        }
+        return prevChatHistory;
+      });
+    }
   }
 
   const iterateSteps = async (steps: any) => {
@@ -312,10 +352,10 @@ const SeekAiDemo = () => {
       headers: { 'Content-Type': 'application/json' }
     });
 
-    let analysis = await response.text();
-    analysis = analysis.substring(1, analysis.length - 1); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
+    let analysis: any = await response.text();
+    analysis = analysis.substring(1, analysis.length - 1).split('\\n'); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
     let markdownContainer = <div className="ps-2 text-sm">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
+      <Markdown rehypePlugins={[rehypeRaw]}>{analysis}</Markdown>
     </div>;
     setChatHistory((prev) => {
       let prevChatHistory = [...prev];
@@ -414,6 +454,10 @@ const SeekAiDemo = () => {
         }
 
         {/* Span Input Message */}
+
+        {/* Error Message */}
+
+
         <div className="relative flex items-center">
           <textarea
             ref={textareaRef}
