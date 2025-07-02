@@ -3,6 +3,7 @@ export const STEPS: { id: number, title: string; description: string }[] = [
   { id: 1, title: "Choose a company", description: "Search for a company" },
   { id: 2, title: "Select items", description: "Select the items you want to report" },
   { id: 3, title: "Report", description: "Display the report" },
+  { id: 4, title: "CRM", description: "Push to CRM" },
 ];
 export const sidebarLinks = [
   {
