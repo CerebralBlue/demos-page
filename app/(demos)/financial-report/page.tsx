@@ -246,6 +246,24 @@ const CompanyAssessmentFlow = () => {
     setStep(prev => prev + 1);
   };
 
+  const handleSendEmail = async () => {
+    try {
+      alert("Email succesfully sent");
+    } catch (err) {
+      console.error("Error sending email:", err);
+      alert("Email sending failed.");
+    }
+  }
+
+  const handleSendToSlack = async () => {
+    try {
+      alert("Report sent to Slack!");
+    } catch (err) {
+      console.error("Error sending report to Slack:", err);
+      alert("Sending report to Slack failed.");
+    }
+  }
+
   const handleBack = () => {
     if (step > 1) setStep(step - 1);
   };
@@ -472,9 +490,30 @@ const CompanyAssessmentFlow = () => {
             >
               Reset
             </button>
+            <div className="flex items-center gap-2">
+              <input
+                type="email"
+                placeholder="Enter email"
+                className="p-2 border rounded"
+              />
+              <button
+                onClick={handleSendEmail}
+                className="p-2 bg-gray-600 text-white rounded-full"
+              >
+                Send to email
+              </button>
+            </div>
+            <button
+              onClick={handleSendToSlack}
+              className="p-2 bg-orange-600 text-white rounded-full"
+            >
+              <Icon name="slack" className="w-4 h-4" />
+              Send to Slack
+            </button>
+
             <button
               onClick={exportToPDF}
-              className="p-2 bg-blue-600 text-white rounded-full ml-4"
+              className="p-2 bg-blue-600 text-white rounded-full"
             >
               Download PDF
             </button>
