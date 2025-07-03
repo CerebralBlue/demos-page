@@ -210,34 +210,21 @@ const LimosDemo: React.FC = () => {
 };
 
   const CustomMarkdownComponents = {
-    ol: ({ children }: { children: React.ReactNode }) => (
+    ol: ({ children }: any) => (
       <ol className="grid grid-cols-3 gap-3 mt-4">{children}</ol>
     ),
-    li: ({ children }: { children: React.ReactNode }) => {
-      const text = React.Children.toArray(children)
-        .map((child) => {
-          if (typeof child === "string") return child;
-          if (typeof child === "object" && "props" in child) return child.props.children;
-          return "";
-        })
-        .join("")
-        .replace(/^\*\*/, "")
-        .replace(/\*\*$/, "")
-        .trim();
-
-      return (
+    li: ({ children }: any) => (
         <li>
           <div
             className="m-0 flex h-[60px] p-3 w-full bg-gray-200 border border-gray-400 dark:border-gray-600 rounded-full dark:bg-gray-800 hover:bg-transparent dark:hover:bg-transparent transition cursor-pointer"
-            onClick={() => handleSendQuery(text)}
+            onClick={() => handleSendQuery('')}
           >
             <p className="text-sm m-auto font-semibold text-center text-gray-500 dark:text-gray-300">
               {children}
             </p>
           </div>
         </li>
-      );
-    },
+      )
   };
 
   return (

@@ -526,7 +526,7 @@ const CompanyAssessmentFlow = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
   );
 };
 
