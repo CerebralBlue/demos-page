@@ -333,7 +333,7 @@ const SeekAiDemo = () => {
     let analysis = '';
     for (const [i, step] of steps.entries()) {
       if (step.do === 1) {
-        sqlQueryResults = await getQueryDatabase(step, i);
+        sqlQueryResults += await getQueryDatabase(step, i);
         analysisResults += `${sqlQueryResults}\n\n`;
       } else if (step.do === 2) {
         analysis = await getResultsAnalysis(step, i, sqlQueryResults, message);
@@ -353,7 +353,7 @@ const SeekAiDemo = () => {
     });
 
     let analysis: any = await response.text();
-    analysis = analysis.substring(1, analysis.length - 1).split('\\n'); //.replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
+    analysis = analysis.substring(1, analysis.length - 1).replaceAll('\n', '<\/br>').replaceAll('\\n', '<\/br>');
     let markdownContainer = <div className="ps-2 text-sm">
       <Markdown rehypePlugins={[rehypeRaw]}>{analysis}</Markdown>
     </div>;
