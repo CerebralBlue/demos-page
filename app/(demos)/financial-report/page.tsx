@@ -1,572 +1,172 @@
-// src/components/CompanyAssessmentFlow.tsx
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Stepper from '../../(root)/components/Stepper';
-import axios from "axios";
-import Icon from '@/components/Icon';
+import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
+import { Bar, Line } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+} from 'chart.js';
+import clsx from 'clsx';
 
-interface CompanyData {
-  duns: string;
-  company_name: string;
-}
+ChartJS.register(BarElement, CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
-interface APIDetail {
-  id: string;
-  title: string;
-  content: string;
-}
-
-const dummyItems = [
-  { id: "Adverse_Media_Flag", label: "Adverse media" },
-  { id: "Business_Status", label: "Business status" },
-  { id: "Sanctions_Flag", label: "Sanctions" },
-];
-
-
-const CompanyAssessmentFlow = () => {
-  const [riskLevel, setRiskLevel] = useState("Yellow (Moderate Risk)");
-  const [assessedBy, setAssessedBy] = useState("Jessica Smith – Assessment Analyst");
-  const [recommendedActions, setRecommendedActions] = useState<string[]>([
-    "Request full UBO structure, including offshore entity documents.",
-    "Perform enhanced due diligence on Cayman Islands holding company.",
-    "Add to monthly periodic monitoring batch process for media and financial updates."
-  ]);
-  const [selectedState, setSelectedState] = useState("");
-  const [companySummary, setCompanySummary] = useState<string | null>(null);
-  const [step, setStep] = useState(1);
-  const [companyQuery, setCompanyQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<CompanyData[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<CompanyData | null>(null);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [reportDetails, setReportDetails] = useState<APIDetail[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isStepLoading, setIsStepLoading] = useState(false);
-  const [fullCompanyData, setFullCompanyData] = useState<any>(null);
-  const handleSendToCRM = async () => {
-    try {
-      const payload = {
-        company: selectedCompany,
-        state: selectedState,
-        summary: companySummary,
-        riskLevel,
-        assessedBy,
-        reportDetails,
-        recommendedActions
-      };
-      // Reemplaza con la URL de tu CRM y la autenticación necesaria
-      await axios.post("https://api.tu-crm.com/assessments", payload, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_CRM_TOKEN}`
-        }
-      });
-      alert("¡Informe enviado al CRM con éxito!");
-    } catch (err) {
-      console.error("Error enviando al CRM:", err);
-      alert("Falló el envío al CRM. Revisa la consola.");
-    }
-  };
-  const handleSearch = async () => {
-    if (!companyQuery.trim()) return;
-    try {
-      setIsLoading(true);
-      setSelectedCompany(null);
-      setSuggestions([]);
-
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-      const maistroCallBody = {
-        url_name: "kyc-demo",
-        agent: "search_name",
-        params: [
-          { name: "companyName", value: companyQuery },
-          { name: "state", value: selectedState }
-        ],
-        options: {
-          returnVariables: false,
-          returnVariablesExpanded: false
-        }
-      };
-      const response = await axios.post(urlMaistro, maistroCallBody, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      let cleanedAnswer = response.data.answer.trim();
-      if (cleanedAnswer.startsWith('```json')) {
-        cleanedAnswer = cleanedAnswer.replace(/^```json/, '').trim();
-      }
-      if (cleanedAnswer.endsWith('```')) {
-        cleanedAnswer = cleanedAnswer.replace(/```$/, '').trim();
-      }
-      if (cleanedAnswer.startsWith('{')) {
-        const singleCompany = JSON.parse(cleanedAnswer);
-        setSelectedCompany(singleCompany);
-        setSuggestions([]);
-      } else {
-        const parsed = JSON.parse(cleanedAnswer);
-        setSuggestions(parsed);
-        setSelectedCompany(null);
-      }
-    } catch (err) {
-      console.error("Error searching companies:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const exportToPDF = () => {
-    if (reportRef.current) {
-      // @ts-ignore
-      // Refer to issue -> https://github.com/eKoopmans/html2pdf.js/issues/644
-      import('html2pdf.js').then((html2pdf) => {
-        html2pdf.default()
-          .set({
-            margin: 0.5,
-            filename: `report_${selectedCompany?.company_name || "company"}.pdf`,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-          })
-          .from(reportRef.current)
-          .save();
-      });
-    }
-  }
-
-  const resetFlow = () => {
-    setStep(1);
-    setCompanyQuery("");
-    setSuggestions([]);
-    setSelectedCompany(null);
-    setSelectedItems([]);
-    setReportDetails([]);
-    setCompanySummary(null);
-    setFullCompanyData(null);
-    setSelectedState("");
-  };
-  const handleItemToggle = (id: string) => {
-    setSelectedItems(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
-  };
-
-  const handleStepTransition = async () => {
-    if (step === 1 && !selectedCompany) return;
-    if (step === 2 && selectedItems.length === 0) return;
-
-    if (step === 2) {
-      setIsStepLoading(true);
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const urlMaistro = `${baseUrl}/neuralseek/maistro`;
-
-      const results: APIDetail[] = [];
-
-      for (const id of selectedItems) {
-        const value = fullCompanyData?.[id];
-        const industry = fullCompanyData?.Industry_Description;
-
-        if (!value || !industry) continue;
-
-        const maistroCallBody = {
-          url_name: "kyc-demo",
-          agent: id,
-          params: [
-            { value },  // valor del campo correspondiente (p. ej. "Yes", "Active", etc.)
-            { value: industry }  // descripción del sector
-          ],
-          options: {
-            returnVariables: false,
-            returnVariablesExpanded: false
-          }
-        };
-
-        try {
-          const res = await axios.post(urlMaistro, maistroCallBody, {
-            headers: { 'Content-Type': 'application/json' },
-          });
-
-          let cleaned = res.data.answer?.trim?.() || "";
-
-          if (cleaned.startsWith("```json")) {
-            cleaned = cleaned.replace(/^```json/, "").trim();
-          }
-          if (cleaned.endsWith("```")) {
-            cleaned = cleaned.replace(/```$/, "").trim();
-          }
-
-          results.push({
-            id,
-            title: dummyItems.find(i => i.id === id)?.label ?? id,
-            content: cleaned
-          });
-        } catch (err) {
-          console.error(`Error fetching report for ${id}:`, err);
-          results.push({
-            id,
-            title: dummyItems.find(i => i.id === id)?.label ?? id,
-            content: "Failed to fetch data"
-          });
-        }
-      }
-
-      try {
-        const summaryBody = {
-          url_name: "kyc-demo",
-          agent: "company_resume",
-          params: [
-            { value: selectedCompany?.company_name || "" },
-            { value: fullCompanyData?.Industry_Description || "" }
-          ],
-          options: {
-            returnVariables: false,
-            returnVariablesExpanded: false
-          }
-        };
-
-        const summaryRes = await axios.post(urlMaistro, summaryBody, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        let cleanedSummary = summaryRes.data.answer?.trim?.() || "";
-        if (cleanedSummary.startsWith("```json")) {
-          cleanedSummary = cleanedSummary.replace(/^```json/, "").trim();
-        }
-        if (cleanedSummary.endsWith("```")) {
-          cleanedSummary = cleanedSummary.replace(/```$/, "").trim();
-        }
-
-        setCompanySummary(cleanedSummary);
-      } catch (err) {
-        console.error("Error fetching company summary:", err);
-        setCompanySummary("No Executive Summary avilable.");
-      }
-      setReportDetails(results);
-    }
-    setIsStepLoading(false);
-    setStep(prev => prev + 1);
-  };
-
-  const handleSendEmail = async () => {
-    try {
-      alert("Email succesfully sent");
-    } catch (err) {
-      console.error("Error sending email:", err);
-      alert("Email sending failed.");
-    }
-  }
-
-  const handleSendToSlack = async () => {
-    try {
-      alert("Report sent to Slack!");
-    } catch (err) {
-      console.error("Error sending report to Slack:", err);
-      alert("Sending report to Slack failed.");
-    }
-  }
-
-  const handleBack = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
-  };
-  const reportRef = React.useRef<HTMLDivElement | null>(null);
-  return (
-
-    <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
-      <div className="w-full flex justify-center mb-6">
-        <img src="logo_kyc.png" alt="Company Logo" className="h-20" />
-      </div>
-      <Stepper currentStep={step} onStepChange={setStep} />
-
-      {step === 1 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Step 1: Enter Company Name or DUNS</h2>
-          <div className="relative w-full">
-            <div className="flex items-center w-full">
-
-              <input
-                type="text"
-                value={companyQuery}
-                onChange={(e) => setCompanyQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Enter company name or DUNS"
-                className="w-3/5 px-4 m-auto py-2 pr-10 border rounded-lg dark:bg-gray-800"
-              />
-
-              <select
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                className="w-1/4 px-4 m-auto py-2 border rounded-lg dark:bg-gray-800"
-              >
-                <option value="">Select a US State</option>
-                {[
-                  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-                  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-                  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-                  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-                ].map(state => (
-                  <option key={state} value={state}>{state}</option>
-                ))}
-              </select>
-              <button
-                onClick={handleSearch}
-                disabled={isLoading || !companyQuery.trim()}
-                className="m-auto transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
-              >
-                {isLoading ? <Icon name="loader" className="animate-spin w-5 h-5" /> : <Icon name="search" className="w-5 h-5" />}
-              </button>
-            </div>
-
-          </div>
-
-          {selectedCompany && (
-            <div className="border p-4 rounded bg-gray-100 dark:bg-gray-800">
-              <h3 className="font-semibold text-lg">Selected Company</h3>
-              <p><strong>Name:</strong> {selectedCompany.company_name}</p>
-              <p><strong>DUNS:</strong> {selectedCompany.duns}</p>
-            </div>
-          )}
-
-          {suggestions.length > 0 && !selectedCompany && (
-            <div className="space-y-2">
-              <p className="text-sm text-yellow-600">Did you mean:</p>
-              {suggestions.map((c: any) => (
-                <div key={c.duns}>
-                  <button
-                    onClick={async () => {
-                      setSelectedCompany(c);
-                      setSuggestions([]);
-
-                      // Fetch full data from DB by DUNS
-                      try {
-                        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                        const url = `${baseUrl}/company/${c.duns}`;
-                        const dbResult = await axios.get(url);
-                        console.log(dbResult.data)
-                        setFullCompanyData(dbResult.data);
-                      } catch (e) {
-                        console.error("Error fetching company from DB:", e);
-                      }
-                    }}
-                    className="text-sm underline hover:text-blue-700"
-                  >
-                    {c.company_name}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="flex justify-end">
-            <button
-              onClick={handleStepTransition}
-              disabled={!selectedCompany}
-              className="mt-4 p-2 bg-green-600 text-white rounded-full disabled:opacity-50"
-            >
-              <Icon name="arrow-right" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Step 2: Select Items to Assess</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            You can select one or more items to generate the evaluation report.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {dummyItems.map((item) => {
-              const isSelected = selectedItems.includes(item.id);
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleItemToggle(item.id)}
-                  className={`w-full p-4 text-left border rounded-lg transition-all duration-200
-              ${isSelected
-                      ? 'bg-green-600 text-white border-green-700 shadow-md'
-                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{item.label}</span>
-                    {isSelected && <Icon name="check" className="w-5 h-5 text-white" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={handleBack}
-              className="p-2 bg-gray-500 text-white rounded-full"
-            >
-              <Icon name="arrow-left" className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleStepTransition}
-              disabled={selectedItems.length === 0}
-              className="p-2 bg-green-600 text-white rounded-full disabled:opacity-50"
-            >
-              <Icon name="arrow-right" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isStepLoading && (
-        <div className="flex justify-center items-center h-64">
-          <Icon name="loader" className="animate-spin w-10 h-10 text-blue-600" />
-        </div>
-      )}
-      {!isStepLoading && step === 3 && (
-        <div>
-
-          <div ref={reportRef} className="space-y-6 bg-white p-6 rounded-lg shadow border border-gray-300 dark:bg-white dark:text-black">
-            <h1 className="text-2xl font-bold text-center mb-2">Risk Assessment Report</h1>
-
-            <div className="text-sm space-y-1">
-              <p><strong>Company:</strong> {selectedCompany?.company_name ?? "N/A"}</p>
-              <p><strong>Assessment Date:</strong> {new Date().toLocaleDateString()}</p>
-              <p><strong>Risk Level:</strong> {riskLevel}</p>
-              <p><strong>Assessed By:</strong> {assessedBy}</p>
-            </div>
-
-            <hr className="border-gray-400 my-4" />
-
-            <h2 className="text-lg font-semibold uppercase text-gray-700">Executive Summary</h2>
-            <p className="whitespace-pre-line text-sm leading-relaxed">{companySummary}</p>
-
-            <hr className="border-gray-400 my-4" />
-
-            <h2 className="text-lg font-semibold uppercase text-gray-700">Risk Factor Breakdown</h2>
-            <table className="w-full table-fixed border-collapse border border-gray-500 text-sm">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="border border-gray-500 px-3 py-2 w-1/4">Risk Factor</th>
-                  <th className="border border-gray-500 px-3 py-2 w-1/6">Status</th>
-                  <th className="border border-gray-500 px-3 py-2">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reportDetails.map(detail => {
-                  const status = fullCompanyData?.[detail.id] ?? "N/A";
-                  return (
-                    <tr key={detail.id}>
-                      <td className="border border-gray-400 px-3 py-2 align-top font-medium">{detail.title}</td>
-                      <td className="border border-gray-400 px-3 py-2 align-top">{status}</td>
-                      <td className="border border-gray-400 px-3 py-2 align-top whitespace-pre-line">{detail.content}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-
-            <hr className="border-gray-400 my-4" />
-
-            <h2 className="text-lg font-semibold uppercase text-gray-700">Recommended Actions</h2>
-            <ul className="list-disc pl-6 text-sm space-y-1">
-              {recommendedActions.map((action, idx) => (
-                <li key={idx}>{action}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex gap-4 mt-4">
-            <button
-              onClick={handleBack}
-              className="p-2 bg-gray-500 text-white rounded-full"
-            >
-              <Icon name="arrow-left" className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={resetFlow}
-              className="p-2 bg-red-600 text-white rounded-full"
-            >
-              Reset
-            </button>
-            <div className="flex items-center gap-2">
-              <input
-                type="email"
-                placeholder="Enter email"
-                className="p-2 border rounded"
-              />
-              <button
-                onClick={handleSendEmail}
-                className="p-2 bg-gray-600 text-white rounded-full"
-              >
-                Send to email
-              </button>
-            </div>
-            <button
-              onClick={handleSendToSlack}
-              className="p-2 bg-orange-600 text-white rounded-full"
-            >
-              <Icon name="slack" className="w-4 h-4" />
-              Send to Slack
-            </button>
-
-            <button
-              onClick={exportToPDF}
-              className="p-2 bg-blue-600 text-white rounded-full"
-            >
-              Download PDF
-            </button>
-            <button
-              onClick={handleStepTransition}
-              disabled={selectedItems.length === 0}
-              className="p-2 bg-green-600 text-white rounded-full disabled:opacity-50"
-            >
-              <Icon name="arrow-right" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-      )}
-      {step === 4 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Step 4: Push to CRM</h2>
-          <p className="text-sm text-gray-600">
-
-          </p>
-
-          <textarea
-            value={JSON.stringify({
-              company: selectedCompany,
-              state: selectedState,
-              summary: companySummary,
-              riskLevel,
-              assessedBy,
-              reportDetails,
-              recommendedActions
-            }, null, 2)}
-            readOnly
-            className="w-full h-64 p-2 border rounded-lg font-mono text-sm bg-gray-50"
-          />
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleBack}
-              className="p-2 bg-gray-500 text-white rounded-full"
-            >
-              <Icon name="arrow-left" className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleSendToCRM}
-              className="p-2 bg-green-600 text-white rounded-full"
-            >
-              Send a CRM
-            </button>
-          </div>
-        </div>
-      )}
-      </div>
-  );
+const trendsData = {
+    labels: Array.from({ length: 60 }, (_, i) => `${i + 1}`),
+    datasets: [
+        {
+            label: 'Tasks',
+            data: Array(60).fill(1),
+            backgroundColor: (ctx: any) => {
+                const i = ctx.dataIndex;
+                if (i < 10) return '#a3bffa'; // early
+                if (i < 40) return '#7f9cf5'; // late
+                return '#5a67d8'; // on-time
+            },
+        },
+    ],
 };
 
-export default CompanyAssessmentFlow;
+const alertsData = {
+    labels: ['09/21', '09/24', '09/26', '10/05', '10/06', '10/07', '10/09', '10/11', '10/14'],
+    datasets: [
+        {
+            label: 'Alerts',
+            data: [165, 108, 66, 71, 32, 64, 97, 43, 19],
+            borderColor: '#3b82f6',
+            backgroundColor: '#3b82f6',
+            tension: 0.3,
+        },
+    ],
+};
+
+export default function FinancialReport() {
+    const handleNewAssessment = () => {
+        const id = uuidv4();
+        router.push(`/financial-report/${id}`);
+    };
+    const router = useRouter();
+    return (
+        <main className="min-h-screen bg-gray-100 text-gray-800 p-6 space-y-6">
+            {/* Header */}
+            <img src="logo_kyc.png" alt="Company Logo" className="h-20" />
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-bold">Customer Assessment Agent</h1>
+                    <p className="text-sm text-gray-600">
+                        Status of onboarding assessments and ongoing monitoring of alerts along with status by region and time period. Start a new assessment.
+                    </p>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow" onClick={handleNewAssessment}>
+                        New Assessment
+                    </button>
+                    {/* <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
+                        <img src="/avatar.jpg" alt="User" className="object-cover w-full h-full" />
+                    </div> */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-20">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-4">
+                <select className="p-2 border border-gray-300 rounded-md">
+                    <option>All Regions</option>
+                </select>
+                <select className="p-2 border border-gray-300 rounded-md">
+                    <option>30 Days</option>
+                </select>
+            </div>
+
+            {/* Main content grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Overview */}
+                <section className="bg-white p-4 rounded-md shadow space-y-4">
+                    <h2 className="text-xl font-semibold">Overview</h2>
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="p-4 border rounded text-center">
+                            <div className="text-sm text-gray-500">Total Open / Closed</div>
+                            <div className="text-2xl font-bold">6 / 89</div>
+                            <a href="#" className="text-blue-500 text-sm">View All</a>
+                        </div>
+                        <div className="p-4 border rounded text-center">
+                            <div className="text-sm text-gray-500">Average Time Open</div>
+                            <div className="text-2xl font-bold">3.1</div>
+                            <div className="text-sm">Days</div>
+                        </div>
+                        <div className="p-4 border rounded text-center">
+                            <div className="text-sm text-gray-500">Percent Late</div>
+                            <div className="text-2xl font-bold">23%</div>
+                        </div>
+                    </div>
+
+                    <table className="w-full text-sm border-t mt-4">
+                        <thead className="bg-blue-100">
+                            <tr>
+                                <th className="p-2">ID</th>
+                                <th className="p-2">Entity Name</th>
+                                <th className="p-2">Status</th>
+                                <th className="p-2">Next Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[
+                                { id: '2472791', name: 'Avaya Inc.', status: 'yellow', action: '2 Flags in investigation' },
+                                { id: '3232406', name: 'Brown Inc', status: 'green', action: 'On track' },
+                                { id: '3177968', name: 'Rasmussen Group', status: 'red', action: 'On track' },
+                                { id: '6692466', name: 'Stanley Group', status: 'yellow', action: '1 Flag under review' },
+                                { id: '8992480', name: 'Synergy, Inc.', status: 'green', action: 'On track' },
+                            ].map((row, i) => (
+                                <tr key={i} className="border-t">
+                                    <td className="p-2">{row.id}</td>
+                                    <td className="p-2">{row.name}</td>
+                                    <td className="p-2">
+                                        <span
+                                            className={clsx(
+                                                'w-3 h-3 rounded-full inline-block',
+                                                row.status === 'green' && 'bg-green-500',
+                                                row.status === 'yellow' && 'bg-yellow-400',
+                                                row.status === 'red' && 'bg-red-500'
+                                            )}
+                                        />
+                                    </td>
+                                    <td className="p-2">{row.action}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </section>
+
+                {/* Trends & Alerts */}
+                <section className="space-y-6">
+                    <div className="bg-white p-4 rounded-md shadow">
+                        <h2 className="text-xl font-semibold mb-2">Trends</h2>
+                        <p className="text-sm text-gray-500 mb-4">Click graph to view specific tasks</p>
+                        <Bar data={trendsData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+                        <div className="flex justify-between text-xs mt-2 text-center">
+                            <span className="text-blue-300">Early</span>
+                            <span className="text-blue-400">Late</span>
+                            <span className="text-blue-600">On-Time</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-md shadow">
+                        <h2 className="text-xl font-semibold mb-2">Alerts</h2>
+                        <p className="text-sm text-gray-500 mb-2">(adverse media, reviews, negative c-suite posts)</p>
+                        <Line data={alertsData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+                    </div>
+                </section>
+            </div>
+        </main>
+    );
+}
+
